@@ -1,4 +1,3 @@
-import SelectNative from './select-native';
+export { default } from './select-native';
+export * from './select-native';
 import './select-native.scss';
-
-export default SelectNative;

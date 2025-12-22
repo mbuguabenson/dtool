@@ -29,7 +29,7 @@ type TSelectNativeOptions = {
     use_text?: boolean;
 };
 
-type TListItem = {
+export type TListItem = {
     text: string;
     value: string;
     disabled?: boolean;

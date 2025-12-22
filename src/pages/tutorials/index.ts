@@ -1,4 +1,3 @@
-import TutorialTab from './tutorials';
-import './tutorials.scss';
+import Tutorials from './tutorials';
 
-export default TutorialTab;
+export default Tutorials;

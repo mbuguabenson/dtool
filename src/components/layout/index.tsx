@@ -9,8 +9,7 @@ import { useOfflineDetection } from '@/hooks/useOfflineDetection';
 import { useStore } from '@/hooks/useStore';
 import useTMB from '@/hooks/useTMB';
 import { handleOidcAuthFailure } from '@/utils/auth-utils';
-import { requestOidcAuthentication } from '@deriv-com/auth-client';
-import { useDevice } from '@deriv-com/ui';
+import { DBOT_TABS } from '@/constants/bot-contents';
 import { crypto_currencies_display_order, fiat_currencies_display_order } from '../shared';
 import Footer from './footer';
 import AppHeader from './header';
@@ -83,14 +82,13 @@ const Layout = observer(() => {
                 // Skip disabled accounts when checking for missing currency
                 const accounts = api_accounts.current.flat();
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                let detected_currency = '';
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const hasMissingCurrency = accounts.some(data => {
                     if (!allCurrencies.has(data.currency)) {
                         console.log('Missing currency:', data.currency);
                         sessionStorage.setItem('query_param_currency', data.currency);
                         return true;
                     }
-                    detected_currency = data.currency;
                     return false;
                 });
 
@@ -267,7 +265,7 @@ const Layout = observer(() => {
             </Body>
             {!isCallbackPage &&
                 isDesktop &&
-                store.dashboard.active_tab !== store.dashboard.dbot_tabs.BOT_BUILDER && <Footer />}
+                store.dashboard.active_tab !== DBOT_TABS.BOT_BUILDER && <Footer />}
             <PWAUpdateNotification />
         </div>
     );

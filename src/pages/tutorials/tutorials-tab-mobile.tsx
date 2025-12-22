@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import { isDesktop } from '@/components/shared';
-import SelectNative from '@/components/shared_ui/select-native';
+import SelectNative, { TListItem } from '@/components/shared_ui/select-native';
 import { useStore } from '@/hooks/useStore';
 import { LabelPairedArrowLeftSmRegularIcon, LabelPairedSearchSmRegularIcon } from '@deriv/quill-icons/LabelPaired';
 import { LegacyCloseCircle1pxBlackIcon } from '@deriv/quill-icons/Legacy';
