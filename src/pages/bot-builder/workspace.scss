@@ -65,3 +65,34 @@
         top: 9rem;
     }
 }
+
+.bot-templates-toggle {
+    position: fixed;
+    bottom: 80px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00d2d3 0%, #007cff 100%);
+    border: none;
+    box-shadow: 0 4px 20px rgba(0, 210, 211, 0.4);
+    cursor: pointer;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+
+    span {
+        font-size: 24px;
+    }
+
+    &:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 30px rgba(0, 210, 211, 0.6);
+    }
+}
+.bot-builder--catalog-open .bot-templates-toggle {
+    display: none;
+}
+

@@ -10,8 +10,10 @@ import { TBlocklyEvents } from 'Types';
 import LoadModal from '../../components/load-modal';
 import SaveModal from '../dashboard/bot-list/save-modal';
 import BotBuilderTourHandler from '../tutorials/dbot-tours/bot-builder-tour';
+import BotCatalogPanel from './bot-catalog-panel';
 import QuickStrategy1 from './quick-strategy';
 import WorkspaceWrapper from './workspace-wrapper';
+import './bot-catalog-panel.scss';
 
 const BotBuilder = observer(() => {
     const { dashboard, app, run_panel, toolbar, quick_strategy, blockly_store } = useStore();
@@ -24,6 +26,7 @@ const BotBuilder = observer(() => {
     const { isDesktop } = useDevice();
     const { onMount, onUnmount } = app;
     const el_ref = React.useRef<HTMLInputElement | null>(null);
+    const [is_catalog_open, setIsCatalogOpen] = React.useState(false);
 
     // TODO: fix
     // const isMounted = useIsMounted();
@@ -113,20 +116,33 @@ const BotBuilder = observer(() => {
         <>
             <div
                 className={classNames('bot-builder', {
-                    'bot-builder--active': active_tab === 2 && !is_preview_on_popup,
-                    'bot-builder--inactive': active_tab !== 2 || is_preview_on_popup,
+                    'bot-builder--active': active_tab === 1 && !is_preview_on_popup,
+                    'bot-builder--inactive': active_tab !== 1 || is_preview_on_popup,
                     'bot-builder--tour-active': active_tour,
+                    'bot-builder--catalog-open': is_catalog_open,
                 })}
             >
                 <div id='scratch_div' ref={el_ref}>
                     <WorkspaceWrapper />
                 </div>
+                {is_catalog_open && <BotCatalogPanel onClose={() => setIsCatalogOpen(false)} />}
             </div>
-            {active_tab === 2 && <BotBuilderTourHandler is_mobile={!isDesktop} />}
+            {active_tab === 1 && <BotBuilderTourHandler is_mobile={!isDesktop} />}
             {/* removed this outside from toolbar becuase it needs to loaded seperately without dependency */}
             <LoadModal />
             <SaveModal />
             {is_open && <QuickStrategy1 />}
+            
+            {/* Floating Bot Templates Button */}
+            {active_tab === 1 && !is_catalog_open && (
+                <button
+                    className='bot-templates-toggle'
+                    onClick={() => setIsCatalogOpen(true)}
+                    title={localize('Bot Templates')}
+                >
+                    <span>📦</span>
+                </button>
+            )}
         </>
     );
 });

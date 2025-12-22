@@ -42,7 +42,6 @@ import './main.scss';
 
 const ChartWrapper = lazy(() => import('../chart/chart-wrapper'));
 const Tutorial = lazy(() => import('../tutorials'));
-const Bots = lazy(() => import('../bots'));
 const AutoTrader = lazy(() => import('../auto-trader'));
 const CopyTrading = lazy(() => import('../copy-trader'));
 const SignalsTab = lazy(() => import('../signals/signals-tab'));
@@ -331,23 +330,6 @@ const AppWrapper = observer(() => {
                                 id='id-dbot-dashboard'
                             >
                                 <Dashboard handleTabChange={handleTabChange} />
-                            </div>
-                            <div
-                                label={
-                                    <div className='main__tabs-label'>
-                                        <LabelPairedPuzzlePieceTwoCaptionBoldIcon
-                                            height='20px'
-                                            width='20px'
-                                            fill='var(--text-general)'
-                                        />
-                                        <Localize i18n_default_text='Bots' />
-                                    </div>
-                                }
-                                id='id-bots'
-                            >
-                                <Suspense fallback={<ChunkLoader message={localize('Loading bots...')} />}>
-                                    <Bots />
-                                </Suspense>
                             </div>
                             <div
                                 label={
