@@ -11,6 +11,7 @@ import useTMB from '@/hooks/useTMB';
 import { handleOidcAuthFailure } from '@/utils/auth-utils';
 import { DBOT_TABS } from '@/constants/bot-contents';
 import { crypto_currencies_display_order, fiat_currencies_display_order } from '../shared';
+import { useDevice } from '@deriv-com/ui';
 import Footer from './footer';
 import AppHeader from './header';
 import Body from './main-body';
