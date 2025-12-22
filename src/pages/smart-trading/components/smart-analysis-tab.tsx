@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import {
@@ -26,6 +26,8 @@ const SmartAnalysisTab = observer(() => {
         markets,
         updateDigitStats,
         smart_analysis_data,
+        active_symbols_data,
+        v_sense_signals,
     } = smart_trading;
     const ticks_service = app.api_helpers_store?.ticks_service;
 
@@ -39,8 +41,14 @@ const SmartAnalysisTab = observer(() => {
             const callback = (ticks_data: { quote: string | number }[]) => {
                 if (is_mounted && ticks_data && ticks_data.length > 0) {
                     const latest = ticks_data[ticks_data.length - 1];
+                    const symbol_info = active_symbols_data[symbol];
+
                     const last_digits = ticks_data.slice(-100).map(t => {
-                        const quote_str = String(t.quote || '0');
+                        let quote_str = String(t.quote || '0');
+                        if (symbol_info && typeof t.quote === 'number') {
+                            const decimals = Math.abs(Math.log10(symbol_info.pip));
+                            quote_str = t.quote.toFixed(decimals);
+                        }
                         const digit = parseInt(quote_str[quote_str.length - 1]);
                         return isNaN(digit) ? 0 : digit;
                     });
@@ -57,7 +65,7 @@ const SmartAnalysisTab = observer(() => {
             is_mounted = false;
             if (listenerKey) ticks_service.stopMonitor({ symbol, key: listenerKey });
         };
-    }, [symbol, ticks_service, updateDigitStats]);
+    }, [symbol, ticks_service, updateDigitStats, active_symbols_data]);
 
     const probs = calculateProbabilities();
     const last_20_ticks = ticks.slice(-20);
@@ -223,20 +231,14 @@ const SmartAnalysisTab = observer(() => {
                 <div className='stat-box-colorful'>
                     <div className='info-col hot'>
                         <div className='lbl'>Hot Digit</div>
-                        <div className='val'>{digit_stats.reduce((a, b) => a.count > b.count ? a : b).digit}</div>
-                    </div>
-                    <div className='meta-col'>
-                        <div className='pct-tag' style={{ color: '#10b981' }}>{digit_stats.reduce((a, b) => a.count > b.count ? a : b).percentage.toFixed(1)}%</div>
+                        <div className='val'>{digit_stats.length > 0 ? digit_stats.reduce((a, b) => a.count > b.count ? a : b).digit : '-'}</div>
                     </div>
                 </div>
 
                 <div className='stat-box-colorful'>
                     <div className='info-col cold'>
                         <div className='lbl'>Cold Digit</div>
-                        <div className='val'>{digit_stats.reduce((a, b) => a.count < b.count ? a : b).digit}</div>
-                    </div>
-                    <div className='meta-col'>
-                        <div className='pct-tag' style={{ color: '#f43f5e' }}>{digit_stats.reduce((a, b) => a.count < b.count ? a : b).percentage.toFixed(1)}%</div>
+                        <div className='val'>{digit_stats.length > 0 ? digit_stats.reduce((a, b) => a.count < b.count ? a : b).digit : '-'}</div>
                     </div>
                 </div>
 
@@ -245,11 +247,71 @@ const SmartAnalysisTab = observer(() => {
                         <div className='lbl'>Total Samples</div>
                         <div className='val'>{ticks.length}</div>
                     </div>
-                    <div className='meta-col'>
-                        <div className='pct-tag'>TICKS</div>
-                    </div>
                 </div>
             </div>
+
+            {v_sense_signals.length > 0 && (
+                <div className='vsense-dashboard'>
+                    <div className='vsense-header-premium'>
+                        <div className='brand'>
+                            <span className='logo'>V-SENSE™</span>
+                            <span className='tag'>VOLATILITY SMART ENTRY & EXIT</span>
+                        </div>
+                        <div className='status-pulse'>
+                            <span className='dot' /> LIVE INTELLIGENCE ACTIVE
+                        </div>
+                    </div>
+                    
+                    <div className='vsense-signals-grid'>
+                        {v_sense_signals.map((sig, i) => (
+                            <div key={i} className={classNames('vsense-card', sig.status.toLowerCase())}>
+                                <div className='card-top'>
+                                    <span className='strategy-name'>{sig.strategy}</span>
+                                    <span className='status-badge'>{sig.status}</span>
+                                </div>
+                                <div className='card-main'>
+                                    {sig.targetDigit !== undefined && (
+                                        <div className='target-info'>
+                                            <span className='lbl'>TARGET DIGIT</span>
+                                            <span className='val'>{sig.targetDigit}</span>
+                                        </div>
+                                    )}
+                                    {sig.targetSide && (
+                                        <div className='target-info'>
+                                            <span className='lbl'>TARGET SIDE</span>
+                                            <span className='val'>{sig.targetSide}</span>
+                                        </div>
+                                    )}
+                                    <div className='confidence-circle'>
+                                        <svg viewBox="0 0 36 36" className="circular-chart">
+                                            <path className="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                            <path className="circle" strokeDasharray={`${sig.confidence}, 100`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                            <text x="18" y="20.35" className="percentage">{sig.confidence}%</text>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div className='card-footer'>
+                                    <div className='meta-item'>
+                                        <span className='lbl'>TREND</span>
+                                        <span className='val'>{sig.powerTrend === 'DOWN' ? '↓' : '↑'}</span>
+                                    </div>
+                                    <div className='meta-item'>
+                                        <span className='lbl'>STRETCH</span>
+                                        <span className='val'>{sig.stretch}</span>
+                                    </div>
+                                    <div className='meta-item'>
+                                        <span className='lbl'>DURATION</span>
+                                        <span className='val'>{sig.strategy === 'DIFFERS' ? '1 Tick' : '5 Ticks'}</span>
+                                    </div>
+                                </div>
+                                <div className='reasoning-tooltip'>
+                                    {sig.reasoning.map((r, idx) => <p key={idx}>{r}</p>)}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {smart_analysis_data && (
                 <div className='smart-prediction-grid'>

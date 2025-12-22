@@ -87,7 +87,7 @@ export default defineConfig({
         template: './index.html',
     },
     server: {
-        port: 8443,
+        port: 3000,
         compress: true,
         headers: {
             'Cross-Origin-Opener-Policy': 'unsafe-none',

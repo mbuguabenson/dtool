@@ -162,7 +162,7 @@ const generatePrediction = (
 
 const OverUnderTab = observer(() => {
     const { smart_trading, app } = useStore();
-    const { ticks, current_price, last_digit, symbol, setSymbol, markets, updateDigitStats } = smart_trading;
+    const { ticks, current_price, last_digit, symbol, setSymbol, markets, updateDigitStats, active_symbols_data } = smart_trading;
     const ticks_service = app.api_helpers_store?.ticks_service;
 
     const [selectedDigit, setSelectedDigit] = useState(4);
@@ -177,8 +177,14 @@ const OverUnderTab = observer(() => {
             const callback = (ticks_data: { quote: string | number }[]) => {
                 if (is_mounted && ticks_data && ticks_data.length > 0) {
                     const latest = ticks_data[ticks_data.length - 1];
+                    const symbol_info = active_symbols_data[symbol];
+
                     const last_digits = ticks_data.slice(-200).map(t => {
-                        const quote_str = String(t.quote || '0');
+                        let quote_str = String(t.quote || '0');
+                        if (symbol_info && typeof t.quote === 'number') {
+                            const decimals = Math.abs(Math.log10(symbol_info.pip));
+                            quote_str = t.quote.toFixed(decimals);
+                        }
                         const digit = parseInt(quote_str[quote_str.length - 1]);
                         return isNaN(digit) ? 0 : digit;
                     });
@@ -195,7 +201,7 @@ const OverUnderTab = observer(() => {
             is_mounted = false;
             if (listenerKey) ticks_service.stopMonitor({ symbol, key: listenerKey });
         };
-    }, [symbol, ticks_service, updateDigitStats]);
+    }, [symbol, ticks_service, updateDigitStats, active_symbols_data]);
 
     // Analysis calculations
     const analysis = useMemo(() => analyzeOverUnder(ticks, selectedDigit), [ticks, selectedDigit]);
@@ -223,7 +229,7 @@ const OverUnderTab = observer(() => {
         const windows = [10, 25, 50];
         const percentages = windows
             .filter(w => ticks.length >= w)
-            .map(w => analyzeOverUnder(ticks, selectedDigit, w).overPercent);
+            .map(w => analyzeOverUnder(ticks.slice(-w), selectedDigit).overPercent);
 
         const mean = percentages.reduce((a, b) => a + b, 0) / percentages.length;
         const variance = percentages.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / percentages.length;

@@ -13,6 +13,10 @@ const remoteConfigQuery = async function () {
     if (!response.ok) {
         throw new Error('Remote Config Server is out of reach!');
     }
+    const contentType = response.headers.get('content-type');
+    if (contentType && !contentType.includes('application/json')) {
+        throw new Error('Remote Config response is not JSON');
+    }
     return response.json();
 };
 

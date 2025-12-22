@@ -1,17 +1,18 @@
 import { useState } from 'react';
 import { observer } from 'mobx-react-lite';
+import ToggleSwitch from '@/components/shared_ui/toggle-switch';
 import { useStore } from '@/hooks/useStore';
-import MarketOverview from './components/market-overview';
+import Chart from '../chart/chart';
+import AdvancedOverUnderTab from './components/advanced-over-under-tab';
 import BotSettingsDialog from './components/bot-settings-dialog';
 import BulkTradingView from './components/bulk-trading-view';
-import AutomatedTradingView from './components/automated-trading-view';
-import SmartAnalysisTab from './components/smart-analysis-tab';
-import EvenOddTab from './components/even-odd-tab';
-import OverUnderTab from './components/over-under-tab';
-import AdvancedOverUnderTab from './components/advanced-over-under-tab';
 import DiffersTab from './components/differs-tab';
+import EvenOddTab from './components/even-odd-tab';
+import MarketOverview from './components/market-overview';
 import MatchesTab from './components/matches-tab';
-import ToggleSwitch from '@/components/shared_ui/toggle-switch';
+import OverUnderTab from './components/over-under-tab';
+import SmartAuto24Tab from './components/smart-auto24-tab';
+import VSenseTurboTab from './components/vsense-turbo-tab';
 import './smart-trading.scss';
 
 const SmartTrading = observer(() => {
@@ -60,28 +61,34 @@ const SmartTrading = observer(() => {
 
             <div className='smart-trading__sub-tabs'>
                 <button
-                    className={`sub-tab ${active_subtab === 'analysis' ? 'active' : ''}`}
-                    onClick={() => smart_trading.setActiveSubtab('analysis')}
+                    className={`sub-tab ${active_subtab === 'speed' ? 'active' : ''}`}
+                    onClick={() => smart_trading.setActiveSubtab('speed')}
                 >
-                    📊 Smart Analysis
+                    🚀 Speed Bot
                 </button>
                 <button
-                    className={`sub-tab ${active_subtab === 'even-odd' ? 'active' : ''}`}
-                    onClick={() => smart_trading.setActiveSubtab('even-odd')}
+                    className={`sub-tab ${active_subtab === 'vsense_turbo' ? 'active' : ''}`}
+                    onClick={() => smart_trading.setActiveSubtab('vsense_turbo')}
+                >
+                    💎 V-SENSE™ Turbo
+                </button>
+                <button
+                    className={`sub-tab ${active_subtab === 'even_odd' ? 'active' : ''}`}
+                    onClick={() => smart_trading.setActiveSubtab('even_odd')}
                 >
                     ⚖️ Even/Odd
                 </button>
                 <button
-                    className={`sub-tab ${active_subtab === 'over-under' ? 'active' : ''}`}
-                    onClick={() => smart_trading.setActiveSubtab('over-under')}
+                    className={`sub-tab ${active_subtab === 'over_under' ? 'active' : ''}`}
+                    onClick={() => smart_trading.setActiveSubtab('over_under')}
                 >
-                    🎯 Over/Under
+                    📈 Over/Under
                 </button>
                 <button
-                    className={`sub-tab ${active_subtab === 'advanced-ou' ? 'active' : ''}`}
-                    onClick={() => smart_trading.setActiveSubtab('advanced-ou')}
+                    className={`sub-tab ${active_subtab === 'advanced_ou' ? 'active' : ''}`}
+                    onClick={() => smart_trading.setActiveSubtab('advanced_ou')}
                 >
-                    💰 Advanced O/U
+                    ⚡ Adv. O/U
                 </button>
                 <button
                     className={`sub-tab ${active_subtab === 'differs' ? 'active' : ''}`}
@@ -93,13 +100,7 @@ const SmartTrading = observer(() => {
                     className={`sub-tab ${active_subtab === 'matches' ? 'active' : ''}`}
                     onClick={() => smart_trading.setActiveSubtab('matches')}
                 >
-                    ✅ Matches
-                </button>
-                <button
-                    className={`sub-tab ${active_subtab === 'speed' ? 'active' : ''}`}
-                    onClick={() => smart_trading.setActiveSubtab('speed')}
-                >
-                    🚀 Speed Bot
+                    🎯 Matches
                 </button>
                 <button
                     className={`sub-tab ${active_subtab === 'bulk' ? 'active' : ''}`}
@@ -113,17 +114,27 @@ const SmartTrading = observer(() => {
                 >
                     🤖 Smart Auto 24
                 </button>
+                <button
+                    className={`sub-tab ${active_subtab === 'charts' ? 'active' : ''}`}
+                    onClick={() => smart_trading.setActiveSubtab('charts')}
+                >
+                    📈 Charts
+                </button>
+
             </div>
 
-            {active_subtab === 'analysis' && <SmartAnalysisTab />}
-            {active_subtab === 'even-odd' && <EvenOddTab />}
-            {active_subtab === 'over-under' && <OverUnderTab />}
-            {active_subtab === 'advanced-ou' && <AdvancedOverUnderTab />}
+            {active_subtab === 'bulk' && <BulkTradingView />}
+            {active_subtab === 'automated' && <SmartAuto24Tab />}
+
+            {active_subtab === 'even_odd' && <EvenOddTab />}
+            {active_subtab === 'over_under' && <OverUnderTab />}
+            {active_subtab === 'advanced_ou' && <AdvancedOverUnderTab />}
             {active_subtab === 'differs' && <DiffersTab />}
             {active_subtab === 'matches' && <MatchesTab />}
-            {active_subtab === 'bulk' && <BulkTradingView />}
-            {active_subtab === 'automated' && <AutomatedTradingView />}
-            {active_subtab === 'speed' && (
+            {active_subtab === 'vsense_turbo' && <VSenseTurboTab />}
+            {active_subtab === 'charts' && <div style={{ height: '70vh' }}><Chart show_digits_stats={false} /></div>}
+
+            {/^(speed|vsense_turbo|even_odd|over_under|advanced_ou|differs|matches)$/.test(active_subtab) && (
                 <>
                     <div className='smart-trading__analytics'>
                         <div className='analytics-card dominance-card'>

@@ -5,7 +5,7 @@ import './market-overview.scss';
 
 const MarketOverview = observer(() => {
     const { smart_trading, app } = useStore();
-    const { symbol, setSymbol, current_price, last_digit, markets, updateDigitStats } = smart_trading;
+    const { symbol, setSymbol, current_price, last_digit, markets, updateDigitStats, active_symbols_data } = smart_trading;
     const ticks_service = app.api_helpers_store?.ticks_service;
 
     useEffect(() => {
@@ -18,8 +18,14 @@ const MarketOverview = observer(() => {
             const callback = (ticks: { quote: string | number }[]) => {
                 if (is_mounted && ticks && ticks.length > 0) {
                     const latest = ticks[ticks.length - 1];
+                    const symbol_info = active_symbols_data[symbol];
+
                     const last_digits = ticks.slice(-100).map(t => {
-                        const quote_str = String(t.quote || '0');
+                        let quote_str = String(t.quote || '0');
+                        if (symbol_info && typeof t.quote === 'number') {
+                            const decimals = Math.abs(Math.log10(symbol_info.pip));
+                            quote_str = t.quote.toFixed(decimals);
+                        }
                         const digit = parseInt(quote_str[quote_str.length - 1]);
                         return isNaN(digit) ? 0 : digit;
                     });
@@ -36,7 +42,7 @@ const MarketOverview = observer(() => {
             is_mounted = false;
             if (listenerKey) ticks_service.stopMonitor({ symbol, key: listenerKey });
         };
-    }, [symbol, ticks_service, updateDigitStats]);
+    }, [symbol, ticks_service, updateDigitStats, active_symbols_data]);
 
     return (
         <div className='smart-market-overview'>

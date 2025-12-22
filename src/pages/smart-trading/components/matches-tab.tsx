@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import { useStore } from '@/hooks/useStore';
@@ -114,10 +114,14 @@ const getTopMatches = (digits: number[], count: number = 3): MatchProbability[] 
 
 const MatchesTab = observer(() => {
     const { smart_trading, app } = useStore();
-    const { ticks, current_price, last_digit, symbol, setSymbol, markets } = smart_trading;
+    const { ticks, current_price, last_digit, symbol, setSymbol, markets, active_symbols_data } = smart_trading;
     const ticks_service = app.api_helpers_store?.ticks_service;
 
-    const [activePrediction, setActivePrediction] = useState<number | null>(null);
+    const { speedbot_prediction } = smart_trading;
+    
+    useEffect(() => {
+        smart_trading.speedbot_contract_type = 'DIGITMATCH';
+    }, [smart_trading]);
 
     useEffect(() => {
         if (!ticks_service || !symbol) return;
@@ -129,8 +133,14 @@ const MatchesTab = observer(() => {
             const callback = (ticks_data: { quote: string | number }[]) => {
                 if (is_mounted && ticks_data && ticks_data.length > 0) {
                     const latest = ticks_data[ticks_data.length - 1];
+                    const symbol_info = active_symbols_data[symbol];
+
                     const last_digits = ticks_data.slice(-200).map(t => {
-                        const quote_str = String(t.quote || '0');
+                        let quote_str = String(t.quote || '0');
+                        if (symbol_info && typeof t.quote === 'number') {
+                            const decimals = Math.abs(Math.log10(symbol_info.pip));
+                            quote_str = t.quote.toFixed(decimals);
+                        }
                         const digit = parseInt(quote_str[quote_str.length - 1]);
                         return isNaN(digit) ? 0 : digit;
                     });
@@ -147,7 +157,7 @@ const MatchesTab = observer(() => {
             is_mounted = false;
             if (listenerKey) ticks_service.stopMonitor({ symbol, key: listenerKey });
         };
-    }, [symbol, ticks_service, smart_trading]);
+    }, [symbol, ticks_service, smart_trading, active_symbols_data]);
 
     // Calculate matches
     const topMatches = useMemo(() => getTopMatches(ticks, 3), [ticks]);
@@ -207,11 +217,11 @@ const MatchesTab = observer(() => {
                         <div
                             key={match.digit}
                             className={classNames('match-card', {
-                                active: activePrediction === match.digit,
+                                active: speedbot_prediction === match.digit,
                                 high: match.confidence === 'HIGH',
                                 medium: match.confidence === 'MEDIUM',
                             })}
-                            onClick={() => setActivePrediction(match.digit)}
+                            onClick={() => (smart_trading.speedbot_prediction = match.digit)}
                         >
                             <div className="card-label">{label}</div>
                             <div className="digit-display">{match.digit}</div>
@@ -248,9 +258,9 @@ const MatchesTab = observer(() => {
                                 className={classNames('digit-card', {
                                     hot: isHot,
                                     cold: isCold,
-                                    active: activePrediction === match.digit,
+                                    active: speedbot_prediction === match.digit,
                                 })}
-                                onClick={() => setActivePrediction(match.digit)}
+                                onClick={() => (smart_trading.speedbot_prediction = match.digit)}
                             >
                                 <div className="digit-number">{match.digit}</div>
                                 <div className="match-percent">{match.probability.toFixed(1)}%</div>

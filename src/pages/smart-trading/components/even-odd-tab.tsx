@@ -14,6 +14,7 @@ const EvenOddTab = observer(() => {
         setSymbol,
         markets,
         updateDigitStats,
+        active_symbols_data,
     } = smart_trading;
     const ticks_service = app.api_helpers_store?.ticks_service;
 
@@ -37,8 +38,14 @@ const EvenOddTab = observer(() => {
             const callback = (ticks_data: { quote: string | number }[]) => {
                 if (is_mounted && ticks_data && ticks_data.length > 0) {
                     const latest = ticks_data[ticks_data.length - 1];
+                    const symbol_info = active_symbols_data[symbol];
+
                     const last_digits = ticks_data.slice(-200).map(t => {
-                        const quote_str = String(t.quote || '0');
+                        let quote_str = String(t.quote || '0');
+                        if (symbol_info && typeof t.quote === 'number') {
+                            const decimals = Math.abs(Math.log10(symbol_info.pip));
+                            quote_str = t.quote.toFixed(decimals);
+                        }
                         const digit = parseInt(quote_str[quote_str.length - 1]);
                         return isNaN(digit) ? 0 : digit;
                     });
@@ -55,7 +62,7 @@ const EvenOddTab = observer(() => {
             is_mounted = false;
             if (listenerKey) ticks_service.stopMonitor({ symbol, key: listenerKey });
         };
-    }, [symbol, ticks_service, updateDigitStats]);
+    }, [symbol, ticks_service, updateDigitStats, active_symbols_data]);
 
     const analyzeEvenOdd = (digits: number[], window: number) => {
         const slice = digits.slice(-window);

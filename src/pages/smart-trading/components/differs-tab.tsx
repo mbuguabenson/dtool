@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import { useStore } from '@/hooks/useStore';
@@ -110,10 +110,18 @@ const getTopDiffers = (digits: number[], count: number = 3): DifferProbability[]
 
 const DiffersTab = observer(() => {
     const { smart_trading, app } = useStore();
-    const { ticks, current_price, last_digit, symbol, setSymbol, markets } = smart_trading;
+    const { ticks, current_price, last_digit, symbol, setSymbol, markets, active_symbols_data } = smart_trading;
     const ticks_service = app.api_helpers_store?.ticks_service;
 
-    const [activeDiffer, setActiveDiffer] = useState<number | null>(null);
+    const { speedbot_prediction, is_speedbot_running, toggleSpeedbot } = smart_trading;
+
+    useEffect(() => {
+        smart_trading.speedbot_contract_type = 'DIGITDIFF';
+        // Default to top differ if no prediction set
+        if (typeof speedbot_prediction !== 'number') {
+           // Optional: default to top differ?
+        }
+    }, [smart_trading]);
 
     useEffect(() => {
         if (!ticks_service || !symbol) return;
@@ -125,8 +133,14 @@ const DiffersTab = observer(() => {
             const callback = (ticks_data: { quote: string | number }[]) => {
                 if (is_mounted && ticks_data && ticks_data.length > 0) {
                     const latest = ticks_data[ticks_data.length - 1];
+                    const symbol_info = active_symbols_data[symbol];
+
                     const last_digits = ticks_data.slice(-200).map(t => {
-                        const quote_str = String(t.quote || '0');
+                        let quote_str = String(t.quote || '0');
+                        if (symbol_info && typeof t.quote === 'number') {
+                            const decimals = Math.abs(Math.log10(symbol_info.pip));
+                            quote_str = t.quote.toFixed(decimals);
+                        }
                         const digit = parseInt(quote_str[quote_str.length - 1]);
                         return isNaN(digit) ? 0 : digit;
                     });
@@ -143,7 +157,7 @@ const DiffersTab = observer(() => {
             is_mounted = false;
             if (listenerKey) ticks_service.stopMonitor({ symbol, key: listenerKey });
         };
-    }, [symbol, ticks_service, smart_trading]);
+    }, [symbol, ticks_service, smart_trading, active_symbols_data]);
 
     // Calculate differs
     const topDiffers = useMemo(() => getTopDiffers(ticks, 3), [ticks]);
@@ -221,11 +235,11 @@ const DiffersTab = observer(() => {
                         <div
                             key={differ.digit}
                             className={classNames('differ-card', {
-                                active: activeDiffer === differ.digit,
+                                active: speedbot_prediction === differ.digit,
                                 strong: differ.confidence === 'STRONG',
                                 medium: differ.confidence === 'MEDIUM',
                             })}
-                            onClick={() => setActiveDiffer(differ.digit)}
+                            onClick={() => (smart_trading.speedbot_prediction = differ.digit)}
                         >
                             <div className="card-label">{label}</div>
                             <div className="digit-display">{differ.digit}</div>
@@ -238,7 +252,12 @@ const DiffersTab = observer(() => {
 
             {/* Trade Signal */}
             <div className="trade-signal-section">
-                <button className="trade-now-btn">TRADE NOW</button>
+                <button
+                    className={`trade-now-btn ${is_speedbot_running ? 'running' : ''}`}
+                    onClick={toggleSpeedbot}
+                >
+                    {is_speedbot_running ? 'STOP TRADING' : 'TRADE NOW'}
+                </button>
                 <div className="signal-text">{signalText}</div>
                 {topDiffers[0] && frequencies.find(f => f.digit === topDiffers[0].digit)?.gap === 0 && (
                     <div className="signal-subtext">
@@ -264,9 +283,9 @@ const DiffersTab = observer(() => {
                                     'zero-gap': isZeroGap,
                                     hot: isHot && !isZeroGap,
                                     cold: isCold && !isZeroGap,
-                                    active: activeDiffer === differ.digit,
+                                    active: speedbot_prediction === differ.digit,
                                 })}
-                                onClick={() => setActiveDiffer(differ.digit)}
+                                onClick={() => (smart_trading.speedbot_prediction = differ.digit)}
                             >
                                 <div className="digit-number">{differ.digit}</div>
                                 <div className="differ-percent">{differ.differProbability.toFixed(0)}%</div>

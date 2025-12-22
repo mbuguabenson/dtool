@@ -1,10 +1,32 @@
 import { action, makeObservable, observable, reaction, runInAction } from 'mobx';
-import { ApiHelpers, api_base, observer as globalObserver } from '@/external/bot-skeleton';
-import { contract_stages } from '@/constants/contract-stage';
 import { DBOT_TABS } from '@/constants/bot-contents';
-import RootStore from './root-store';
-import { SmartPredictor, PredictionResult, HotColdData, RiskMetrics, TradingSignal } from '@/lib/analysis/smart-predictions';
+import { contract_stages } from '@/constants/contract-stage';
+import { ApiHelpers, api_base, observer as globalObserver } from '@/external/bot-skeleton';
 import AnalysisEngine from '@/lib/analysis-engine';
+import {
+    HotColdData,
+    PredictionResult,
+    RiskMetrics,
+    SmartPredictor,
+    TradingSignal,
+} from '@/lib/analysis/smart-predictions';
+import { VSenseEngine, VSenseSignal } from '@/lib/analysis/v-sense-engine';
+import RootStore from './root-store';
+
+type TDerivResponse = {
+    proposal_open_contract?: {
+        is_sold?: boolean;
+        status?: string;
+        profit?: string;
+        contract_id?: number | string;
+    };
+    subscription?: { id: string };
+    error?: { message: string; code: string };
+    buy?: { contract_id: string | number };
+    proposal?: { id: string };
+};
+
+export type TSmartSubtab = 'speed' | 'bulk' | 'automated' | 'analysis' | 'even_odd' | 'over_under' | 'advanced_ou' | 'differs' | 'matches' | 'charts' | 'turbo' | 'vsense_turbo';
 
 export type TSmartDigitStat = {
     digit: number;
@@ -108,8 +130,21 @@ export default class SmartTradingStore {
     @observable accessor last_digit: number | null = null;
     @observable accessor is_connected = false;
     @observable accessor markets: { group: string; items: { value: string; label: string }[] }[] = [];
+    @observable accessor active_symbols_data: Record<string, { pip: number; symbol: string }> = {};
 
-    @observable accessor active_subtab: 'analysis' | 'even-odd' | 'over-under' | 'advanced-ou' | 'differs' | 'matches' | 'speed' | 'bulk' | 'automated' = 'analysis';
+    // V-SENSE™ TurboExec Bot State
+    @observable accessor is_turbo_bot_running: boolean = false;
+    @observable accessor turbo_bot_state: 'STOPPED' | 'LISTENING' | 'SETUP' | 'CONFIRMING' | 'EXECUTING' | 'COOLDOWN' = 'STOPPED';
+    @observable accessor turbo_settings = {
+        max_risk: 0.05,
+        is_bulk_enabled: false,
+        min_confidence: 60,
+    };
+    @observable accessor turbo_cooldown_ticks: number = 0;
+    @observable accessor turbo_last_signal: string = '';
+
+    @observable accessor active_subtab: TSmartSubtab = 'speed';
+    @observable accessor v_sense_signals: VSenseSignal[] = [];
     @observable accessor number_of_contracts = 1;
     @observable accessor is_bulk_trading = false;
 
@@ -302,6 +337,14 @@ export default class SmartTradingStore {
                 risk: predictor.getRiskMetrics(),
                 signal: predictor.getTradingSignal(),
             };
+
+            // Update VSense
+            const vsense = new VSenseEngine(this.ticks, this.symbol);
+            this.v_sense_signals = vsense.analyze();
+
+            if (this.is_turbo_bot_running) {
+                this.processTurboBot();
+            }
         });
 
         this.checkStrategyTriggers();
@@ -387,17 +430,21 @@ export default class SmartTradingStore {
             }
         }
         try {
-            const symbols = await (ApiHelpers.instance as unknown as { active_symbols: any }).active_symbols.retrieveActiveSymbols();
+            const symbols = await (ApiHelpers.instance as unknown as { active_symbols: { retrieveActiveSymbols: () => Promise<Array<{ is_trading_suspended: number; market_display_name?: string; market: string; symbol: string; display_name: string; pip: number }>> } }).active_symbols.retrieveActiveSymbols();
             runInAction(() => {
                 if (symbols && Array.isArray(symbols)) {
                     const groups: Record<string, { group: string; items: { value: string; label: string }[] }> = {};
-                    symbols.forEach(s => {
+                    const symbolData: Record<string, { pip: number; symbol: string }> = {};
+
+                    symbols.forEach((s: { is_trading_suspended: number | boolean; market_display_name?: string; market: string; symbol: string; display_name: string; pip: number }) => {
                         if (s.is_trading_suspended) return;
                         const market_name = s.market_display_name || s.market;
                         if (!groups[market_name]) groups[market_name] = { group: market_name, items: [] };
                         groups[market_name].items.push({ value: s.symbol, label: s.display_name });
+                        symbolData[s.symbol] = s;
                     });
                     this.markets = Object.values(groups).sort((a, b) => a.group.localeCompare(b.group));
+                    this.active_symbols_data = symbolData;
                 }
             });
         } catch (error) {
@@ -413,7 +460,7 @@ export default class SmartTradingStore {
     };
 
     @action
-    setActiveSubtab = (subtab: 'analysis' | 'even-odd' | 'over-under' | 'advanced-ou' | 'differs' | 'matches' | 'speed' | 'bulk' | 'automated') => {
+    setActiveSubtab = (subtab: TSmartSubtab) => {
         this.active_subtab = subtab;
     };
 
@@ -560,10 +607,10 @@ export default class SmartTradingStore {
                         proposal_open_contract: 1,
                         contract_id,
                     },
-                    (response: any) => {
+                    (response: TDerivResponse) => {
                         if (response.proposal_open_contract?.is_sold) {
-                            const status = response.proposal_open_contract.status;
-                            const profit = parseFloat(response.proposal_open_contract.profit);
+                            const status = response.proposal_open_contract?.status;
+                            const profit = parseFloat(response.proposal_open_contract?.profit || '0');
 
                             globalObserver.emit('bot.contract', response.proposal_open_contract);
                             globalObserver.emit('contract.status', {
@@ -628,7 +675,7 @@ export default class SmartTradingStore {
                             if (unsubscribe && typeof unsubscribe === 'function') {
                                 unsubscribe();
                             } else {
-                                api_base.api.send({ forget: response.subscription.id });
+                                 api_base.api.send({ forget: response.subscription?.id });
                             }
                         }
                     }
@@ -713,7 +760,7 @@ export default class SmartTradingStore {
                 }
                 case 'even_odd_percentages': {
                     const val = strategy.target_side === 'Even' ? probs.even : probs.odd;
-                    triggered = val >= strategy.threshold_pct;
+                    triggered = val >= strategy.threshold_pct!;
                     break;
                 }
                 case 'over_under_digits': {
@@ -721,19 +768,19 @@ export default class SmartTradingStore {
                     const is_greater = strategy.condition === 'Greater than';
                     triggered =
                         last_digits.length === (strategy.check_last_x || 3) &&
-                        last_digits.every(d => (is_greater ? d > strategy.threshold_val : d < strategy.threshold_val));
+                        last_digits.every(d => (is_greater ? d > strategy.threshold_val! : d < strategy.threshold_val!));
                     break;
                 }
                 case 'over_under_percentages': {
                     const val = strategy.target_type === 'Over %' ? probs.over : probs.under;
-                    triggered = val >= strategy.threshold_pct;
+                    triggered = val >= strategy.threshold_pct!;
                     break;
                 }
                 case 'rise_fall': {
                     const rise_pct =
                         (this.consecutive_even / (this.consecutive_even + this.consecutive_odd || 1)) * 100;
                     const val = strategy.target_side === 'Rise' ? rise_pct : 100 - rise_pct;
-                    triggered = val >= strategy.threshold_pct;
+                    triggered = val >= strategy.threshold_pct!;
                     break;
                 }
                 case 'matches_differs': {
@@ -742,7 +789,7 @@ export default class SmartTradingStore {
                         strategy.target_type === 'Matches %'
                             ? digit_stat?.percentage || 0
                             : 100 - (digit_stat?.percentage || 0);
-                    triggered = val >= strategy.threshold_pct;
+                    triggered = val >= strategy.threshold_pct!;
                     break;
                 }
             }
@@ -793,7 +840,7 @@ export default class SmartTradingStore {
             case 'OVER3UNDER6':
             case 'OVER2UNDER7': {
                 const recent = digits.slice(-50);
-                const barrier = strategy.barrier;
+                const barrier = strategy.barrier as { over: number; under: number };
                 const overCount = recent.filter(d => d > barrier.over).length;
                 const underCount = recent.filter(d => d < barrier.under).length;
 
@@ -806,7 +853,7 @@ export default class SmartTradingStore {
                 return {
                     action: confidence >= strategy.minConfidence ? 'TRADE' : 'WAIT',
                     contractType: dominant === 'OVER' ? 'DIGITOVER' : 'DIGITUNDER',
-                    prediction: dominant === 'OVER' ? barrier.over : barrier.under,
+                    prediction: dominant === 'OVER' ? (strategy.barrier as { over: number; under: number }).over : (strategy.barrier as { over: number; under: number }).under,
                     confidence,
                 };
             }
@@ -884,9 +931,7 @@ export default class SmartTradingStore {
                 duration: strategy.ticks,
                 duration_unit: 't',
                 symbol: this.symbol,
-                barrier: ['DIGITOVER', 'DIGITUNDER', 'DIGITMATCH', 'DIGITDIFF'].includes(trade_type)
-                    ? String(prediction)
-                    : undefined,
+                ...((['DIGITOVER', 'DIGITUNDER', 'DIGITMATCH', 'DIGITDIFF'].includes(trade_type || '')) && prediction !== undefined ? { barrier: String(prediction) } : {}),
             });
 
             if (proposal.error) {
@@ -917,10 +962,10 @@ export default class SmartTradingStore {
                     proposal_open_contract: 1,
                     contract_id,
                 },
-                (response: any) => {
-                    if (response.proposal_open_contract?.is_sold) {
-                        const status = response.proposal_open_contract.status;
-                        const profit = parseFloat(response.proposal_open_contract.profit);
+                (response: TDerivResponse) => {
+                        if (response.proposal_open_contract?.is_sold) {
+                            const status = response.proposal_open_contract?.status || 'lost';
+                            const profit = parseFloat(response.proposal_open_contract?.profit || '0');
 
                         globalObserver.emit('bot.contract', response.proposal_open_contract);
                         globalObserver.emit('contract.status', {
@@ -931,12 +976,12 @@ export default class SmartTradingStore {
                         runInAction(() => {
                             const trade_result = {
                                 timestamp: Date.now(),
-                                contractType: trade_type,
+                                contractType: trade_type || 'Unknown',
                                 stake: strategy.current_stake,
                                 result: status.toUpperCase(),
                                 profitLoss: profit,
                             };
-                            this.trade_history.push(trade_result);
+                            this.trade_history.push(trade_result as TTradeHistory);
 
                             if (status === 'won') {
                                 strategy.current_stake = strategy.stake;
@@ -960,6 +1005,149 @@ export default class SmartTradingStore {
             runInAction(() => {
                 strategy.status = 'waiting';
             });
+        }
+    };
+    @action
+    toggleTurboBot = () => {
+        this.is_turbo_bot_running = !this.is_turbo_bot_running;
+        if (this.is_turbo_bot_running) {
+            this.turbo_bot_state = 'LISTENING';
+            this.wins = 0;
+            this.losses = 0;
+            this.session_pl = 0;
+        } else {
+            this.turbo_bot_state = 'STOPPED';
+        }
+    };
+
+    @action
+    processTurboBot = () => {
+        if (!this.is_turbo_bot_running || this.turbo_bot_state === 'STOPPED') return;
+
+        if (this.turbo_bot_state === 'COOLDOWN') {
+            this.turbo_cooldown_ticks--;
+            if (this.turbo_cooldown_ticks <= 0) {
+                this.turbo_bot_state = 'LISTENING';
+            }
+            return;
+        }
+
+        if (this.turbo_bot_state === 'LISTENING') {
+            const valid_signals = this.v_sense_signals.filter(s => 
+                s.confidence >= this.turbo_settings.min_confidence && 
+                s.status === 'SAFE'
+            );
+
+            if (valid_signals.length > 0) {
+                const best_signal = valid_signals.reduce((prev, current) => 
+                    (prev.confidence > current.confidence) ? prev : current
+                );
+
+                this.executeTurboTrade(best_signal);
+            }
+        }
+    };
+
+    @action
+    executeTurboTrade = async (signal: VSenseSignal) => {
+        this.turbo_bot_state = 'SETUP';
+        
+        const balance = parseFloat(this.root_store.client.balance) || 1000;
+        const risk_pct = signal.confidence >= 75 ? 0.05 : 0.02;
+        let stake = balance * risk_pct;
+        if (stake < 0.35) stake = 0.35;
+        stake = Math.round(stake * 100) / 100;
+
+        let bulk_size = 1;
+        if (this.turbo_settings.is_bulk_enabled) {
+            if (signal.strategy === 'DIFFERS' && signal.confidence >= 85) bulk_size = 3;
+            else if (signal.strategy === 'DIFFERS') bulk_size = 2;
+            else if (signal.confidence >= 80) bulk_size = 2;
+        }
+
+        this.turbo_bot_state = 'EXECUTING';
+        this.turbo_last_signal = `${signal.strategy} @ ${signal.confidence}% [${signal.targetDigit || signal.targetSide}]`;
+
+        const type = this.getTurboContractType(signal);
+        const duration = signal.strategy === 'DIFFERS' ? 1 : 5;
+        const prediction = signal.targetDigit;
+
+        for (let i = 0; i < bulk_size; i++) {
+            this.fireTurboContract(type, stake, duration, prediction);
+        }
+
+        this.turbo_bot_state = 'COOLDOWN';
+        this.turbo_cooldown_ticks = signal.strategy === 'DIFFERS' ? 10 : 15;
+    };
+
+    getTurboContractType = (signal: VSenseSignal) => {
+        switch (signal.strategy) {
+            case 'DIFFERS': return 'DIGITDIFF';
+            case 'EVEN_ODD': return signal.targetSide === 'EVEN' ? 'DIGITEVEN' : 'DIGITODD';
+            case 'OVER_UNDER': return signal.targetSide === 'OVER' ? 'DIGITOVER' : 'DIGITUNDER';
+            default: return 'DIGITDIFF';
+        }
+    };
+
+    @action
+    fireTurboContract = async (type: string, stake: number, duration: number, prediction?: number) => {
+        if (!api_base.api) return;
+
+        try {
+            const proposal = await api_base.api.send({
+                proposal: 1,
+                amount: stake,
+                basis: 'stake',
+                contract_type: type,
+                currency: this.root_store.client.currency || 'USD',
+                duration,
+                duration_unit: 't',
+                symbol: this.symbol,
+                ...((prediction !== undefined) ? { barrier: String(prediction) } : {}),
+            });
+
+            if (proposal.error) return;
+
+            const buy = await api_base.api.send({
+                buy: proposal.proposal.id,
+                price: stake,
+            });
+
+            if (buy.error) return;
+
+            const contract_id = buy.buy.contract_id;
+            const unsubscribe = api_base.api.subscribe(
+                { proposal_open_contract: 1, contract_id },
+                (response: TDerivResponse) => {
+                    if (response.proposal_open_contract?.is_sold) {
+                        const is_win = response.proposal_open_contract.status === 'won';
+                        const profit = parseFloat(response.proposal_open_contract.profit || '0');
+
+                        runInAction(() => {
+                            if (is_win) this.wins++;
+                            else {
+                                this.losses++;
+                                if (this.is_turbo_bot_running) {
+                                    this.is_turbo_bot_running = false;
+                                    this.turbo_bot_state = 'STOPPED';
+                                }
+                            }
+                            this.session_pl += profit;
+
+                            this.trade_history.push({
+                                timestamp: Date.now(),
+                                contractType: type,
+                                stake,
+                                result: is_win ? 'WON' : 'LOST',
+                                profitLoss: profit,
+                            } as TTradeHistory);
+                        });
+                        if (unsubscribe && typeof unsubscribe === 'function') unsubscribe();
+                    }
+                }
+            );
+        } catch (e) {
+            console.error('Turbo Exec Error:', e);
         }
     };
 }

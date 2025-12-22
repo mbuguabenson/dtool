@@ -1,22 +1,10 @@
-// Theme-aware Differs Tab Styles
-.theme--dark .differs-tab,
-.theme--light .differs-tab {
-    padding: 1.5rem;
-    min-height: 100vh;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-.theme--dark .differs-tab {
-    background: linear-gradient(135deg, rgba(10, 10, 30, 0.95) 0%, rgba(20, 20, 40, 0.98) 100%);
-    color: #fff;
-}
-
-.theme--light .differs-tab {
-    background: linear-gradient(135deg, rgba(240, 242, 250, 0.95) 0%, rgba(250, 251, 255, 0.98) 100%);
-    color: var(--text-prominent);
-}
-
 .differs-tab {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(10, 10, 30, 0.95) 0%, rgba(20, 20, 40, 0.98) 100%);
+    min-height: 100vh;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
     // Premium Market Header
     .premium-market-header {
         display: grid;
@@ -24,7 +12,9 @@
         gap: 1rem;
         margin-bottom: 1.5rem;
         padding: 1rem;
+        background: rgba(255, 255, 255, 0.03);
         border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
 
         @media (max-width: 768px) {
             grid-template-columns: 1fr;
@@ -37,6 +27,7 @@
             align-items: center;
             gap: 0.75rem;
             padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 8px;
 
             label,
@@ -50,9 +41,14 @@
             select {
                 background: transparent;
                 border: none;
+                color: #fff;
                 font-size: 0.95rem;
                 outline: none;
                 cursor: pointer;
+
+                option {
+                    background: #1a1a2e;
+                }
             }
 
             .val {
@@ -72,7 +68,7 @@
                 font-weight: 700;
                 background: rgba(239, 68, 68, 0.2);
                 border: 2px solid rgba(239, 68, 68, 0.5);
-                box-shadow:0 0 15px rgba(239, 68, 68, 0.3);
+                box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
             }
         }
     }
@@ -223,6 +219,8 @@
             .digit-card {
                 padding: 1rem;
                 border-radius: 10px;
+                background: rgba(255, 255, 255, 0.05);
+                border: 2px solid rgba(255, 255, 255, 0.1);
                 text-align: center;
                 cursor: pointer;
                 transition: all 0.3s ease;
@@ -230,6 +228,7 @@
 
                 &:hover {
                     transform: scale(1.05);
+                    background: rgba(255, 255, 255, 0.08);
                 }
 
                 &.active {
@@ -288,6 +287,7 @@
                     border-radius: 4px;
                     font-size: 0.7rem;
                     font-weight: 600;
+                    background: rgba(255, 255, 255, 0.1);
                     margin-bottom: 0.25rem;
                 }
 
@@ -308,76 +308,6 @@
                     opacity: 0.8;
                 }
             }
-        }
-    }
-}
-
-// Theme-specific overrides
-.theme--dark .differs-tab {
-    .premium-market-header {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-
-        .market-select-glass,
-        .price-display-glass,
-        .digit-display-glass {
-            background: rgba(255, 255, 255, 0.05);
-
-            select {
-                color: #fff;
-
-                option {
-                    background: #1a1a2e;
-                }
-            }
-        }
-    }
-
-    .digits-grid .digit-card {
-        background: rgba(255, 255, 255, 0.05);
-        border: 2px solid rgba(255, 255, 255, 0.1);
-
-        &:hover {
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .confidence-badge {
-            background: rgba(255, 255, 255, 0.1);
-        }
-    }
-}
-
-.theme--light .differs-tab {
-    .premium-market-header {
-        background: rgba(0, 0, 0, 0.03);
-        border: 1px solid rgba(0, 0, 0, 0.1);
-
-        .market-select-glass,
-        .price-display-glass,
-        .digit-display-glass {
-            background: rgba(0, 0, 0, 0.04);
-
-            select {
-                color: var(--text-prominent);
-
-                option {
-                    background: #fff;
-                    color: #000;
-                }
-            }
-        }
-    }
-
-    .digits-grid .digit-card {
-        background: rgba(0, 0, 0, 0.04);
-        border: 2px solid rgba(0, 0, 0, 0.1);
-
-        &:hover {
-            background: rgba(0, 0, 0, 0.07);
-        }
-
-        .confidence-badge {
-            background: rgba(0, 0, 0, 0.1);
         }
     }
 }

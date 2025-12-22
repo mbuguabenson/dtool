@@ -28,7 +28,7 @@
 
 
 .injectionDiv {
-    height: calc(100vh - 16.4rem);
+    height: calc(100vh - 14.0rem);
     position: relative;
     touch-action: none;
     overflow: hidden;
@@ -36,11 +36,12 @@
 
 .bot-builder {
     position: absolute;
-    top: 11.2rem;
+    top: 8.8rem;
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 5;
+    z-index: -1;
+    visibility: hidden;
     background: var(--general-section-1);
     width: 100%;
     
@@ -52,6 +53,12 @@
 
     &--active {
         visibility: visible;
+        z-index: 5;
+    }
+
+    &--tour-active {
+        visibility: visible;
+        z-index: 5;
     }
 
     @include mobile-or-tablet-screen {
