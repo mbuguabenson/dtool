@@ -176,5 +176,12 @@ export const generateOAuthURL = () => {
             }
         }
     }
+
+    // Force dynamic redirect_uri from current origin to avoid localhost fallback in production
+    if (!original_url.searchParams.has('redirect_uri')) {
+        const redirect_uri = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
+        original_url.searchParams.set('redirect_uri', redirect_uri);
+    }
+
     return original_url.toString() || oauth_url;
 };

@@ -34,6 +34,7 @@ import { LegacyGuide1pxIcon } from '@deriv/quill-icons/Legacy';
 import { requestOidcAuthentication } from '@deriv-com/auth-client';
 import { Localize, localize } from '@deriv-com/translations';
 import { useDevice } from '@deriv-com/ui';
+import PageContentWrapper from '@/components/page-content-wrapper';
 import RunPanel from '../../components/run-panel';
 import ChartModal from '../chart/chart-modal';
 import Dashboard from '../dashboard';
@@ -42,6 +43,7 @@ import './main.scss';
 
 const ChartWrapper = lazy(() => import('../chart/chart-wrapper'));
 const Tutorial = lazy(() => import('../tutorials'));
+// const Bots = lazy(() => import('../bots'));
 const AutoTrader = lazy(() => import('../auto-trader'));
 const CopyTrading = lazy(() => import('../copy-trader'));
 const SignalsTab = lazy(() => import('../signals/signals-tab'));
@@ -305,6 +307,7 @@ const AppWrapper = observer(() => {
                 <div
                     className={classNames('main__container', {
                         'main__container--active': active_tour && active_tab === DASHBOARD && !isDesktop,
+                        'main__container--bot-builder': active_tab === BOT_BUILDER,
                     })}
                 >
                     <div>
@@ -375,9 +378,11 @@ const AppWrapper = observer(() => {
                                     </div>
                                 }
                             >
-                                <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                    <AutoTrader />
-                                </Suspense>
+                                <PageContentWrapper>
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
+                                        <AutoTrader />
+                                    </Suspense>
+                                </PageContentWrapper>
                             </div>
                             <div
                                 label={
@@ -387,9 +392,11 @@ const AppWrapper = observer(() => {
                                     </div>
                                 }
                             >
-                                <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                    <CopyTrading />
-                                </Suspense>
+                                <PageContentWrapper>
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
+                                        <CopyTrading />
+                                    </Suspense>
+                                </PageContentWrapper>
                             </div>
                             <div
                                 label={
@@ -400,9 +407,11 @@ const AppWrapper = observer(() => {
                                 }
                                 id='id-signals'
                             >
-                                <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                    <SignalsTab />
-                                </Suspense>
+                                <PageContentWrapper>
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
+                                        <SignalsTab />
+                                    </Suspense>
+                                </PageContentWrapper>
                             </div>
                             <div
                                 label={
@@ -413,9 +422,11 @@ const AppWrapper = observer(() => {
                                 }
                                 id='id-free-bots'
                             >
-                                <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                    <FreeBotsTab />
-                                </Suspense>
+                                <PageContentWrapper>
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
+                                        <FreeBotsTab />
+                                    </Suspense>
+                                </PageContentWrapper>
                             </div>
                             <div
                                 label={
@@ -426,9 +437,11 @@ const AppWrapper = observer(() => {
                                 }
                                 id='id-smart-trading'
                             >
-                                <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                    <SmartTrading />
-                                </Suspense>
+                                <PageContentWrapper>
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
+                                        <SmartTrading />
+                                    </Suspense>
+                                </PageContentWrapper>
                             </div>
                             <div
                                 label={
@@ -439,9 +452,11 @@ const AppWrapper = observer(() => {
                                 }
                                 id='id-smart-analysis'
                             >
-                                <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                    <SmartAnalysisTab />
-                                </Suspense>
+                                <PageContentWrapper>
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
+                                        <SmartAnalysisTab />
+                                    </Suspense>
+                                </PageContentWrapper>
                             </div>
                             <div
                                 label={
@@ -452,9 +467,11 @@ const AppWrapper = observer(() => {
                                 }
                                 id='id-even-odd'
                             >
-                                <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                    <EvenOddTab />
-                                </Suspense>
+                                <PageContentWrapper>
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
+                                        <EvenOddTab />
+                                    </Suspense>
+                                </PageContentWrapper>
                             </div>
                             <div
                                 label={
@@ -465,9 +482,11 @@ const AppWrapper = observer(() => {
                                 }
                                 id='id-over-under'
                             >
-                                <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                    <OverUnderTab />
-                                </Suspense>
+                                <PageContentWrapper>
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
+                                        <OverUnderTab />
+                                    </Suspense>
+                                </PageContentWrapper>
                             </div>
                             <div
                                 label={
@@ -482,9 +501,11 @@ const AppWrapper = observer(() => {
                                 }
                                 id='id-ai-analysis'
                             >
-                                <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                    <AIAnalysisTab />
-                                </Suspense>
+                                <PageContentWrapper>
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
+                                        <AIAnalysisTab />
+                                    </Suspense>
+                                </PageContentWrapper>
                             </div>
                             <div
                                 label={
@@ -519,9 +540,11 @@ const AppWrapper = observer(() => {
                                 }
                                 id='id-circles'
                             >
-                                <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                    <CirclesAnalysis />
-                                </Suspense>
+                                <PageContentWrapper>
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
+                                        <CirclesAnalysis />
+                                    </Suspense>
+                                </PageContentWrapper>
                             </div>
                         </Tabs>
                         {!isDesktop && right_tab_shadow && <span className='tabs-shadow tabs-shadow--right' />}{' '}
