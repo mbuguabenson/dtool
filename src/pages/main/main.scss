@@ -88,25 +88,28 @@
             }
 
             &__active {
-                background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-                color: #ffffff !important;
-                border-bottom: 4px solid #ffffff !important;
+                background: rgba(255, 255, 255, 0.15) !important;
+                color: #ffad00 !important; // Yellow text
+                border-bottom: 4px solid #ffad00 !important; // Yellow underline
                 font-weight: 700;
                 transition: all 0.3s ease;
-                box-shadow: 0 4px 15px rgba(118, 75, 162, 0.3);
+                border-top-left-radius: 1rem;
+                border-top-right-radius: 1rem;
 
                 svg {
-                    fill: #ffffff !important;
+                    fill: #ffad00 !important; // Yellow icon
                 }
             }
 
             &__list {
-                background: var(--general-section-1);
+                background: #6c3483; // Deep purple background
                 justify-content: start;
                 flex-shrink: 0;
                 overflow-x: auto;
                 -ms-overflow-style: none;
                 scrollbar-width: none;
+                border: none;
+                padding-top: 0.8rem;
 
                 &::-webkit-scrollbar {
                     height: 4px;
@@ -114,13 +117,13 @@
                 }
 
                 &::-webkit-scrollbar-thumb {
-                    background: rgba(255, 68, 79, 0.3);
+                    background: rgba(255, 255, 255, 0.2);
                     border-radius: 2px;
                 }
 
                 &:hover {
                     &::-webkit-scrollbar-thumb {
-                        background: var(--brand-red-coral);
+                        background: rgba(255, 255, 255, 0.4);
                     }
                 }
 
@@ -210,23 +213,20 @@
             }
 
             &__item {
-                border-top-left-radius: 1rem;
-                border-top-right-radius: 1rem;
                 height: 4.0rem;
                 padding: 0 1.6rem;
                 width: auto;
-                height: 100%;
-                overflow-y: auto;
-                overflow-x: hidden;
+                @include flex-center;
+                color: #ffffff; // White text for inactive tabs
+                transition: background 0.2s ease;
 
                 &:hover:not(.dc-tabs__active) {
-                    background: var(--general-hover);
+                    background: rgba(255, 255, 255, 0.1);
                     cursor: pointer;
                 }
 
-                @include flex-center;
-
                 svg {
+                    fill: #ffffff; // White icon for inactive tabs
                     padding-inline-end: 0;
                     margin-inline-end: 0.8rem;
 
