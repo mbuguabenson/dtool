@@ -82,8 +82,17 @@ const AppContent = observer(() => {
         }
     }, [common, connectionStatus, offline_timeout]);
 
-    // Handle offline scenarios - don't wait indefinitely for API
+    // Handle offline scenarios and general loading hangs - don't wait indefinitely for API
     useEffect(() => {
+        // Safety timeout to ensure loading screen always disappears
+        const global_loading_timeout = setTimeout(() => {
+            if (is_loading) {
+                console.warn('[AppContent] Aggressive loading timeout reached, forcing dashboard view');
+                setIsLoading(false);
+                setIsApiInitialized(true);
+            }
+        }, 8000);
+
         if (!isOnline && is_loading) {
             console.log('[Offline] Detected offline state, setting timeout to show dashboard');
             const timeout = setTimeout(() => {
@@ -104,6 +113,7 @@ const AppContent = observer(() => {
         }
 
         return () => {
+            clearTimeout(global_loading_timeout);
             if (offline_timeout) {
                 clearTimeout(offline_timeout);
             }

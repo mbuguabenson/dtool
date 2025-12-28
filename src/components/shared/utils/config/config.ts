@@ -153,5 +153,8 @@ export const generateOAuthURL = () => {
     }
 
     const app_id = getAppId();
-    return `${oauth_url}?app_id=${app_id}`;
+    const redirect_uri = `${window.location.protocol}//${window.location.host}`;
+
+    console.log('[Config] Generated OAuth URL with redirect_uri:', redirect_uri);
+    return `${oauth_url}?app_id=${app_id}&l=${window.localStorage.getItem('lang') || 'EN'}&brand=deriv&redirect_uri=${redirect_uri}`;
 };
