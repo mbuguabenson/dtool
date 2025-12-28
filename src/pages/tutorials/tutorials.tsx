@@ -9,6 +9,7 @@ import FAQContent from './faq-content';
 import GuideContent from './guide-content';
 import TutorialsTabDesktop from './tutorials-tab-desktop';
 import TutorialsTabMobile from './tutorials-tab-mobile';
+import './tutorials.scss';
 
 type TTutorialsTab = {
     handleTabChange: (active_number: number) => void;

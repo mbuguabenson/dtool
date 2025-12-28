@@ -88,9 +88,15 @@
             }
 
             &__active {
-                background: rgba(255, 68, 79, 0.1); // Premium tint for active tab
-                border-bottom: 2px solid var(--brand-red-coral);
-                transition: background 0.3s ease;
+                background: transparent;
+                color: var(--brand-red-coral) !important;
+                border-bottom: 4px solid var(--brand-red-coral) !important;
+                font-weight: 700;
+                transition: all 0.2s ease;
+
+                svg {
+                    fill: var(--brand-red-coral) !important;
+                }
             }
 
             &__list {
@@ -103,11 +109,18 @@
 
                 &::-webkit-scrollbar {
                     height: 4px;
+                    display: block; // Ensure it's visible on desktops
                 }
 
                 &::-webkit-scrollbar-thumb {
-                    background: var(--border-normal);
+                    background: rgba(255, 68, 79, 0.3);
                     border-radius: 2px;
+                }
+
+                &:hover {
+                    &::-webkit-scrollbar-thumb {
+                        background: var(--brand-red-coral);
+                    }
                 }
 
                 &--header {
