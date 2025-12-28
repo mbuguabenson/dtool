@@ -17,7 +17,7 @@ import { useOauth2 } from '@/hooks/auth/useOauth2';
 import { useApiBase } from '@/hooks/useApiBase';
 import { useStore } from '@/hooks/useStore';
 import useTMB from '@/hooks/useTMB';
-import { handleOidcAuthFailure } from '@/utils/auth-utils';
+import { clearAuthData } from '@/utils/auth-utils';
 import {
     LabelPairedArrowUpArrowDownCaptionRegularIcon,
     LabelPairedChartCandlestickCaptionRegularIcon,
@@ -31,7 +31,6 @@ import {
     LabelPairedSlidersCaptionRegularIcon,
 } from '@deriv/quill-icons/LabelPaired';
 import { LegacyGuide1pxIcon } from '@deriv/quill-icons/Legacy';
-import { requestOidcAuthentication } from '@deriv-com/auth-client';
 import { Localize, localize } from '@deriv-com/translations';
 import { useDevice } from '@deriv-com/ui';
 import PageContentWrapper from '@/components/page-content-wrapper';
@@ -268,36 +267,14 @@ const AppWrapper = observer(() => {
         [active_tab]
     );
 
-    const { isSingleLoggingIn } = useOauth2();
-
     const handleLoginGeneration = async () => {
-        const getQueryParams = new URLSearchParams(window.location.search);
-        const currency = getQueryParams.get('account') ?? '';
-        const query_param_currency = currency || sessionStorage.getItem('query_param_currency') || 'USD';
-
         try {
             // Check TMB status first
             const tmbEnabled = await isTmbEnabled();
             if (tmbEnabled) {
                 await onRenderTMBCheck();
             } else {
-                // Use standard OAuth2 authentication
-                const currentAppId = generateOAuthURL().split('app_id=')[1]?.split('&')[0] || '117122';
-                try {
-                    await requestOidcAuthentication({
-                        clientId: currentAppId,
-                        redirectCallbackUri: `${window.location.origin}/callback`,
-                        ...(query_param_currency
-                            ? {
-                                state: {
-                                    account: query_param_currency,
-                                },
-                            }
-                            : {}),
-                    });
-                } catch (err) {
-                    handleOidcAuthFailure(err);
-                }
+                window.location.assign(generateOAuthURL());
             }
         } catch (error) {
             console.error('Login generation error:', error);

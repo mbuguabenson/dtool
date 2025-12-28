@@ -8,10 +8,8 @@ import { api_base } from '@/external/bot-skeleton';
 import { useOfflineDetection } from '@/hooks/useOfflineDetection';
 import { useStore } from '@/hooks/useStore';
 import useTMB from '@/hooks/useTMB';
-import { handleOidcAuthFailure } from '@/utils/auth-utils';
 import { DBOT_TABS } from '@/constants/bot-contents';
-import { crypto_currencies_display_order, fiat_currencies_display_order, getAppId } from '../shared';
-import { requestOidcAuthentication } from '@deriv-com/auth-client';
+import { crypto_currencies_display_order, fiat_currencies_display_order, generateOAuthURL } from '../shared';
 import { useDevice } from '@deriv-com/ui';
 import Footer from './footer';
 import AppHeader from './header';
@@ -181,29 +179,7 @@ const Layout = observer(() => {
                 if (tmbEnabled) {
                     await onRenderTMBCheck();
                 } else if (shouldAuthenticate) {
-                    const query_param_currency = currency || sessionStorage.getItem('query_param_currency') || 'USD';
-                    const currentAppId = getAppId();
-
-                    // Make sure we have the currency in session storage before redirecting
-                    if (query_param_currency) {
-                        sessionStorage.setItem('query_param_currency', query_param_currency);
-                    }
-                    try {
-                        await requestOidcAuthentication({
-                            clientId: currentAppId,
-                            redirectCallbackUri: `${window.location.origin}/callback`,
-                            ...(query_param_currency
-                                ? {
-                                    state: {
-                                        account: query_param_currency,
-                                    },
-                                }
-                                : {}),
-                        });
-                    } catch (err) {
-                        setIsAuthenticating(false);
-                        handleOidcAuthFailure(err);
-                    }
+                    window.location.assign(generateOAuthURL());
                 }
             } catch (err) {
                 // eslint-disable-next-line no-console

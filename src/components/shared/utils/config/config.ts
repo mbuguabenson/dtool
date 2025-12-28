@@ -156,9 +156,8 @@ export const generateOAuthURL = () => {
     }
 
     const app_id = getAppId();
-    const redirect_uri = window.location.origin;
 
-    const login_url = `${oauth_url}?app_id=${app_id}&l=${lang}&brand=deriv&redirect_uri=${redirect_uri}`;
+    const login_url = `${oauth_url}?app_id=${app_id}&l=${lang}&brand=deriv`;
 
     console.log('[Config] Generated OAuth URL:', login_url);
     return login_url;

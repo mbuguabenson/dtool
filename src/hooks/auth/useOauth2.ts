@@ -2,9 +2,8 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import Cookies from 'js-cookie';
 import RootStore from '@/stores/root-store';
-import { handleOidcAuthFailure } from '@/utils/auth-utils';
+import { clearAuthData } from '@/utils/auth-utils';
 import { Analytics } from '@deriv-com/analytics';
-import { OAuth2Logout, requestOidcAuthentication } from '@deriv-com/auth-client';
 
 /**
  * Provides an object with properties: `oAuthLogout`, `retriggerOAuth2Login`, and `isSingleLoggingIn`.
@@ -56,44 +55,24 @@ export const useOauth2 = ({
     }, [isClientAccountsPopulated, loggedState, isSilentLoginExcluded]);
 
     const logoutHandler = async () => {
-        const { getAppId } = await import('@/components/shared');
-        const currentAppId = getAppId();
         client?.setIsLoggingOut(true);
         try {
-            await OAuth2Logout({
-                clientId: currentAppId,
-                redirectCallbackUri: `${window.location.origin}/callback`,
-                WSLogoutAndRedirect: handleLogout ?? (() => Promise.resolve()),
-                postLogoutRedirectUri: window.location.origin,
-            }).catch(err => {
-                // eslint-disable-next-line no-console
-                console.error(err);
-            });
+            clearAuthData(false);
             await client?.logout().catch(err => {
                 // eslint-disable-next-line no-console
                 console.error('Error during TMB logout:', err);
             });
 
             Analytics.reset();
+            window.location.assign(window.location.origin);
         } catch (error) {
             // eslint-disable-next-line no-console
             console.error(error);
         }
     };
     const retriggerOAuth2Login = async () => {
-        const { getAppId } = await import('@/components/shared');
-        const currentAppId = getAppId();
-        try {
-            await requestOidcAuthentication({
-                clientId: currentAppId,
-                redirectCallbackUri: `${window.location.origin}/callback`,
-                postLogoutRedirectUri: window.location.origin,
-            }).catch(err => {
-                handleOidcAuthFailure(err);
-            });
-        } catch (error) {
-            handleOidcAuthFailure(error);
-        }
+        const { generateOAuthURL } = await import('@/components/shared');
+        window.location.assign(generateOAuthURL());
     };
 
     return { oAuthLogout: logoutHandler, retriggerOAuth2Login, isSingleLoggingIn };
