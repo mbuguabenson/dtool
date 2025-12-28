@@ -16,6 +16,12 @@ const CallbackPage = observer(() => {
             if (isProcessing.current) return;
             isProcessing.current = true;
 
+            // Clear potential legacy config that causes InvalidToken errors on Vercel
+            if (window.location.hostname.endsWith('.vercel.app')) {
+                localStorage.removeItem('config.app_id');
+                localStorage.removeItem('config.server_url');
+            }
+
             const params = new URLSearchParams(window.location.search);
             const tokens: Record<string, string> = {};
             const accountsList: Record<string, string> = {};

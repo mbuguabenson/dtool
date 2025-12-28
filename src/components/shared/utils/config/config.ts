@@ -84,14 +84,19 @@ export const getAppId = () => {
     const config_app_id = window.localStorage.getItem('config.app_id');
     const current_domain = getCurrentProductionDomain() ?? '';
 
-    if (config_app_id) {
+    if (window.location.hostname.endsWith('.vercel.app')) {
+        // Enforce Vercel App ID and clear any conflicting local config
+        if (config_app_id && config_app_id !== String(APP_IDS.VERCEL)) {
+            console.warn('[Config] Clearing custom App ID override for Vercel deployment');
+            window.localStorage.removeItem('config.app_id');
+        }
+        app_id = APP_IDS.VERCEL;
+    } else if (config_app_id) {
         app_id = config_app_id;
     } else if (isStaging()) {
         app_id = APP_IDS.STAGING;
     } else if (isTestLink()) {
         app_id = APP_IDS.LOCALHOST;
-    } else if (window.location.hostname.endsWith('.vercel.app')) {
-        app_id = APP_IDS.VERCEL;
     } else {
         app_id = domain_app_ids[current_domain as keyof typeof domain_app_ids] ?? APP_IDS.PRODUCTION;
     }
