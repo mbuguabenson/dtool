@@ -14,7 +14,7 @@ type TFAQContent = {
 };
 
 type TFAQList = {
-    title: string;
+    title?: string;
     description: TDescription[];
     search_id?: string;
 };
@@ -53,9 +53,9 @@ const FAQContent = ({ faq_list, handleTabChange }: TFAQContent) => {
     const handleAccordionOpen = () => {
         faq_list.forEach(data => {
             if (data.search_id === faq_title) {
-                document.querySelectorAll('.faq__title').forEach((data, index) => {
+                document.querySelectorAll('.faq__title').forEach((el, index) => {
                     if (Number(faq_title.split('-')[1]) === index) {
-                        data.click();
+                        (el as HTMLElement).click();
                         setFaqTitle('');
                         handleTabChange(DBOT_TABS.TUTORIAL);
                     }
@@ -111,7 +111,7 @@ const FAQContent = ({ faq_list, handleTabChange }: TFAQContent) => {
                     key={title}
                     size={isDesktop ? 's' : 'xs'}
                 >
-                    {title}
+                    {title || ''}
                 </Text>
             ),
             content: description?.map((item, index) => (

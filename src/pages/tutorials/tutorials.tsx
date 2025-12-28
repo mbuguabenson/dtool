@@ -63,7 +63,7 @@ const TutorialsTab = observer(({ handleTabChange }: TTutorialsTab) => {
         },
         {
             label: localize('Quick strategy guides'),
-            content: <QuickStrategyGuides quick_strategy_tab_content={quick_strategy_tab_content()} />,
+            content: <QuickStrategyGuides />,
         },
         {
             label: localize('Search'),
@@ -74,8 +74,8 @@ const TutorialsTab = observer(({ handleTabChange }: TTutorialsTab) => {
                         guide_tab_content={guide_tab_content()}
                         video_tab_content={video_tab_content()}
                     />
-                    <FAQContent faq_list={faq_tab_content()} />
-                    <QuickStrategyGuides quick_strategy_tab_content={quick_strategy_tab_content()} />
+                    <FAQContent faq_list={faq_tab_content()} handleTabChange={handleTabChange} />
+                    <QuickStrategyGuides />
                 </>
             ) : (
                 <NoSearchResult />

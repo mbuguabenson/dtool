@@ -1,5 +1,5 @@
 export type TAccordionItem = Array<{
-    header: string;
+    header: React.ReactNode;
     content: React.ReactNode;
 }>;
 
