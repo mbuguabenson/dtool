@@ -182,16 +182,9 @@ export const generateOAuthURL = () => {
     if (!original_url.searchParams.has('redirect_uri')) {
         let redirect_uri = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
 
-        // For Vercel and other non-Deriv domains, ensure we redirect to/from the /callback page
-        // as Deriv's registered redirect URIs usually include the path
-        const supportedDomains = ['deriv.com', 'deriv.be', 'deriv.me', 'deriv.dev', 'localhost'];
-        const isSupported = supportedDomains.some(domain => hostname.includes(domain));
-
-        if (!isSupported && !redirect_uri.includes('/callback')) {
-            const baseUrl = `${window.location.protocol}//${window.location.host}`;
-            redirect_uri = `${baseUrl}/callback`;
-            console.log('[Config] Using explicit callback redirect URI for non-Deriv domain:', redirect_uri);
-        }
+        // For Vercel and other non-Deriv domains, the registered URL might not include /callback
+        // so we use the default redirect_uri constructed above.
+        console.log('[Config] Using redirect URI:', redirect_uri);
 
         original_url.searchParams.set('redirect_uri', redirect_uri);
     }
