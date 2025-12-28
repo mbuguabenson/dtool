@@ -10,6 +10,7 @@ export const APP_IDS = {
     PRODUCTION: 114784,
     PRODUCTION_BE: 114784,
     PRODUCTION_ME: 114784,
+    VERCEL: 117122,
 };
 
 export const livechat_license_id = 12049137;
@@ -23,7 +24,7 @@ export const domain_app_ids = {
     'dbot.deriv.com': APP_IDS.PRODUCTION,
     'dbot.deriv.be': APP_IDS.PRODUCTION_BE,
     'dbot.deriv.me': APP_IDS.PRODUCTION_ME,
-    '22-dec.vercel.app': 117122,
+    '22-dec.vercel.app': APP_IDS.VERCEL,
 };
 
 export const getCurrentProductionDomain = () =>
@@ -179,7 +180,19 @@ export const generateOAuthURL = () => {
 
     // Force dynamic redirect_uri from current origin to avoid localhost fallback in production
     if (!original_url.searchParams.has('redirect_uri')) {
-        const redirect_uri = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
+        let redirect_uri = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
+
+        // For Vercel and other non-Deriv domains, ensure we redirect to/from the /callback page
+        // as Deriv's registered redirect URIs usually include the path
+        const supportedDomains = ['deriv.com', 'deriv.be', 'deriv.me', 'deriv.dev', 'localhost'];
+        const isSupported = supportedDomains.some(domain => hostname.includes(domain));
+
+        if (!isSupported && !redirect_uri.includes('/callback')) {
+            const baseUrl = `${window.location.protocol}//${window.location.host}`;
+            redirect_uri = `${baseUrl}/callback`;
+            console.log('[Config] Using explicit callback redirect URI for non-Deriv domain:', redirect_uri);
+        }
+
         original_url.searchParams.set('redirect_uri', redirect_uri);
     }
 

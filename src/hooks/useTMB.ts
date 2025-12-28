@@ -213,14 +213,8 @@ const useTMB = (): UseTMBReturn => {
 
                 // If localStorage value is explicitly set, use that value
                 if (storedValue === 'true') {
-                    window.is_tmb_enabled = true;
-                    setIsTmbEnabled(true);
-                    tmbStatusDeterminedRef.current = true;
                     return true;
                 } else if (storedValue === 'false') {
-                    window.is_tmb_enabled = false;
-                    setIsTmbEnabled(false);
-                    tmbStatusDeterminedRef.current = true;
                     return false;
                 }
 
@@ -228,45 +222,32 @@ const useTMB = (): UseTMBReturn => {
                 const url = is_staging
                     ? 'https://app-config-staging.firebaseio.com/remote_config/oauth/is_tmb_enabled.json'
                     : 'https://app-config-prod.firebaseio.com/remote_config/oauth/is_tmb_enabled.json';
-                const response = await fetch(url);
-                const result = await response.json();
 
-                const isEnabled = !!result.dbot;
-
-                // Update window property with API value and mark as determined
-                window.is_tmb_enabled = isEnabled;
-                setIsTmbEnabled(isEnabled);
-                tmbStatusDeterminedRef.current = true;
-                return isEnabled;
-            } catch (e) {
-                // eslint-disable-next-line no-console
-                console.error(e);
-
-                // Check if we have a manually set value in localStorage
-                const storedValue = localStorage.getItem('is_tmb_enabled');
-
-                // If localStorage value is explicitly set, use that value
-                if (storedValue === 'true') {
-                    window.is_tmb_enabled = true;
-                    setIsTmbEnabled(true);
-                    tmbStatusDeterminedRef.current = true;
-                    return true;
-                } else if (storedValue === 'false') {
-                    window.is_tmb_enabled = false;
-                    setIsTmbEnabled(false);
-                    tmbStatusDeterminedRef.current = true;
-                    return false;
+                let isEnabled = false;
+                try {
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        const result = await response.json();
+                        isEnabled = !!result?.dbot;
+                        console.log('[TMB] Remote config loaded:', isEnabled);
+                    }
+                } catch (fetchError) {
+                    console.warn('[TMB] Remote config fetch failed, falling back to false:', fetchError);
                 }
 
-                // By default it will fallback to false if firebase error happens
-                window.is_tmb_enabled = false;
-                setIsTmbEnabled(false);
-                tmbStatusDeterminedRef.current = true;
+                return isEnabled;
+            } catch (e) {
+                console.error('[TMB] Critical error in isTmbEnabled:', e);
                 return false;
+            } finally {
+                tmbStatusDeterminedRef.current = true;
             }
         })();
 
-        return tmbStatusPromiseRef.current;
+        const finalResult = await tmbStatusPromiseRef.current;
+        window.is_tmb_enabled = finalResult;
+        setIsTmbEnabled(finalResult);
+        return finalResult;
     }, [isTMBSupportedDomain, is_staging]);
 
     // Initialize the hook and check TMB status - only run once

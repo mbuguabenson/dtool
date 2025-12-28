@@ -59,6 +59,9 @@ class APIBase {
     active_symbols_promise: Promise<void> | null = null;
     common_store: CommonStore | undefined;
     landing_company: string | null = null;
+    reconnect_attempts = 0;
+    max_reconnect_attempts = 5;
+    reconnect_timeout: ReturnType<typeof setTimeout> | null = null;
 
     unsubscribeAllSubscriptions = () => {
         this.current_auth_subscriptions?.forEach(subscription_promise => {
@@ -75,6 +78,11 @@ class APIBase {
 
     onsocketopen() {
         setConnectionStatus(CONNECTION_STATUS.OPENED);
+        this.reconnect_attempts = 0; // Reset on success
+        if (this.reconnect_timeout) {
+            clearTimeout(this.reconnect_timeout);
+            this.reconnect_timeout = null;
+        }
     }
 
     onsocketclose() {
@@ -147,12 +155,26 @@ class APIBase {
     }
 
     reconnectIfNotConnected = () => {
-        // eslint-disable-next-line no-console
-        console.log('connection state: ', this.api?.connection?.readyState);
-        if (this.api?.connection?.readyState && this.api?.connection?.readyState > 1) {
-            // eslint-disable-next-line no-console
-            console.log('Info: Connection to the server was closed, trying to reconnect.');
-            this.init(true);
+        if (this.reconnect_timeout) return;
+
+        const readyState = this.api?.connection?.readyState;
+        console.log('[API] Connection state check:', readyState, 'Attempts:', this.reconnect_attempts);
+
+        if (readyState !== undefined && readyState > 1) {
+            if (this.reconnect_attempts >= this.max_reconnect_attempts) {
+                console.error('[API] Max reconnect attempts reached. Stopping reconnection.');
+                return;
+            }
+
+            const delay = Math.min(1000 * Math.pow(2, this.reconnect_attempts), 10000);
+            this.reconnect_attempts++;
+
+            console.log(`[API] Reconnecting in ${delay}ms (Attempt ${this.reconnect_attempts}/${this.max_reconnect_attempts})...`);
+
+            this.reconnect_timeout = setTimeout(() => {
+                this.reconnect_timeout = null;
+                this.init(true);
+            }, delay);
         }
     };
 
