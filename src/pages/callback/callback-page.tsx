@@ -1,123 +1,138 @@
+import { useEffect, useRef } from 'react';
 import Cookies from 'js-cookie';
-import { crypto_currencies_display_order, fiat_currencies_display_order } from '@/components/shared';
 import { generateDerivApiInstance } from '@/external/bot-skeleton/services/api/appId';
 import { observer as globalObserver } from '@/external/bot-skeleton/utils/observer';
 import useTMB from '@/hooks/useTMB';
 import { clearAuthData } from '@/utils/auth-utils';
-import { Callback } from '@deriv-com/auth-client';
-import { Button } from '@deriv-com/ui';
+import { useStore } from '@/hooks/useStore';
+import { observer } from 'mobx-react-lite';
 
-/**
- * Gets the selected currency or falls back to appropriate defaults
- */
-const getSelectedCurrency = (
-    tokens: Record<string, string>,
-    clientAccounts: Record<string, any>,
-    state: any
-): string => {
-    const getQueryParams = new URLSearchParams(window.location.search);
-    const currency =
-        (state && state?.account) ||
-        getQueryParams.get('account') ||
-        sessionStorage.getItem('query_param_currency') ||
-        '';
-    const firstAccountKey = tokens.acct1;
-    const firstAccountCurrency = clientAccounts[firstAccountKey]?.currency;
+const CallbackPage = observer(() => {
+    const { common } = useStore();
+    const isProcessing = useRef(false);
 
-    const validCurrencies = [...fiat_currencies_display_order, ...crypto_currencies_display_order];
-    if (tokens.acct1?.startsWith('VR') || currency === 'demo') return 'demo';
-    if (currency && validCurrencies.includes(currency.toUpperCase())) return currency;
-    return firstAccountCurrency || 'USD';
-};
+    useEffect(() => {
+        const processUrlTokens = async () => {
+            if (isProcessing.current) return;
+            isProcessing.current = true;
 
-const CallbackPage = () => {
-    return (
-        <Callback
-            onSignInSuccess={async (tokens: Record<string, string>, rawState: unknown) => {
-                const state = rawState as { account?: string } | null;
-                const accountsList: Record<string, string> = {};
-                const clientAccounts: Record<string, { loginid: string; token: string; currency: string }> = {};
+            const params = new URLSearchParams(window.location.search);
+            const tokens: Record<string, string> = {};
+            const accountsList: Record<string, string> = {};
+            const clientAccounts: Record<string, { loginid: string; token: string; currency: string }> = {};
 
-                for (const [key, value] of Object.entries(tokens)) {
-                    if (key.startsWith('acct')) {
-                        const tokenKey = key.replace('acct', 'token');
-                        if (tokens[tokenKey]) {
-                            accountsList[value] = tokens[tokenKey];
-                            clientAccounts[value] = {
-                                loginid: value,
-                                token: tokens[tokenKey],
-                                currency: '',
-                            };
-                        }
-                    } else if (key.startsWith('cur')) {
-                        const accKey = key.replace('cur', 'acct');
-                        if (tokens[accKey]) {
-                            clientAccounts[tokens[accKey]].currency = value;
-                        }
+            // Extract all params to a dictionary first
+            for (const [key, value] of params.entries()) {
+                tokens[key] = value;
+            }
+
+            // Parse accounts (acct1, token1, cur1, etc.)
+            for (const [key, value] of Object.entries(tokens)) {
+                if (key.startsWith('acct')) {
+                    const index = key.replace('acct', '');
+                    const tokenKey = `token${index}`;
+                    const curKey = `cur${index}`;
+                    const token = tokens[tokenKey];
+                    const currency = tokens[curKey] || '';
+
+                    if (token) {
+                        accountsList[value] = token;
+                        clientAccounts[value] = {
+                            loginid: value,
+                            token: token,
+                            currency: currency,
+                        };
                     }
                 }
+            }
 
-                localStorage.setItem('accountsList', JSON.stringify(accountsList));
-                localStorage.setItem('clientAccounts', JSON.stringify(clientAccounts));
+            if (Object.keys(accountsList).length === 0) {
+                console.error('No accounts found in callback URL');
+                common.setError(true, {
+                    message: 'Login failed: No accounts found.',
+                    header: 'Login Error',
+                });
+                return;
+            }
 
-                let is_token_set = false;
+            // 1. Save minimal auth data needed for API
+            localStorage.setItem('accountsList', JSON.stringify(accountsList));
+            localStorage.setItem('clientAccounts', JSON.stringify(clientAccounts));
 
-                const api = await generateDerivApiInstance();
-                if (api) {
-                    const { authorize, error } = await api.authorize(tokens.token1);
-                    api.disconnect();
+            // Default to the first account (acct1) as active
+            const firstToken = tokens['token1'];
+            const firstAcct = tokens['acct1'];
+
+            if (firstToken && firstAcct) {
+                localStorage.setItem('authToken', firstToken);
+                localStorage.setItem('active_loginid', firstAcct);
+                Cookies.set('logged_state', 'true', { expires: 30, path: '/' });
+            } else {
+                // Fallback if acct1 is missing (rare but possible)
+                const firstKey = Object.keys(accountsList)[0];
+                if (firstKey) {
+                    localStorage.setItem('authToken', accountsList[firstKey]);
+                    localStorage.setItem('active_loginid', firstKey);
+                    Cookies.set('logged_state', 'true', { expires: 30, path: '/' });
+                }
+            }
+
+            // 2. Authorize to validate and get details
+            try {
+                const api = generateDerivApiInstance();
+                const activeToken = localStorage.getItem('authToken');
+
+                if (api && activeToken) {
+                    const { authorize, error } = await api.authorize(activeToken);
+
                     if (error) {
-                        // Check if the error is due to an invalid token
+                        console.error('Authorization error in callback:', error);
                         if (error.code === 'InvalidToken') {
-                            // Set is_token_set to true to prevent the app from getting stuck in loading state
-                            is_token_set = true;
-
-                            // Only emit the InvalidToken event if logged_state is true
-                            const { is_tmb_enabled = false } = useTMB();
-                            if (Cookies.get('logged_state') === 'true' && !is_tmb_enabled) {
-                                // Emit an event that can be caught by the application to retrigger OIDC authentication
-                                globalObserver.emit('InvalidToken', { error });
-                            }
-                            if (Cookies.get('logged_state') === 'false') {
-                                // If the user is not logged out, we need to clear the local storage
-                                clearAuthData();
-                            }
+                            clearAuthData();
+                            common.setError(true, {
+                                message: 'Login failed: Invalid token.',
+                                header: 'Login Error',
+                            });
+                            return;
                         }
                     } else {
-                        localStorage.setItem('callback_token', authorize.toString());
-                        const clientAccountsArray = Object.values(clientAccounts);
-                        const firstId = authorize?.account_list[0]?.loginid;
-                        const filteredTokens = clientAccountsArray.filter(account => account.loginid === firstId);
-                        if (filteredTokens.length) {
-                            localStorage.setItem('authToken', filteredTokens[0].token);
-                            localStorage.setItem('active_loginid', filteredTokens[0].loginid);
-                            is_token_set = true;
+                        // Success - update local storage with authoritative data from API
+                        if (authorize.account_list) {
+                            localStorage.setItem('client_account_details', JSON.stringify(authorize.account_list));
+                        }
+                        if (authorize.country) {
+                            localStorage.setItem('client.country', authorize.country);
                         }
                     }
+                    api.disconnect();
                 }
-                if (!is_token_set) {
-                    localStorage.setItem('authToken', tokens.token1);
-                    localStorage.setItem('active_loginid', tokens.acct1);
-                }
-                // Determine the appropriate currency to use
-                const selected_currency = getSelectedCurrency(tokens, clientAccounts, state);
+            } catch (e) {
+                console.error('API Error during callback processing:', e);
+            }
 
-                window.location.replace(window.location.origin + `/?account=${selected_currency}`);
-            }}
-            renderReturnButton={() => {
-                return (
-                    <Button
-                        className='callback-return-button'
-                        onClick={() => {
-                            window.location.href = '/';
-                        }}
-                    >
-                        {'Return to Bot'}
-                    </Button>
-                );
-            }}
-        />
+            // 3. Redirect to dashboard
+            // Preserve the 'account' query param if user wanted a specific currency, else default to 'USD' or the first account's currency
+            // But usually just redirecting to / is enough, main.tsx handles default account selection.
+            window.location.assign(window.location.origin);
+        };
+
+        processUrlTokens();
+    }, [common]);
+
+    return (
+        <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100vh',
+            flexDirection: 'column',
+            gap: '20px',
+            color: 'var(--text-general)'
+        }}>
+            <h2>Logging in...</h2>
+            <div className="initial-loader__barspinner barspinner barspinner-light"></div>
+        </div>
     );
-};
+});
 
 export default CallbackPage;
