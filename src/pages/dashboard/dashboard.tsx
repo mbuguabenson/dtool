@@ -40,18 +40,16 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
                         >
                             <div className='tab__dashboard__header-content'>
                                 <div className='tab__dashboard__header-text'>
-                                    {!has_dashboard_strategies && (
-                                        <Text
-                                            className='title'
-                                            as='h2'
-                                            color='prominent'
-                                            size={isDesktop ? 'sm' : 's'}
-                                            lineHeight='xxl'
-                                            weight='bold'
-                                        >
-                                            {localize('Load or build your bot')}
-                                        </Text>
-                                    )}
+                                    <Text
+                                        className='title'
+                                        as='h2'
+                                        color='prominent'
+                                        size={isDesktop ? 'sm' : 's'}
+                                        lineHeight='xxl'
+                                        weight='bold'
+                                    >
+                                        {localize('Load or build your bot')}
+                                    </Text>
                                     <Text
                                         as='p'
                                         color='prominent'

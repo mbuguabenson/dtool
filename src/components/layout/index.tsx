@@ -8,7 +8,6 @@ import { api_base } from '@/external/bot-skeleton';
 import { useOfflineDetection } from '@/hooks/useOfflineDetection';
 import { useStore } from '@/hooks/useStore';
 import useTMB from '@/hooks/useTMB';
-import { DBOT_TABS } from '@/constants/bot-contents';
 import { crypto_currencies_display_order, fiat_currencies_display_order, generateOAuthURL } from '../shared';
 import { useDevice } from '@deriv-com/ui';
 import Footer from './footer';
@@ -251,9 +250,7 @@ const Layout = observer(() => {
             <Body>
                 <Outlet />
             </Body>
-            {!isCallbackPage &&
-                isDesktop &&
-                store.dashboard.active_tab !== DBOT_TABS.BOT_BUILDER && <Footer />}
+            {!isCallbackPage && isDesktop && <Footer />}
             <PWAUpdateNotification />
         </div>
     );
