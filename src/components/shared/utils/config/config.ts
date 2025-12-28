@@ -90,6 +90,8 @@ export const getAppId = () => {
         app_id = APP_IDS.STAGING;
     } else if (isTestLink()) {
         app_id = APP_IDS.LOCALHOST;
+    } else if (window.location.hostname.endsWith('.vercel.app')) {
+        app_id = APP_IDS.VERCEL;
     } else {
         app_id = domain_app_ids[current_domain as keyof typeof domain_app_ids] ?? APP_IDS.PRODUCTION;
     }
@@ -154,7 +156,7 @@ export const generateOAuthURL = () => {
     }
 
     const app_id = getAppId();
-    const redirect_uri = `${window.location.origin}/`;
+    const redirect_uri = window.location.origin;
 
     const login_url = `${oauth_url}?app_id=${app_id}&l=${lang}&brand=deriv&redirect_uri=${redirect_uri}`;
 

@@ -56,9 +56,12 @@ export const useOauth2 = ({
     }, [isClientAccountsPopulated, loggedState, isSilentLoginExcluded]);
 
     const logoutHandler = async () => {
+        const { getAppId } = await import('@/components/shared');
+        const currentAppId = getAppId();
         client?.setIsLoggingOut(true);
         try {
             await OAuth2Logout({
+                clientId: currentAppId,
                 redirectCallbackUri: `${window.location.origin}/callback`,
                 WSLogoutAndRedirect: handleLogout ?? (() => Promise.resolve()),
                 postLogoutRedirectUri: window.location.origin,
@@ -78,8 +81,11 @@ export const useOauth2 = ({
         }
     };
     const retriggerOAuth2Login = async () => {
+        const { getAppId } = await import('@/components/shared');
+        const currentAppId = getAppId();
         try {
             await requestOidcAuthentication({
+                clientId: currentAppId,
                 redirectCallbackUri: `${window.location.origin}/callback`,
                 postLogoutRedirectUri: window.location.origin,
             }).catch(err => {

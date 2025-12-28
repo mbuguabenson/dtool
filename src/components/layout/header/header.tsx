@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import clsx from 'clsx';
 import { observer } from 'mobx-react-lite';
 import PWAInstallButton from '@/components/pwa-install-button';
-import { generateOAuthURL, standalone_routes } from '@/components/shared';
+import { generateOAuthURL, getAppId, standalone_routes } from '@/components/shared';
 import Button from '@/components/shared_ui/button';
 import useActiveAccount from '@/hooks/api/account/useActiveAccount';
 import { useOauth2 } from '@/hooks/auth/useOauth2';
@@ -151,16 +151,17 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
                                 if (tmbEnabled) {
                                     await onRenderTMBCheck(true); // Pass true to indicate it's from login button
                                 } else {
-                                    // Always use OIDC if TMB is not enabled
+                                    const currentAppId = getAppId();
                                     try {
                                         await requestOidcAuthentication({
+                                            clientId: currentAppId,
                                             redirectCallbackUri: `${window.location.origin}/callback`,
                                             ...(query_param_currency
                                                 ? {
-                                                      state: {
-                                                          account: query_param_currency,
-                                                      },
-                                                  }
+                                                    state: {
+                                                        account: query_param_currency,
+                                                    },
+                                                }
                                                 : {}),
                                         });
                                     } catch (err) {

@@ -282,8 +282,10 @@ const AppWrapper = observer(() => {
                 await onRenderTMBCheck();
             } else {
                 // Use standard OAuth2 authentication
+                const currentAppId = generateOAuthURL().split('app_id=')[1]?.split('&')[0] || '117122';
                 try {
                     await requestOidcAuthentication({
+                        clientId: currentAppId,
                         redirectCallbackUri: `${window.location.origin}/callback`,
                         ...(query_param_currency
                             ? {

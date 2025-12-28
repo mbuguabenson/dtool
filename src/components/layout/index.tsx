@@ -10,7 +10,7 @@ import { useStore } from '@/hooks/useStore';
 import useTMB from '@/hooks/useTMB';
 import { handleOidcAuthFailure } from '@/utils/auth-utils';
 import { DBOT_TABS } from '@/constants/bot-contents';
-import { crypto_currencies_display_order, fiat_currencies_display_order } from '../shared';
+import { crypto_currencies_display_order, fiat_currencies_display_order, getAppId } from '../shared';
 import { requestOidcAuthentication } from '@deriv-com/auth-client';
 import { useDevice } from '@deriv-com/ui';
 import Footer from './footer';
@@ -182,6 +182,7 @@ const Layout = observer(() => {
                     await onRenderTMBCheck();
                 } else if (shouldAuthenticate) {
                     const query_param_currency = currency || sessionStorage.getItem('query_param_currency') || 'USD';
+                    const currentAppId = getAppId();
 
                     // Make sure we have the currency in session storage before redirecting
                     if (query_param_currency) {
@@ -189,6 +190,7 @@ const Layout = observer(() => {
                     }
                     try {
                         await requestOidcAuthentication({
+                            clientId: currentAppId,
                             redirectCallbackUri: `${window.location.origin}/callback`,
                             ...(query_param_currency
                                 ? {
