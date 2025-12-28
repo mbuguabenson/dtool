@@ -1,8 +1,26 @@
 import { DerivLogo } from '@deriv-com/ui';
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import './initial-loader.scss';
 
+const LOADING_MESSAGES = [
+    "Initializing application...",
+    "Connecting to server...",
+    "Loading assets...",
+    "Authenticating secure session...",
+    "Preparing trading workspace..."
+];
+
 export default function InitialLoader() {
+    const [messageIndex, setMessageIndex] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setMessageIndex((prev) => (prev + 1) % LOADING_MESSAGES.length);
+        }, 2000);
+        return () => clearInterval(interval);
+    }, []);
+
     return (
         <div className='initial-loader-container'>
             <motion.div
@@ -31,7 +49,15 @@ export default function InitialLoader() {
                         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                     />
                 </div>
-                <p className="loading-text">Initializing application...</p>
+                <motion.p
+                    key={messageIndex}
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    className="loading-text"
+                >
+                    {LOADING_MESSAGES[messageIndex]}
+                </motion.p>
             </motion.div>
 
             <motion.div
