@@ -5,6 +5,7 @@ import { getAppId } from '@/components/shared';
 
 export type TCopyAccount = {
     token: string;
+    label?: string;
     type: 'Source' | 'Target';
     status: 'Connected' | 'Pending' | 'Error';
     account_type: string;
@@ -15,9 +16,21 @@ export type TCopyAccount = {
     trades_count?: number;
 };
 
+export type TTradeResult = {
+    timestamp: number;
+    market: string;
+    stake: number;
+    status: 'Success' | 'Failed';
+    message: string;
+    target_label: string;
+    contract_id?: number | string;
+};
+
 export default class CopyTraderStore {
     root_store: RootStore;
     private _last_mirrored_id: string | number | null = null;
+
+    @observable accessor trade_history: TTradeResult[] = [];
 
     @observable accessor source_account: TCopyAccount = {
         token: '',
@@ -31,6 +44,7 @@ export default class CopyTraderStore {
     @observable accessor target_accounts: TCopyAccount[] = [
         {
             token: '',
+            label: 'My Target Account',
             type: 'Target',
             status: 'Pending',
             account_type: '-',
@@ -89,6 +103,35 @@ export default class CopyTraderStore {
     addTargetAccount = () => {
         this.target_accounts.push({
             token: '',
+            type: 'Target',
+            status: 'Pending',
+            account_type: '-',
+            balance: '-',
+            currency: '-',
+        });
+    };
+
+    @action
+    removeTargetAccount = (index: number) => {
+        const account = this.target_accounts[index];
+        if (account.ws) {
+            account.ws.close();
+        }
+        this.target_accounts.splice(index, 1);
+    };
+
+    @action
+    setTargetLabel = (index: number, label: string) => {
+        if (this.target_accounts[index]) {
+            this.target_accounts[index].label = label;
+        }
+    };
+
+    @action
+    addTargetAccount = () => {
+        this.target_accounts.push({
+            token: '',
+            label: `Target Account ${this.target_accounts.length + 1}`,
             type: 'Target',
             status: 'Pending',
             account_type: '-',
@@ -210,12 +253,21 @@ export default class CopyTraderStore {
 
                     if (proposal_response.error) {
                         console.error('CopyTrader Proposal Error:', proposal_response.error);
+                        runInAction(() => {
+                            this.trade_history.unshift({
+                                timestamp: Date.now(),
+                                market: String(contract.underlying),
+                                stake: stake,
+                                status: 'Failed',
+                                message: 'Proposal Error: ' + proposal_response.error.message,
+                                target_label: target.label || 'Target',
+                            });
+                        });
                         return;
                     }
 
                     const proposal_id = proposal_response.proposal?.id;
                     if (!proposal_id) {
-                        console.error('CopyTrader: No proposal ID received for target');
                         return;
                     }
 
@@ -229,13 +281,32 @@ export default class CopyTraderStore {
 
                     runInAction(() => {
                         target.trades_count = (target.trades_count || 0) + 1;
+                        this.trade_history.unshift({
+                            timestamp: Date.now(),
+                            market: String(contract.underlying),
+                            stake: stake,
+                            status: 'Success',
+                            message: 'Trade copied successfully',
+                            target_label: target.label || 'Target',
+                            contract_id: proposal_id,
+                        });
                     });
 
                     console.log(
                         `Sent mirror buy request to target account ${target.token.substring(0, 5)} with stake ${stake}...`
                     );
-                } catch (error) {
+                } catch (error: any) {
                     console.error('CopyTrader mirror error:', error);
+                    runInAction(() => {
+                        this.trade_history.unshift({
+                            timestamp: Date.now(),
+                            market: String(contract.underlying),
+                            stake: stake,
+                            status: 'Failed',
+                            message: error.message || 'Unknown Error',
+                            target_label: target.label || 'Target',
+                        });
+                    });
                 }
             }
         });

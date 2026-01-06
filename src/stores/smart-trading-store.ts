@@ -1271,42 +1271,59 @@ export default class SmartTradingStore {
         this.root_store.run_panel.setContractStage(contract_stages.PURCHASE_SENT);
         globalObserver.emit('contract.status', { id: 'contract.purchase_sent' });
 
+        // Helper for timeouts
+        const timeoutPromise = (ms: number, msg: string) =>
+            new Promise<never>((_, reject) => setTimeout(() => reject(new Error(msg)), ms));
+
         try {
-            const proposal = await api_base.api.send({
-                proposal: 1,
-                amount: strategy.current_stake,
-                basis: 'stake',
-                contract_type: trade_type,
-                currency: this.root_store.client.currency || 'USD',
-                duration: strategy.ticks,
-                duration_unit: 't',
-                symbol: this.symbol,
-                ...((['DIGITOVER', 'DIGITUNDER', 'DIGITMATCH', 'DIGITDIFF'].includes(trade_type || '')) && prediction !== undefined ? { barrier: String(prediction) } : {}),
-            });
+            // PROPOSAL Step with Timeout
+            const proposal = await Promise.race([
+                api_base.api.send({
+                    proposal: 1,
+                    amount: strategy.current_stake,
+                    basis: 'stake',
+                    contract_type: trade_type,
+                    currency: this.root_store.client.currency || 'USD',
+                    duration: strategy.ticks,
+                    duration_unit: 't',
+                    symbol: this.symbol,
+                    ...((['DIGITOVER', 'DIGITUNDER', 'DIGITMATCH', 'DIGITDIFF'].includes(trade_type || '')) && prediction !== undefined ? { barrier: String(prediction) } : {}),
+                }),
+                timeoutPromise(10000, 'Proposal timed out')
+            ]);
 
             if (proposal.error) {
-                strategy.status = 'waiting';
+                console.warn('Strategy Proposal Error:', proposal.error.message);
+                runInAction(() => { strategy.status = 'waiting'; });
                 return;
             }
 
-            const buy = await api_base.api.send({
-                buy: proposal.proposal.id,
-                price: strategy.current_stake,
-            });
+            // BUY Step with Timeout
+            const buy = await Promise.race([
+                api_base.api.send({
+                    buy: proposal.proposal.id,
+                    price: strategy.current_stake,
+                }),
+                timeoutPromise(10000, 'Buy timed out')
+            ]);
 
             if (buy.error) {
-                strategy.status = 'waiting';
+                console.warn('Strategy Buy Error:', buy.error.message);
+                runInAction(() => { strategy.status = 'waiting'; });
                 return;
             }
 
             const contract_id = buy.buy.contract_id;
 
-            this.root_store.run_panel.setContractStage(contract_stages.PURCHASE_RECEIVED);
+            runInAction(() => {
+                this.root_store.run_panel.setContractStage(contract_stages.PURCHASE_RECEIVED);
+            });
             globalObserver.emit('contract.status', {
                 id: 'contract.purchase_received',
                 buy: buy.buy,
             });
 
+            // Subscription doesn't block the next tick loop directly, but let's ensure we catch errors
             const unsubscribe = api_base.api.subscribe(
                 {
                     proposal_open_contract: 1,
@@ -1336,7 +1353,6 @@ export default class SmartTradingStore {
                             // Update global stats
                             if (status === 'won') {
                                 this.wins++;
-                                // Keep global consecutive_losses for overall safety if needed
                                 this.consecutive_losses = 0;
                             } else {
                                 this.losses++;
@@ -1363,9 +1379,11 @@ export default class SmartTradingStore {
                     }
                 }
             );
-        } catch (error) {
+        } catch (error: any) {
+            console.error('ExecuteStrategyTrade Timeout/Error:', error.message);
             runInAction(() => {
                 strategy.status = 'waiting';
+                // Optionally add a small delay before retry to avoid spamming a bad connection
             });
         }
     };
