@@ -100,27 +100,6 @@ export default class CopyTraderStore {
     };
 
     @action
-    addTargetAccount = () => {
-        this.target_accounts.push({
-            token: '',
-            type: 'Target',
-            status: 'Pending',
-            account_type: '-',
-            balance: '-',
-            currency: '-',
-        });
-    };
-
-    @action
-    removeTargetAccount = (index: number) => {
-        const account = this.target_accounts[index];
-        if (account.ws) {
-            account.ws.close();
-        }
-        this.target_accounts.splice(index, 1);
-    };
-
-    @action
     setTargetLabel = (index: number, label: string) => {
         if (this.target_accounts[index]) {
             this.target_accounts[index].label = label;
@@ -169,6 +148,7 @@ export default class CopyTraderStore {
             const data = JSON.parse(msg.data);
 
             if (data.error) {
+                console.error('CopyTrader Auth Error:', data.error.message);
                 runInAction(() => {
                     account.status = 'Error';
                 });
@@ -233,7 +213,7 @@ export default class CopyTraderStore {
                         symbol: contract.underlying,
                     };
 
-                    target.ws.send(JSON.stringify(proposal_request));
+                    target.ws!.send(JSON.stringify(proposal_request));
 
                     // Wait for proposal response
                     const proposal_response = await new Promise<any>((resolve, reject) => {
@@ -277,7 +257,7 @@ export default class CopyTraderStore {
                         price: stake,
                     };
 
-                    target.ws.send(JSON.stringify(buy_request));
+                    target.ws!.send(JSON.stringify(buy_request));
 
                     runInAction(() => {
                         target.trades_count = (target.trades_count || 0) + 1;
