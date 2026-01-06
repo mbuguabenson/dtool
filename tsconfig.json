@@ -2,7 +2,11 @@
     "compilerOptions": {
         "target": "ES2020",
         "useDefineForClassFields": true,
-        "lib": ["ES2020", "DOM", "DOM.Iterable"],
+        "lib": [
+            "ES2020",
+            "DOM",
+            "DOM.Iterable"
+        ],
         "module": "ESNext",
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": false,
@@ -19,10 +23,23 @@
         "allowJs": true,
         "baseUrl": "./src",
         "paths": {
-            "@/*": ["./*"]
+            "@/*": [
+                "./*"
+            ],
+            "@deriv/shared": [
+                "./components/shared/index.ts"
+            ],
+            "@deriv/components": [
+                "./components/shared/index.ts"
+            ]
         },
         "esModuleInterop": true,
-        "types": ["jest", "@testing-library/jest-dom"]
+        "types": [
+            "jest",
+            "@testing-library/jest-dom"
+        ]
     },
-    "include": ["src"]
+    "include": [
+        "src"
+    ]
 }

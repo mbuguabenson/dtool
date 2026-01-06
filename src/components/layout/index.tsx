@@ -23,7 +23,6 @@ interface IClientAccount {
 }
 
 const Layout = observer(() => {
-    console.log('[Layout] Rendering started');
     const { isDesktop } = useDevice();
     const { isOnline } = useOfflineDetection();
     const store = useStore();
@@ -85,7 +84,6 @@ const Layout = observer(() => {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const hasMissingCurrency = accounts.some(data => {
                     if (!allCurrencies.has(data.currency)) {
-                        console.log('Missing currency:', data.currency);
                         sessionStorage.setItem('query_param_currency', data.currency);
                         return true;
                     }
@@ -162,18 +160,12 @@ const Layout = observer(() => {
 
         // Skip authentication when offline
         if (!isOnline) {
-            console.log('[Layout] Offline detected, skipping authentication');
             setIsAuthenticating(false);
             setClientHasCurrency(true); // Allow access in offline mode
             return;
         }
 
-        console.log('[Layout] Starting authentication check...', {
-            isLoggedInCookie,
-            isClientAccountsPopulated,
-            clientHasCurrency,
-            shouldAuthenticate
-        });
+
 
         // Create an async IIFE to handle authentication
         (async () => {
@@ -213,9 +205,7 @@ const Layout = observer(() => {
     // Add offline timeout to prevent infinite authentication
     useEffect(() => {
         if (!isOnline && isAuthenticating) {
-            console.log('[Layout] Setting offline timeout for authentication');
             const timeout = setTimeout(() => {
-                console.log('[Layout] Offline timeout reached, stopping authentication');
                 setIsAuthenticating(false);
                 setClientHasCurrency(true);
             }, 2000);

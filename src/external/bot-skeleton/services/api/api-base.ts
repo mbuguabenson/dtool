@@ -163,7 +163,6 @@ class APIBase {
         if (this.reconnect_timeout) return;
 
         const readyState = this.api?.connection?.readyState;
-        console.log('[API] Connection state check:', readyState, 'Attempts:', this.reconnect_attempts);
 
         if (readyState !== undefined && readyState > 1) {
             if (this.reconnect_attempts >= this.max_reconnect_attempts) {
@@ -173,8 +172,6 @@ class APIBase {
 
             const delay = Math.min(1000 * Math.pow(2, this.reconnect_attempts), 10000);
             this.reconnect_attempts++;
-
-            console.log(`[API] Reconnecting in ${delay}ms (Attempt ${this.reconnect_attempts}/${this.max_reconnect_attempts})...`);
 
             this.reconnect_timeout = setTimeout(() => {
                 this.reconnect_timeout = null;
@@ -188,7 +185,6 @@ class APIBase {
         if (!token || !this.api) return;
         this.token = token;
         this.account_id = V2GetActiveClientId() ?? '';
-        console.log('[API] Authorizing with token:', { token: token.substring(0, 8) + '...', account_id: this.account_id });
 
         setIsAuthorizing(true);
         setIsAuthorized(false);
@@ -220,8 +216,6 @@ class APIBase {
                 setIsAuthorizing(false);
                 return error;
             }
-
-            console.log('[API] Authorization Successful:', { loginid: authorize.loginid, account_list_len: authorize.account_list?.length });
             this.account_info = authorize;
             setAccountList(authorize?.account_list || []);
             setAuthData(authorize);

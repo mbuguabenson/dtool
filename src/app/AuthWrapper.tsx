@@ -40,9 +40,7 @@ const setLocalStorageToken = async (
 
             URLUtils.filterSearchParams(paramsToDelete);
 
-            // Skip API connection when offline
             if (!isOnline) {
-                console.log('[Auth] Offline mode - skipping API connection');
                 localStorage.setItem('authToken', loginInfo[0].token);
                 localStorage.setItem('active_loginid', loginInfo[0].loginid);
                 return;
@@ -114,12 +112,10 @@ export const AuthWrapper = () => {
 
     React.useEffect(() => {
         const initializeAuth = async () => {
-            console.log('[AuthWrapper] Initializing auth...');
             try {
                 // Pass isOnline to setLocalStorageToken to handle offline mode properly
                 await setLocalStorageToken(loginInfo, paramsToDelete, setIsAuthComplete, isOnline);
                 URLUtils.filterSearchParams(['lang']);
-                console.log('[AuthWrapper] Auth initialization complete');
                 setIsAuthComplete(true);
             } catch (error) {
                 console.error('[Auth] Authentication initialization failed:', error);
@@ -131,7 +127,6 @@ export const AuthWrapper = () => {
         // If offline, set auth complete immediately but still run initializeAuth
         // to save login info to localStorage for offline use
         if (!isOnline) {
-            console.log('[Auth] Offline detected, proceeding with minimal auth');
             setIsAuthComplete(true);
         }
 
@@ -141,9 +136,7 @@ export const AuthWrapper = () => {
     // Add timeout for offline scenarios to prevent infinite loading
     React.useEffect(() => {
         if (!isOnline && !isAuthComplete) {
-            console.log('[Auth] Offline detected, setting auth timeout');
             const timeout = setTimeout(() => {
-                console.log('[Auth] Offline timeout reached, proceeding without full auth');
                 setIsAuthComplete(true);
             }, 2000); // 2 second timeout for offline
 

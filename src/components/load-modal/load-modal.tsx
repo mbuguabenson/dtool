@@ -7,6 +7,7 @@ import { useDevice } from '@deriv-com/ui';
 import { rudderStackSendSwitchLoadStrategyTabEvent } from '../../analytics/rudderstack-bot-builder';
 import { rudderStackSendCloseEvent } from '../../analytics/rudderstack-common-events';
 import { LOAD_MODAL_TABS } from '../../analytics/utils';
+import { useLocation, useNavigate } from 'react-router-dom';
 import MobileFullPageModal from '../shared_ui/mobile-full-page-modal';
 import Modal from '../shared_ui/modal';
 import Tabs from '../shared_ui/tabs';
@@ -30,13 +31,20 @@ const LoadModal: React.FC = observer(() => {
     } = load_modal;
     const { setPreviewOnPopup } = dashboard;
     const { isDesktop } = useDevice();
+    const location = useLocation();
+    const navigate = useNavigate();
     const header_text = localize('Load strategy');
+
+    const historyShim = {
+        replace: (path: string) => navigate(path, { replace: true }),
+        location,
+    };
 
     const handleTabItemClick = (active_index: number) => {
         setActiveTabIndex(active_index);
         rudderStackSendSwitchLoadStrategyTabEvent({
             load_strategy_tab: LOAD_MODAL_TABS[active_index + (!isDesktop ? 1 : 0)],
-        });
+        } as any);
     };
 
     if (!isDesktop) {
@@ -51,12 +59,11 @@ const LoadModal: React.FC = observer(() => {
                     rudderStackSendCloseEvent({
                         subform_name: 'load_strategy',
                         load_strategy_tab: LOAD_MODAL_TABS[active_index + 1],
-                    });
+                    } as any);
                 }}
                 height_offset='80px'
-                page_overlay
             >
-                <Tabs active_index={active_index} onTabItemClick={handleTabItemClick} top>
+                <Tabs active_index={active_index} onTabItemClick={handleTabItemClick} top history={historyShim as any}>
                     <div label={localize('Local')}>
                         <Local />
                     </div>
@@ -83,13 +90,13 @@ const LoadModal: React.FC = observer(() => {
                 rudderStackSendCloseEvent({
                     subform_name: 'load_strategy',
                     load_strategy_tab: LOAD_MODAL_TABS[active_index + (!isDesktop ? 1 : 0)],
-                });
+                } as any);
             }}
             onEntered={onEntered}
-            elements_to_ignore={[document.querySelector('.injectionDiv')]}
+            elements_to_ignore={[document.querySelector('.injectionDiv') as HTMLElement]}
         >
             <Modal.Body>
-                <Tabs active_index={active_index} onTabItemClick={handleTabItemClick} top header_fit_content>
+                <Tabs active_index={active_index} onTabItemClick={handleTabItemClick} top header_fit_content history={historyShim as any}>
                     <div label={localize('Recent')}>
                         <Recent />
                     </div>

@@ -1,5 +1,7 @@
 export * from './services';
 export * from './services';
+export * from './components';
+
 export * from './utils/array';
 export * from './utils/brand';
 export * from './utils/browser';

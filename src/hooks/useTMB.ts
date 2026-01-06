@@ -64,11 +64,7 @@ const useTMB = (): UseTMBReturn => {
         return supportedDomains.some(domain => hostname.includes(domain));
     }, []);
 
-    useEffect(() => {
-        if (!isTMBSupportedDomain) {
-            console.log(`[TMB] Domain ${window.location.hostname} not supported for TMB, will use standard OAuth2`);
-        }
-    }, [isTMBSupportedDomain]);
+
 
     const is_staging = useMemo(() => window.location.hostname.includes('staging'), []);
     const is_production = useMemo(() => !is_staging, [is_staging]);
@@ -83,7 +79,6 @@ const useTMB = (): UseTMBReturn => {
     const getActiveSessions = useCallback(async (): Promise<TMBWebsocketTokens | undefined> => {
         // Skip TMB check for non-whitelisted domains (e.g., Vercel deployments)
         if (!isTMBSupportedDomain) {
-            console.log('[TMB] Skipping active sessions check for non-supported domain');
             return undefined;
         }
 
@@ -102,7 +97,6 @@ const useTMB = (): UseTMBReturn => {
                 if (valid_server_urls.includes(configServerUrl)) {
                     const hostname = window.location.hostname;
                     sessionsUrl = 'https://oauth.deriv.com/oauth2/sessions/active';
-                    console.log('Using production OAuth server for WebSocket config:', sessionsUrl);
                     if (hostname.includes('.deriv.me')) {
                         sessionsUrl = 'https://oauth.deriv.me/oauth2/sessions/active';
                     } else if (hostname.includes('.deriv.be')) {
@@ -114,8 +108,10 @@ const useTMB = (): UseTMBReturn => {
                         ? configServerUrl
                         : `https://${configServerUrl}`;
                     sessionsUrl = `${serverUrl}/oauth2/sessions/active`;
-                    console.log('Using config.server_url:', sessionsUrl);
                 }
+
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
                 const response = await fetch(sessionsUrl, {
                     method: 'GET',
@@ -124,14 +120,16 @@ const useTMB = (): UseTMBReturn => {
                         Accept: 'application/json',
                         'Content-Type': 'application/json',
                     },
+                    signal: controller.signal,
                 });
+
+                clearTimeout(timeoutId);
 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
 
                 const result = await response.json();
-                console.log(`[TMB] Making sessions/active request to: ${sessionsUrl}`);
                 return result as TMBWebsocketTokens;
             }
 
@@ -145,6 +143,9 @@ const useTMB = (): UseTMBReturn => {
                 sessionsUrl = '/oauth2/sessions/active';
             }
 
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
             const response = await fetch(sessionsUrl, {
                 method: 'GET',
                 credentials: 'include',
@@ -152,7 +153,10 @@ const useTMB = (): UseTMBReturn => {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
                 },
+                signal: controller.signal,
             });
+
+            clearTimeout(timeoutId);
 
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -161,7 +165,11 @@ const useTMB = (): UseTMBReturn => {
             const result = await response.json();
             return result as TMBWebsocketTokens;
         } catch (error) {
-            console.error('Failed to get active sessions:', error);
+            if (error instanceof Error && error.name === 'AbortError') {
+                console.warn('[TMB] Active sessions request timed out');
+            } else {
+                console.error('Failed to get active sessions:', error);
+            }
             return undefined;
         }
     }, [isTMBSupportedDomain]);
@@ -227,14 +235,22 @@ const useTMB = (): UseTMBReturn => {
 
                 let isEnabled = false;
                 try {
-                    const response = await fetch(url);
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
+                    const response = await fetch(url, { signal: controller.signal });
+                    clearTimeout(timeoutId);
+
                     if (response.ok) {
                         const result = await response.json();
                         isEnabled = !!result?.dbot;
-                        console.log('[TMB] Remote config loaded:', isEnabled);
                     }
                 } catch (fetchError) {
-                    console.warn('[TMB] Remote config fetch failed, falling back to false:', fetchError);
+                    if (fetchError instanceof Error && fetchError.name === 'AbortError') {
+                        console.warn('[TMB] Remote config fetch timed out');
+                    } else {
+                        console.warn('[TMB] Remote config fetch failed, falling back to false:', fetchError);
+                    }
                 }
 
                 return isEnabled;
@@ -279,10 +295,8 @@ const useTMB = (): UseTMBReturn => {
                 // Pre-fetch active sessions if needed
                 if (!isCallbackPage && window.is_tmb_enabled) {
                     try {
-                        console.log('[TMB] Pre-fetching active sessions...');
                         // This is a critical step - we need to await this
                         const activeSessions = await getActiveSessions();
-                        console.log('[TMB] Active sessions pre-fetched:', activeSessions?.active);
                         activeSessionsRef.current = activeSessions;
 
                         // Process tokens in advance if available
@@ -305,7 +319,6 @@ const useTMB = (): UseTMBReturn => {
                 }
 
                 // Only after all operations are complete, mark as initialized
-                console.log('[TMB] Initialization complete');
                 setIsInitialized(true);
                 setIsTmbCheckComplete(true);
 

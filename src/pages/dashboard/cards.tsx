@@ -66,7 +66,7 @@ const Cards = observer(({ is_mobile, has_dashboard_strategies }: TCardProps) => 
                     subform_source: 'dashboard',
                     subform_name: 'load_strategy',
                     load_strategy_tab: 'local',
-                });
+                } as any);
             },
         },
         {
@@ -84,7 +84,7 @@ const Cards = observer(({ is_mobile, has_dashboard_strategies }: TCardProps) => 
                     subform_source: 'dashboard',
                     subform_name: 'load_strategy',
                     load_strategy_tab: 'local',
-                });
+                } as any);
             },
         },
         {
@@ -98,7 +98,7 @@ const Cards = observer(({ is_mobile, has_dashboard_strategies }: TCardProps) => 
                     subform_source: 'dashboard',
                     subform_name: 'load_strategy',
                     load_strategy_tab: 'google drive',
-                });
+                } as any);
             },
         },
         {
@@ -110,7 +110,7 @@ const Cards = observer(({ is_mobile, has_dashboard_strategies }: TCardProps) => 
                 rudderStackSendDashboardClickEvent({
                     dashboard_click_name: 'bot_builder',
                     subpage_name: 'bot_builder',
-                });
+                } as any);
             },
         },
         {
@@ -163,10 +163,8 @@ const Cards = observer(({ is_mobile, has_dashboard_strategies }: TCardProps) => 
                                     className={classNames('tab__dashboard__table__images', {
                                         'tab__dashboard__table__images--minimized': has_dashboard_strategies,
                                     })}
-                                    width='8rem'
-                                    height='8rem'
-                                    icon={icon}
                                     id={id}
+                                    style={{ width: '8rem', height: '8rem' }}
                                     onClick={() => {
                                         callback();
                                     }}
@@ -188,6 +186,8 @@ const Cards = observer(({ is_mobile, has_dashboard_strategies }: TCardProps) => 
                             is_mobile_full_width
                             className='dc-dialog__wrapper--google-drive'
                             has_close_icon
+                            onConfirm={() => { }}
+                            login={() => { }}
                         >
                             <GoogleDrive />
                         </Dialog>
@@ -201,7 +201,6 @@ const Cards = observer(({ is_mobile, has_dashboard_strategies }: TCardProps) => 
                                 onCloseDialog();
                             }}
                             height_offset='80px'
-                            page_overlay
                         >
                             <div label='Google Drive' className='google-drive-label'>
                                 <GoogleDrive />

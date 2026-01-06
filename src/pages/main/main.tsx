@@ -13,11 +13,9 @@ import { DBOT_TABS, TAB_IDS } from '@/constants/bot-contents';
 import { api_base, updateWorkspaceName } from '@/external/bot-skeleton';
 import { CONNECTION_STATUS } from '@/external/bot-skeleton/services/api/observables/connection-status-stream';
 import { isDbotRTL } from '@/external/bot-skeleton/utils/workspace';
-import { useOauth2 } from '@/hooks/auth/useOauth2';
 import { useApiBase } from '@/hooks/useApiBase';
 import { useStore } from '@/hooks/useStore';
 import useTMB from '@/hooks/useTMB';
-import { clearAuthData } from '@/utils/auth-utils';
 import {
     LabelPairedArrowUpArrowDownCaptionRegularIcon,
     LabelPairedChartCandlestickCaptionRegularIcon,
@@ -53,6 +51,7 @@ const EvenOddTab = lazy(() => import('../smart-trading/components/even-odd-tab')
 const OverUnderTab = lazy(() => import('../smart-trading/components/over-under-tab'));
 const AIAnalysisTab = lazy(() => import('../smart-trading/components/ai-analysis-tab'));
 const CirclesAnalysis = lazy(() => import('../circles-analysis/index'));
+const DTrader = lazy(() => import('../dtrader/index'));
 
 const AppWrapper = observer(() => {
     const { connectionStatus } = useApiBase();
@@ -101,6 +100,7 @@ const AppWrapper = observer(() => {
         'ai_analysis',
         'tutorials',
         'circles',
+        'dtrader',
     ];
     const { isDesktop } = useDevice();
     const location = useLocation();
@@ -117,6 +117,11 @@ const AppWrapper = observer(() => {
     const active_hash_tab = GetHashedValue(active_tab);
 
     const { onRenderTMBCheck, isTmbEnabled } = useTMB();
+
+    const historyShim = {
+        replace: (path: string) => navigate(path, { replace: true }),
+        location,
+    };
 
     React.useEffect(() => {
         const el_dashboard = document.getElementById('id-dbot-dashboard');
@@ -267,6 +272,8 @@ const AppWrapper = observer(() => {
         [active_tab]
     );
 
+
+
     const handleLoginGeneration = async () => {
         try {
             // Check TMB status first
@@ -296,7 +303,7 @@ const AppWrapper = observer(() => {
                             className='main__tabs'
                             onTabItemClick={handleTabChange}
                             top
-                            history={window.history as any}
+                            history={historyShim as any}
                             is_scrollable
                         >
                             <div
@@ -523,6 +530,21 @@ const AppWrapper = observer(() => {
                                 <PageContentWrapper>
                                     <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
                                         <CirclesAnalysis />
+                                    </Suspense>
+                                </PageContentWrapper>
+                            </div>
+                            <div
+                                label={
+                                    <div className='main__tabs-label'>
+                                        <LabelPairedChartLineCaptionRegularIcon height='20px' width='20px' fill='var(--text-general)' />
+                                        <Localize i18n_default_text='DTrader' />
+                                    </div>
+                                }
+                                id='id-dtrader'
+                            >
+                                <PageContentWrapper>
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading DTrader...')} />}>
+                                        <DTrader passthrough={{ root_store: null as any, WS: null as any }} />
                                     </Suspense>
                                 </PageContentWrapper>
                             </div>
