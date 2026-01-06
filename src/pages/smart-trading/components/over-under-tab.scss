@@ -377,6 +377,35 @@
                 box-shadow: 0 4px 20px rgba(168, 85, 247, 0.5);
             }
         }
+
+        &.executing {
+            opacity: 0.7;
+            pointer-events: none;
+            position: relative;
+
+            &::after {
+                content: '';
+                position: absolute;
+                width: 20px;
+                height: 20px;
+                top: calc(50% - 10px);
+                right: 20px;
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                border-top-color: #fff;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+        }
+    }
+
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
     }
 
     // Large Under/Over Display
@@ -765,11 +794,13 @@
 }
 
 @keyframes pulse {
+
     0%,
     100% {
         transform: scale(1);
         opacity: 1;
     }
+
     50% {
         transform: scale(1.1);
         opacity: 0.8;

@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import { useStore } from '@/hooks/useStore';
+import QuickSettings from './quick-settings';
 import './differs-tab.scss';
 
 // Shared interfaces
@@ -119,7 +120,7 @@ const DiffersTab = observer(() => {
         smart_trading.speedbot_contract_type = 'DIGITDIFF';
         // Default to top differ if no prediction set
         if (typeof speedbot_prediction !== 'number') {
-           // Optional: default to top differ?
+            // Optional: default to top differ?
         }
     }, [smart_trading]);
 
@@ -219,6 +220,8 @@ const DiffersTab = observer(() => {
                 </div>
             </div>
 
+            <QuickSettings />
+
             {/* Title */}
             <div className="tab-header">
                 <h2 className="tab-title">Differs Analysis</h2>
@@ -252,12 +255,20 @@ const DiffersTab = observer(() => {
 
             {/* Trade Signal */}
             <div className="trade-signal-section">
-                <button
-                    className={`trade-now-btn ${is_speedbot_running ? 'running' : ''}`}
-                    onClick={toggleSpeedbot}
-                >
-                    {is_speedbot_running ? 'STOP TRADING' : 'TRADE NOW'}
-                </button>
+                <div className="action-buttons-row">
+                    <button
+                        className={classNames('trade-now-btn', { 'running': is_speedbot_running })}
+                        onClick={toggleSpeedbot}
+                    >
+                        {is_speedbot_running ? 'STOP AUTO' : 'START AUTO'}
+                    </button>
+                    <button
+                        className={classNames('manual-trade-btn', { 'executing': smart_trading.is_executing })}
+                        onClick={() => smart_trading.manualTrade('DIGITDIFF', speedbot_prediction)}
+                    >
+                        {smart_trading.is_executing ? 'EXECUTING...' : 'MANUAL TRADE'}
+                    </button>
+                </div>
                 <div className="signal-text">{signalText}</div>
                 {topDiffers[0] && frequencies.find(f => f.digit === topDiffers[0].digit)?.gap === 0 && (
                     <div className="signal-subtext">

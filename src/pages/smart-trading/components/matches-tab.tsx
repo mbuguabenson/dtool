@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import { useStore } from '@/hooks/useStore';
+import QuickSettings from './quick-settings';
 import './matches-tab.scss';
 
 // Shared interfaces
@@ -118,7 +119,7 @@ const MatchesTab = observer(() => {
     const ticks_service = app.api_helpers_store?.ticks_service;
 
     const { speedbot_prediction } = smart_trading;
-    
+
     useEffect(() => {
         smart_trading.speedbot_contract_type = 'DIGITMATCH';
     }, [smart_trading]);
@@ -202,6 +203,8 @@ const MatchesTab = observer(() => {
                 </div>
             </div>
 
+            <QuickSettings />
+
             {/* Title */}
             <div className="tab-header">
                 <h2 className="tab-title">Matches Analysis</h2>
@@ -240,7 +243,15 @@ const MatchesTab = observer(() => {
                     {frequencies.find(f => f.digit === topMatches[0]?.digit)?.count || 0} times,{' '}
                     {topMatches[0]?.probability.toFixed(1)}%
                 </div>
-                <button className="scan-btn">Scan Last 12 Ticks</button>
+                <div className="action-buttons-row">
+                    <button className="scan-btn">Scan Last 12 Ticks</button>
+                    <button
+                        className={classNames('manual-trade-btn', { 'executing': smart_trading.is_executing })}
+                        onClick={() => smart_trading.manualTrade('DIGITMATCH', speedbot_prediction)}
+                    >
+                        {smart_trading.is_executing ? 'EXECUTING...' : 'MANUAL TRADE'}
+                    </button>
+                </div>
             </div>
 
             {/* All Digits Grid */}

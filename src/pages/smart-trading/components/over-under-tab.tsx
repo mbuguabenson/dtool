@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import { useStore } from '@/hooks/useStore';
+import QuickSettings from './quick-settings';
 import './over-under-tab.scss';
 
 // Analysis Interfaces
@@ -86,10 +87,10 @@ const calculateDigitPower = (digit: number, recentDigits: number[]): DigitPower 
         powerScore >= 15
             ? 'VERY STRONG'
             : powerScore >= 10
-            ? 'STRONG'
-            : powerScore >= 5
-            ? 'MODERATE'
-            : 'WEAK';
+                ? 'STRONG'
+                : powerScore >= 5
+                    ? 'MODERATE'
+                    : 'WEAK';
 
     return {
         frequency: frequencyPercent,
@@ -108,10 +109,10 @@ const calculateConfidence = (analysis: OverUnderAnalysis): Confidence => {
         maxPercent >= 65
             ? 'VERY HIGH'
             : maxPercent >= 60
-            ? 'HIGH'
-            : maxPercent >= 55 || difference >= 20
-            ? 'MEDIUM'
-            : 'LOW';
+                ? 'HIGH'
+                : maxPercent >= 55 || difference >= 20
+                    ? 'MEDIUM'
+                    : 'LOW';
 
     return {
         level,
@@ -130,8 +131,8 @@ const generatePrediction = (
         analysis.underPercent > analysis.overPercent
             ? 'UNDER'
             : analysis.overPercent > analysis.underPercent
-            ? 'OVER'
-            : 'BALANCED';
+                ? 'OVER'
+                : 'BALANCED';
 
     // Check if current digit is hot
     const isCurrentHot = power.strength === 'VERY STRONG' || power.strength === 'STRONG';
@@ -288,6 +289,8 @@ const OverUnderTab = observer(() => {
                 </div>
             </div>
 
+            <QuickSettings />
+
             {/* Title */}
             <div className="analysis-header">
                 <h2>
@@ -359,8 +362,14 @@ const OverUnderTab = observer(() => {
             </div>
 
             {/* Action Button */}
-            <button className={classNames('action-button', prediction.prediction.toLowerCase())}>
-                {prediction.prediction}
+            <button
+                className={classNames('action-button', prediction.prediction.toLowerCase(), { 'executing': smart_trading.is_executing })}
+                onClick={() => smart_trading.manualTrade(
+                    prediction.prediction === 'OVER' ? 'DIGITOVER' : 'DIGITUNDER',
+                    selectedDigit
+                )}
+            >
+                {smart_trading.is_executing ? 'EXECUTING...' : prediction.prediction}
             </button>
 
             {/* Large Under/Over Display */}

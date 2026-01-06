@@ -330,7 +330,7 @@ export default class SmartTradingStore {
                 this.analysis_engine.addTick(Number(price));
                 this.root_store.analysis.updateDigitStats(last_digits, price);
             }
-            
+
             this.smart_analysis_data = {
                 predictions: predictor.predict(),
                 hotCold: predictor.getHotCold(),
@@ -675,7 +675,7 @@ export default class SmartTradingStore {
                             if (unsubscribe && typeof unsubscribe === 'function') {
                                 unsubscribe();
                             } else {
-                                 api_base.api.send({ forget: response.subscription?.id });
+                                api_base.api.send({ forget: response.subscription?.id });
                             }
                         }
                     }
@@ -963,9 +963,9 @@ export default class SmartTradingStore {
                     contract_id,
                 },
                 (response: TDerivResponse) => {
-                        if (response.proposal_open_contract?.is_sold) {
-                            const status = response.proposal_open_contract?.status || 'lost';
-                            const profit = parseFloat(response.proposal_open_contract?.profit || '0');
+                    if (response.proposal_open_contract?.is_sold) {
+                        const status = response.proposal_open_contract?.status || 'lost';
+                        const profit = parseFloat(response.proposal_open_contract?.profit || '0');
 
                         globalObserver.emit('bot.contract', response.proposal_open_contract);
                         globalObserver.emit('contract.status', {
@@ -1008,6 +1008,129 @@ export default class SmartTradingStore {
         }
     };
     @action
+    manualTrade = async (contract_type: string, prediction?: number) => {
+        if (!this.root_store.common.is_socket_opened || this.is_executing) return;
+
+        if (!this.root_store.client.is_logged_in) {
+            this.root_store.run_panel.showLoginDialog();
+            return;
+        }
+
+        this.is_executing = true;
+        this.root_store.run_panel.setIsRunning(true);
+        this.root_store.run_panel.setContractStage(contract_stages.PURCHASE_SENT);
+        globalObserver.emit('contract.status', { id: 'contract.purchase_sent' });
+
+        const stake = this.current_stake;
+        const symbol = this.symbol;
+
+        try {
+            if (!api_base.api) {
+                this.is_executing = false;
+                this.root_store.run_panel.setIsRunning(false);
+                return;
+            }
+
+            const proposal_request: any = {
+                proposal: 1,
+                amount: stake,
+                basis: 'stake',
+                contract_type,
+                currency: this.root_store.client.currency || 'USD',
+                duration: 1,
+                duration_unit: 't',
+                symbol,
+            };
+
+            if (prediction !== undefined) {
+                proposal_request.barrier = String(prediction);
+            }
+
+            const proposal_response = await api_base.api.send(proposal_request);
+
+            if (proposal_response.error) {
+                console.error('SmartTrading Manual Proposal Error:', proposal_response.error);
+                this.is_executing = false;
+                this.root_store.run_panel.setIsRunning(false);
+                return;
+            }
+
+            const proposal_id = proposal_response.proposal?.id;
+            const buy_response = await api_base.api.send({
+                buy: proposal_id,
+                price: stake,
+            });
+
+            if (buy_response.error) {
+                console.error('SmartTrading Manual Buy Error:', buy_response.error);
+                this.is_executing = false;
+                this.root_store.run_panel.setIsRunning(false);
+                return;
+            }
+
+            const contract_id = buy_response.buy?.contract_id;
+            if (contract_id) {
+                this.root_store.run_panel.setContractStage(contract_stages.PURCHASE_RECEIVED);
+                globalObserver.emit('contract.status', {
+                    id: 'contract.purchase_received',
+                    buy: buy_response.buy,
+                });
+
+                const unsubscribe = api_base.api.subscribe(
+                    { proposal_open_contract: 1, contract_id },
+                    (response: TDerivResponse) => {
+                        if (response.proposal_open_contract?.is_sold) {
+                            const status = response.proposal_open_contract?.status;
+                            const profit = parseFloat(response.proposal_open_contract?.profit || '0');
+
+                            globalObserver.emit('bot.contract', response.proposal_open_contract);
+                            globalObserver.emit('contract.status', {
+                                id: 'contract.sold',
+                                contract: response.proposal_open_contract,
+                            });
+
+                            runInAction(() => {
+                                if (status === 'won') {
+                                    this.wins++;
+                                    this.consecutive_losses = 0;
+                                    this.current_stake = this.speedbot_stake;
+                                    this.current_streak = this.current_streak < 0 ? 1 : this.current_streak + 1;
+                                } else {
+                                    this.losses++;
+                                    this.consecutive_losses++;
+                                    this.current_streak = this.current_streak > 0 ? -1 : this.current_streak - 1;
+
+                                    if (this.use_martingale) {
+                                        this.current_stake = this.current_stake * this.martingale_multiplier;
+                                        if (this.is_max_stake_enabled && this.current_stake > this.max_stake_limit) {
+                                            this.current_stake = this.max_stake_limit;
+                                        }
+                                    }
+                                }
+                                this.session_pl += profit;
+                                this.is_executing = false;
+                            });
+
+                            if (unsubscribe && typeof unsubscribe === 'function') {
+                                unsubscribe();
+                            } else {
+                                api_base.api.send({ forget: response.subscription?.id });
+                            }
+                        }
+                    }
+                );
+            } else {
+                this.is_executing = false;
+                this.root_store.run_panel.setIsRunning(false);
+            }
+        } catch (error) {
+            console.error('SmartTrading Manual execution error:', error);
+            this.is_executing = false;
+            this.root_store.run_panel.setIsRunning(false);
+        }
+    };
+
+    @action
     toggleTurboBot = () => {
         this.is_turbo_bot_running = !this.is_turbo_bot_running;
         if (this.is_turbo_bot_running) {
@@ -1033,13 +1156,13 @@ export default class SmartTradingStore {
         }
 
         if (this.turbo_bot_state === 'LISTENING') {
-            const valid_signals = this.v_sense_signals.filter(s => 
-                s.confidence >= this.turbo_settings.min_confidence && 
+            const valid_signals = this.v_sense_signals.filter(s =>
+                s.confidence >= this.turbo_settings.min_confidence &&
                 s.status === 'SAFE'
             );
 
             if (valid_signals.length > 0) {
-                const best_signal = valid_signals.reduce((prev, current) => 
+                const best_signal = valid_signals.reduce((prev, current) =>
                     (prev.confidence > current.confidence) ? prev : current
                 );
 
@@ -1051,7 +1174,7 @@ export default class SmartTradingStore {
     @action
     executeTurboTrade = async (signal: VSenseSignal) => {
         this.turbo_bot_state = 'SETUP';
-        
+
         const balance = parseFloat(this.root_store.client.balance) || 1000;
         const risk_pct = signal.confidence >= 75 ? 0.05 : 0.02;
         let stake = balance * risk_pct;

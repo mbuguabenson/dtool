@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import { useStore } from '@/hooks/useStore';
+import QuickSettings from './quick-settings';
 import './even-odd-tab.scss';
 
 const EvenOddTab = observer(() => {
@@ -70,7 +71,7 @@ const EvenOddTab = observer(() => {
         const evenCount = slice.filter(d => d % 2 === 0).length;
         const oddCount = slice.length - evenCount;
         const total = slice.length;
-        
+
         return {
             evenPercent: (evenCount / total) * 100,
             oddPercent: (oddCount / total) * 100,
@@ -104,11 +105,11 @@ const EvenOddTab = observer(() => {
         const mean = percentages.reduce((a, b) => a + b) / percentages.length;
         const variance = percentages.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / percentages.length;
         const stdDev = Math.sqrt(variance);
-        
+
         let level: 'LOW' | 'MEDIUM' | 'HIGH' = 'LOW';
         if (stdDev > 10) level = 'HIGH';
         else if (stdDev > 5) level = 'MEDIUM';
-        
+
         return { score: stdDev * 4, level }; // Scalar for display
     }, [ticks]);
 
@@ -123,7 +124,7 @@ const EvenOddTab = observer(() => {
     const signal = useMemo(() => {
         const maxPower = power.dominantPercent;
         const isIncreasing = trend === 'INCREASING' || (power.dominant === 'EVEN' ? analysis.last10.evenPercent > 55 : analysis.last10.oddPercent > 55);
-        
+
         let action = 'NEUTRAL';
         if (maxPower >= 56 && isIncreasing) action = 'TRADE NOW';
         else if (maxPower >= 52) action = 'WAIT';
@@ -184,6 +185,8 @@ const EvenOddTab = observer(() => {
                     </div>
                 </div>
             </div>
+
+            <QuickSettings />
 
             <div className='analysis-header'>
                 <h2>Even vs Odd Analysis</h2>
@@ -271,8 +274,11 @@ const EvenOddTab = observer(() => {
                 </div>
             </div>
 
-            <div className={classNames('big-action-button', power.dominant.toLowerCase())}>
-                TRADE {power.dominant} NOW - {power.dominantPercent.toFixed(1)}%
+            <div
+                className={classNames('big-action-button', power.dominant.toLowerCase(), { 'executing': smart_trading.is_executing })}
+                onClick={() => smart_trading.manualTrade(power.dominant === 'EVEN' ? 'DIGITEVEN' : 'DIGITODD')}
+            >
+                {smart_trading.is_executing ? 'EXECUTING...' : `TRADE ${power.dominant} NOW - ${power.dominantPercent.toFixed(1)}%`}
             </div>
 
             <div className='last-digits-tape'>
