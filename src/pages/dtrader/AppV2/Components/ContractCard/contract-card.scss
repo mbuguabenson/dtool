@@ -107,11 +107,7 @@
                 border-radius: 50%;
                 mask: radial-gradient(farthest-side, #0000 50%, var(--component-textIcon-static-prominentDark) 51%);
                 background:
-                    linear-gradient(
-                            0deg,
-                            rgb(255 255 255 / 50%) 50%,
-                            var(--component-button-bg-sell-primary-loading) 0
-                        )
+                    linear-gradient(0deg, rgb(255 255 255 / 50%) 50%, var(--component-button-bg-sell-primary-loading) 0)
                         center/1px 100%,
                     linear-gradient(90deg, rgb(255 255 255 / 25%) 50%, rgb(255 255 255 / 75%) 0) center/100% 1px;
                 background-repeat: no-repeat;

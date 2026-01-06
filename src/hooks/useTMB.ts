@@ -64,8 +64,6 @@ const useTMB = (): UseTMBReturn => {
         return supportedDomains.some(domain => hostname.includes(domain));
     }, []);
 
-
-
     const is_staging = useMemo(() => window.location.hostname.includes('staging'), []);
     const is_production = useMemo(() => !is_staging, [is_staging]);
     const isOAuth2Enabled = useMemo(() => is_production || is_staging, [is_production, is_staging]);

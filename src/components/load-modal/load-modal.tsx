@@ -96,7 +96,13 @@ const LoadModal: React.FC = observer(() => {
             elements_to_ignore={[document.querySelector('.injectionDiv') as HTMLElement]}
         >
             <Modal.Body>
-                <Tabs active_index={active_index} onTabItemClick={handleTabItemClick} top header_fit_content history={historyShim as any}>
+                <Tabs
+                    active_index={active_index}
+                    onTabItemClick={handleTabItemClick}
+                    top
+                    header_fit_content
+                    history={historyShim as any}
+                >
                     <div label={localize('Recent')}>
                         <Recent />
                     </div>

@@ -178,7 +178,7 @@ const Cards = observer(({ is_mobile, has_dashboard_strategies }: TCardProps) => 
                         );
                     })}
 
-                    {!isDesktop ? (
+                    {isDesktop ? (
                         <Dialog
                             title={dialog_options.title}
                             is_visible={is_dialog_open}
@@ -212,7 +212,7 @@ const Cards = observer(({ is_mobile, has_dashboard_strategies }: TCardProps) => 
             </div>
         ),
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [is_dialog_open, has_dashboard_strategies]
+        [is_dialog_open, has_dashboard_strategies, is_mobile, isDesktop]
     );
 });
 

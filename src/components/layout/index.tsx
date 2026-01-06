@@ -61,10 +61,7 @@ const Layout = observer(() => {
         };
     }, []);
 
-    const validCurrencies = useMemo(
-        () => [...fiat_currencies_display_order, ...crypto_currencies_display_order],
-        []
-    );
+    const validCurrencies = useMemo(() => [...fiat_currencies_display_order, ...crypto_currencies_display_order], []);
     const query_currency = (getQueryParams.get('account') ?? '')?.toUpperCase();
     const isCurrencyValid = validCurrencies.includes(query_currency);
     const api_accounts = useRef<IClientAccount[][]>([]);
@@ -164,8 +161,6 @@ const Layout = observer(() => {
             setClientHasCurrency(true); // Allow access in offline mode
             return;
         }
-
-
 
         // Create an async IIFE to handle authentication
         (async () => {

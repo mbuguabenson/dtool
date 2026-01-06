@@ -191,6 +191,7 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
         >
             <Wrapper variant='left'>
                 <div className='header-branding'>
+                    <div className='brand-logo'>P</div>
                     <div className='brand-details'>
                         <span className='brand-title'>Profithub</span>
                         <span className='brand-subtitle'>Powered by Deriv</span>
