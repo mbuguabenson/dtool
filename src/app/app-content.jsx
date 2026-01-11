@@ -91,7 +91,7 @@ const AppContent = observer(() => {
                 setIsLoading(false);
                 setIsApiInitialized(true);
             }
-        }, 8000);
+        }, 10000); // Increased to 10s for more headroom on slow connections
 
         if (!isOnline && is_loading) {
             console.log('[Offline] Detected offline state, setting timeout to show dashboard');

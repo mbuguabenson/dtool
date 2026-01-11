@@ -61,7 +61,9 @@
 
         &--bot-builder {
             .dc-tabs__list {
-                padding-inline-end: 24rem; // increased space for Run button
+                @include desktop-screen {
+                    padding-inline-end: 24rem; // increased space for Run button
+                }
             }
         }
 
@@ -262,7 +264,7 @@
     }
 }
 
-&__run-strategy-wrapper {
+.main__run-strategy-wrapper {
     inset-inline-end: 1.6rem;
     top: 5.6rem;
     z-index: 10;
@@ -486,7 +488,7 @@
 
 .bot-builder {
     position: absolute;
-    top: 8.8rem;
+    top: 10.4rem;
     left: 0;
     right: 0;
     bottom: 0;
@@ -494,9 +496,9 @@
     visibility: hidden;
     background: var(--general-section-1);
     width: 100%;
-    height: calc(100vh - 8.8rem);
-    min-height: calc(100vh - 8.8rem); // Ensure minimum height
-    max-height: calc(100vh - 8.8rem); // Prevent overflow
+    height: calc(100vh - 10.4rem);
+    min-height: calc(100vh - 10.4rem); // Ensure minimum height
+    max-height: calc(100vh - 10.4rem); // Prevent overflow
 
     &--active {
         visibility: visible;
@@ -526,12 +528,12 @@
     }
 
     @include mobile-or-tablet-screen {
-        top: 5.6rem;
+        top: 6.4rem;
         inset-inline-start: 0;
         width: 100vw;
-        height: calc(100vh - 5.6rem);
-        min-height: calc(100vh - 5.6rem); // Consistent height on mobile
-        max-height: calc(100vh - 5.6rem);
+        height: calc(100vh - 6.4rem);
+        min-height: calc(100vh - 6.4rem); // Consistent height on mobile
+        max-height: calc(100vh - 6.4rem);
     }
 }
 

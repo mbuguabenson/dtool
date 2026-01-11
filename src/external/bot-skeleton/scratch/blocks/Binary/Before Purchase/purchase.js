@@ -12,11 +12,32 @@ window.Blockly.Blocks.purchase = {
     definition() {
         return {
             message0: localize('Purchase {{ contract_type }}', { contract_type: '%1' }),
+            message1: localize('Allow Bulk Purchase: {{ allow_bulk }}', { allow_bulk: '%1' }),
+            message2: localize('No. of Trades: {{ num_trades }}', { num_trades: '%1' }),
             args0: [
                 {
                     type: 'field_dropdown',
                     name: 'PURCHASE_LIST',
                     options: [['', '']],
+                },
+            ],
+            args1: [
+                {
+                    type: 'field_dropdown',
+                    name: 'ALLOW_BULK_PURCHASE',
+                    options: [
+                        [localize('No'), 'no'],
+                        [localize('Yes'), 'yes'],
+                    ],
+                },
+            ],
+            args2: [
+                {
+                    type: 'field_number',
+                    name: 'NUM_TRADES',
+                    value: 1,
+                    min: 1,
+                    max: 100,
                 },
             ],
             previousStatement: null,
@@ -31,7 +52,7 @@ window.Blockly.Blocks.purchase = {
         return {
             display_name: localize('Purchase'),
             description: localize(
-                'Use this block to purchase the specific contract you want. You may add multiple Purchase blocks together with conditional blocks to define your purchase conditions. This block can only be used within the Purchase conditions block.'
+                'Use this block to purchase the specific contract you want. You may add multiple Purchase blocks together with conditional blocks to define your purchase conditions. This block can only be used within the Purchase conditions block. You can also enable Bulk Purchase to initiate multiple trades at once.'
             ),
             key_words: localize('buy'),
         };
@@ -80,12 +101,15 @@ window.Blockly.Blocks.purchase = {
         excludeOptionFromContextMenu(menu, menu_items);
         modifyContextMenu(menu);
     },
+    enforceLimitations: window.Blockly.Blocks.trade_definition_market.enforceLimitations,
     restricted_parents: ['before_purchase'],
 };
 
 window.Blockly.JavaScript.javascriptGenerator.forBlock.purchase = block => {
     const purchaseList = block.getFieldValue('PURCHASE_LIST');
+    const allowBulk = block.getFieldValue('ALLOW_BULK_PURCHASE') === 'yes';
+    const numTrades = block.getFieldValue('NUM_TRADES') || 1;
 
-    const code = `Bot.purchase('${purchaseList}');\n`;
+    const code = `Bot.purchase('${purchaseList}', ${allowBulk}, ${numTrades});\n`;
     return code;
 };
