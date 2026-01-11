@@ -90,35 +90,31 @@ const WorkspaceGroup = observer(() => {
                         </span>
                     }
                 />
-                {isDesktop && (
-                    <>
-                        <div className='vertical-divider' />
-                        <ToolbarIcon
-                            popover_message={localize('Charts')}
-                            icon={
-                                <span
-                                    className='toolbar__icon'
-                                    id='db-toolbar__charts-button'
-                                    onClick={() => setChartModalVisibility()}
-                                >
-                                    <LabelPairedChartLineMdRegularIcon />
-                                </span>
-                            }
-                        />
-                        <ToolbarIcon
-                            popover_message={localize('TradingView Chart')}
-                            icon={
-                                <span
-                                    className='toolbar__icon'
-                                    id='db-toolbar__tradingview-button'
-                                    onClick={() => setTradingViewModalVisibility()}
-                                >
-                                    <LabelPairedChartTradingviewMdRegularIcon />
-                                </span>
-                            }
-                        />
-                    </>
-                )}
+                <div className='vertical-divider' />
+                <ToolbarIcon
+                    popover_message={localize('Charts')}
+                    icon={
+                        <span
+                            className='toolbar__icon'
+                            id='db-toolbar__charts-button'
+                            onClick={() => setChartModalVisibility()}
+                        >
+                            <LabelPairedChartLineMdRegularIcon />
+                        </span>
+                    }
+                />
+                <ToolbarIcon
+                    popover_message={localize('TradingView Chart')}
+                    icon={
+                        <span
+                            className='toolbar__icon'
+                            id='db-toolbar__tradingview-button'
+                            onClick={() => setTradingViewModalVisibility()}
+                        >
+                            <LabelPairedChartTradingviewMdRegularIcon />
+                        </span>
+                    }
+                />
                 <div className='vertical-divider' />
                 <ToolbarIcon
                     popover_message={localize('Undo')}

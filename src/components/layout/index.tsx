@@ -235,7 +235,7 @@ const Layout = observer(() => {
             <Body>
                 <Outlet />
             </Body>
-            {!isCallbackPage && isDesktop && <Footer />}
+            {!isCallbackPage && <Footer />}
             <PWAUpdateNotification />
         </div>
     );
