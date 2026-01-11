@@ -103,7 +103,7 @@
             }
         }
 
-        &--open > &-icon {
+        &--open>&-icon {
             &--left {
                 transform: rotate(180deg);
             }

@@ -10,8 +10,9 @@
     &__account-settings,
     .notifications__wrapper,
     &__menu {
-        svg > path,
-        svg > g > path {
+
+        svg>path,
+        svg>g>path {
             fill: var(--text-prominent);
         }
     }
@@ -75,6 +76,15 @@
                 background: radial-gradient(circle at center, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
                 opacity: 0.5;
                 transition: opacity 0.3s ease;
+            }
+
+            @include mobile-or-tablet-screen {
+                width: 24px;
+                height: 24px;
+
+                .logo-letter {
+                    font-size: 1.2rem;
+                }
             }
         }
 
@@ -219,7 +229,7 @@
             box-shadow: 0 0 2px 0 var(--du-shadow-box, #00000014);
         }
 
-        .deriv-account-switcher__balance + svg > path {
+        .deriv-account-switcher__balance+svg>path {
             fill: var(--text-general);
         }
 
