@@ -1,10 +1,11 @@
+import { observer } from 'mobx-react-lite';
+import { useStore } from '@/hooks/useStore';
 import MarketSelector from './market-selector';
 import './market-overview.scss';
 
 const MarketOverview = observer(() => {
-    const { smart_trading, app } = useStore();
-    const { symbol, current_price, last_digit, updateDigitStats, active_symbols_data } = smart_trading;
-    const ticks_service = app.api_helpers_store?.ticks_service;
+    const { smart_trading } = useStore();
+    const { current_price, last_digit } = smart_trading;
 
     // ... (useEffect remains the same)
 
