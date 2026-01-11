@@ -155,11 +155,12 @@ export const load = async ({
     setLoading(true);
     // Delay execution to allow fully previewing previous strategy if users quickly switch between strategies.
     await delayExecution(100);
-    const showInvalidStrategyError = () => {
+    const showInvalidStrategyError = (message) => {
         setLoadedLocalFile(null);
-        botNotification(notification_message().invalid_xml);
+        const errorContent = message ? { message } : notification_message().invalid_xml;
+        botNotification(errorContent);
         setLoading(false);
-        const error_message = localize('XML file contains unsupported elements. Please check or modify file.');
+        const error_message = message || localize('XML file contains unsupported elements. Please check or modify file.');
         globalObserver.emit('ui.log.error', error_message);
         return {
             error: error_message,
@@ -170,12 +171,12 @@ export const load = async ({
     try {
         const xmlDoc = new DOMParser().parseFromString(block_string, 'application/xml');
         if (xmlDoc.getElementsByTagName('parsererror').length) {
-            return showInvalidStrategyError();
+            return showInvalidStrategyError(localize('XML Parsing Error: The file content is not valid XML.'));
         } else {
             show_snackbar && botNotification(notification_message().BOT_IMPORT);
         }
     } catch (e) {
-        return showInvalidStrategyError();
+        return showInvalidStrategyError(localize('Xml Parsing Exception: ') + e.message);
     }
 
     let xml;
@@ -183,7 +184,7 @@ export const load = async ({
     try {
         xml = window.Blockly.utils.xml.textToDom(block_string);
     } catch (e) {
-        return showInvalidStrategyError();
+        return showInvalidStrategyError(localize('Blockly XML Parsing Error: ') + e.message);
     }
     const blockConversion = new BlockConversion();
     xml = blockConversion.convertStrategy(xml, showIncompatibleStrategyDialog);
@@ -191,16 +192,22 @@ export const load = async ({
 
     // Check if there are any blocks in this strategy.
     if (!blockly_xml.length) {
-        return showInvalidStrategyError();
+        return showInvalidStrategyError(localize('No blocks found in the strategy file.'));
     }
 
     // Check if all block types in XML are allowed.
-    const has_invalid_blocks = Array.from(blockly_xml).some(block => {
+    const invalid_blocks = [];
+    Array.from(blockly_xml).forEach(block => {
         const block_type = block.getAttribute('type');
-        return !Object.keys(window.Blockly.Blocks).includes(block_type);
+        if (!Object.keys(window.Blockly.Blocks).includes(block_type)) {
+            invalid_blocks.push(block_type);
+        }
     });
-    if (has_invalid_blocks) {
-        return showInvalidStrategyError();
+
+    if (invalid_blocks.length > 0) {
+        // Dedup
+        const unique_invalid = [...new Set(invalid_blocks)];
+        return showInvalidStrategyError(localize('Unsupported block types found: ') + unique_invalid.join(', '));
     }
 
     try {
