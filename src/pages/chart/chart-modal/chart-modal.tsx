@@ -4,8 +4,7 @@ import { Loader, useDevice } from '@deriv-com/ui';
 import ChartModalDesktop from './chart-modal-desktop';
 
 export const ChartModal = observer(() => {
-    const { isDesktop } = useDevice();
-    return <Suspense fallback={<Loader />}>{isDesktop && <ChartModalDesktop />}</Suspense>;
+    return <Suspense fallback={<Loader />}>{<ChartModalDesktop />}</Suspense>;
 });
 
 export default ChartModal;
