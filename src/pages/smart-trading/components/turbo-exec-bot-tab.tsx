@@ -39,12 +39,18 @@ const TurboExecBotTab = observer(() => {
 
     const getStateIcon = () => {
         switch (turbo_bot_state) {
-            case 'STOPPED': return '📡';
-            case 'LISTENING': return '🎧';
-            case 'SETUP': return '⚙️';
-            case 'EXECUTING': return '🔥';
-            case 'COOLDOWN': return '⏳';
-            default: return '🛰️';
+            case 'STOPPED':
+                return '📡';
+            case 'LISTENING':
+                return '🎧';
+            case 'SETUP':
+                return '⚙️';
+            case 'EXECUTING':
+                return '🔥';
+            case 'COOLDOWN':
+                return '⏳';
+            default:
+                return '🛰️';
         }
     };
 
@@ -53,9 +59,7 @@ const TurboExecBotTab = observer(() => {
             {/* Mission Header */}
             <div className='card status-mission-header'>
                 <div className='state-monitor'>
-                    <div className={classNames('status-indicator', turbo_bot_state)}>
-                        {getStateIcon()}
-                    </div>
+                    <div className={classNames('status-indicator', turbo_bot_state)}>{getStateIcon()}</div>
                     <div className='state-text'>
                         <div className='label'>Mission Status</div>
                         <div className='value'>
@@ -71,9 +75,13 @@ const TurboExecBotTab = observer(() => {
                         disabled={!is_connected}
                     >
                         {is_turbo_bot_running ? (
-                            <><span>⏹</span> ABORT MISSION</>
+                            <>
+                                <span>⏹</span> ABORT MISSION
+                            </>
                         ) : (
-                            <><span>🚀</span> INITIATE TURBO</>
+                            <>
+                                <span>🚀</span> INITIATE TURBO
+                            </>
                         )}
                     </button>
                 </div>
@@ -95,7 +103,9 @@ const TurboExecBotTab = observer(() => {
                     <div className='signal-grid'>
                         {v_sense_signals.map((signal, idx) => (
                             <div key={idx} className='intel-stat'>
-                                <div className='label'>{signal.strategy} {signal.targetSide || signal.targetDigit}</div>
+                                <div className='label'>
+                                    {signal.strategy} {signal.targetSide || signal.targetDigit}
+                                </div>
                                 <div className={classNames('value', signal.status)}>
                                     {signal.status} ({signal.confidence}%)
                                 </div>
@@ -137,7 +147,13 @@ const TurboExecBotTab = observer(() => {
                             </div>
                         </div>
 
-                        <hr style={{ border: 'none', borderTop: '1px solid rgba(255,255,255,0.05)', margin: '1.5rem 0' }} />
+                        <hr
+                            style={{
+                                border: 'none',
+                                borderTop: '1px solid rgba(255,255,255,0.05)',
+                                margin: '1.5rem 0',
+                            }}
+                        />
 
                         <div className='performance-summary'>
                             <h4>Performance Scan</h4>
@@ -158,7 +174,14 @@ const TurboExecBotTab = observer(() => {
                         </div>
                     </div>
 
-                    <div className='card' style={{ padding: '1rem', background: 'rgba(239, 68, 68, 0.05)', borderColor: 'rgba(239, 68, 68, 0.2)' }}>
+                    <div
+                        className='card'
+                        style={{
+                            padding: '1rem',
+                            background: 'rgba(239, 68, 68, 0.05)',
+                            borderColor: 'rgba(239, 68, 68, 0.2)',
+                        }}
+                    >
                         <div style={{ fontSize: '0.75rem', color: '#f87171', fontWeight: 600 }}>
                             ⚠️ SAFETY PROTOCOL ACTIVE
                         </div>

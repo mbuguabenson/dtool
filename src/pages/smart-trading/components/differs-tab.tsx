@@ -191,10 +191,10 @@ const DiffersTab = observer(() => {
     }, [topDiffers, frequencies]);
 
     return (
-        <div className="differs-tab">
+        <div className='differs-tab'>
             {/* Header */}
-            <div className="premium-market-header">
-                <div className="market-select-glass">
+            <div className='premium-market-header'>
+                <div className='market-select-glass'>
                     <label>MARKET</label>
                     <select value={symbol} onChange={e => setSymbol(e.target.value)}>
                         {markets.map(group => (
@@ -209,30 +209,29 @@ const DiffersTab = observer(() => {
                     </select>
                 </div>
 
-                <div className="price-display-glass">
-                    <span className="lbl">LIVE PRICE</span>
-                    <span className="val">{current_price}</span>
+                <div className='price-display-glass'>
+                    <span className='lbl'>LIVE PRICE</span>
+                    <span className='val'>{current_price}</span>
                 </div>
 
-                <div className="digit-display-glass">
-                    <span className="lbl">LAST DIGIT</span>
-                    <div className="digit-box">{last_digit !== null ? last_digit : '-'}</div>
+                <div className='digit-display-glass'>
+                    <span className='lbl'>LAST DIGIT</span>
+                    <div className='digit-box'>{last_digit !== null ? last_digit : '-'}</div>
                 </div>
             </div>
 
             <QuickSettings />
 
             {/* Title */}
-            <div className="tab-header">
-                <h2 className="tab-title">Differs Analysis</h2>
+            <div className='tab-header'>
+                <h2 className='tab-title'>Differs Analysis</h2>
             </div>
 
             {/* Top 3 Differs */}
-            <div className="top-differs-grid">
+            <div className='top-differs-grid'>
                 {topDiffers.map((differ, index) => {
                     const freq = frequencies.find(f => f.digit === differ.digit);
-                    const label =
-                        index === 0 ? 'Least Appearing' : index === 1 ? '2nd Least' : '3rd Least';
+                    const label = index === 0 ? 'Least Appearing' : index === 1 ? '2nd Least' : '3rd Least';
 
                     return (
                         <div
@@ -244,43 +243,43 @@ const DiffersTab = observer(() => {
                             })}
                             onClick={() => (smart_trading.speedbot_prediction = differ.digit)}
                         >
-                            <div className="card-label">{label}</div>
-                            <div className="digit-display">{differ.digit}</div>
-                            <div className="percentage">{differ.differProbability.toFixed(1)}%</div>
-                            <div className="appeared-count">Appeared {freq?.count || 0} times</div>
+                            <div className='card-label'>{label}</div>
+                            <div className='digit-display'>{differ.digit}</div>
+                            <div className='percentage'>{differ.differProbability.toFixed(1)}%</div>
+                            <div className='appeared-count'>Appeared {freq?.count || 0} times</div>
                         </div>
                     );
                 })}
             </div>
 
             {/* Trade Signal */}
-            <div className="trade-signal-section">
-                <div className="action-buttons-row">
+            <div className='trade-signal-section'>
+                <div className='action-buttons-row'>
                     <button
-                        className={classNames('trade-now-btn', { 'running': is_speedbot_running })}
+                        className={classNames('trade-now-btn', { running: is_speedbot_running })}
                         onClick={toggleSpeedbot}
                     >
                         {is_speedbot_running ? 'STOP AUTO' : 'START AUTO'}
                     </button>
                     <button
-                        className={classNames('manual-trade-btn', { 'executing': smart_trading.is_executing })}
+                        className={classNames('manual-trade-btn', { executing: smart_trading.is_executing })}
                         onClick={() => smart_trading.manualTrade('DIGITDIFF', speedbot_prediction)}
                     >
                         {smart_trading.is_executing ? 'EXECUTING...' : 'MANUAL TRADE'}
                     </button>
                 </div>
-                <div className="signal-text">{signalText}</div>
+                <div className='signal-text'>{signalText}</div>
                 {topDiffers[0] && frequencies.find(f => f.digit === topDiffers[0].digit)?.gap === 0 && (
-                    <div className="signal-subtext">
+                    <div className='signal-subtext'>
                         Digit {topDiffers[0].digit} has not appeared in 3+ ticks - TRADE DIFFERS NOW
                     </div>
                 )}
             </div>
 
             {/* All Digits Grid */}
-            <div className="all-digits-section">
-                <h3 className="section-title">All Digits Differ Analysis</h3>
-                <div className="digits-grid">
+            <div className='all-digits-section'>
+                <h3 className='section-title'>All Digits Differ Analysis</h3>
+                <div className='digits-grid'>
                     {allDiffers.map(differ => {
                         const freq = frequencies.find(f => f.digit === differ.digit);
                         const isZeroGap = freq?.gap === 0;
@@ -298,12 +297,12 @@ const DiffersTab = observer(() => {
                                 })}
                                 onClick={() => (smart_trading.speedbot_prediction = differ.digit)}
                             >
-                                <div className="digit-number">{differ.digit}</div>
-                                <div className="differ-percent">{differ.differProbability.toFixed(0)}%</div>
-                                <div className="gap-info">Gap: {freq?.gap || 0}</div>
-                                <div className="confidence-badge">{differ.confidence}</div>
-                                {isZeroGap && <div className="zero-gap-badge">JUST!</div>}
-                                <div className="status-label">
+                                <div className='digit-number'>{differ.digit}</div>
+                                <div className='differ-percent'>{differ.differProbability.toFixed(0)}%</div>
+                                <div className='gap-info'>Gap: {freq?.gap || 0}</div>
+                                <div className='confidence-badge'>{differ.confidence}</div>
+                                {isZeroGap && <div className='zero-gap-badge'>JUST!</div>}
+                                <div className='status-label'>
                                     {isZeroGap ? 'Zero Gap!' : isHot ? 'Hot' : isCold ? 'Cold' : 'Neutral'}
                                 </div>
                             </div>

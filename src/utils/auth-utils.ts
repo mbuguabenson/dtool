@@ -30,5 +30,3 @@ export const handleOidcAuthFailure = (error: any) => {
     localStorage.removeItem('accountsList');
     localStorage.removeItem('clientAccounts');
 };
-
-

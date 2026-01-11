@@ -129,10 +129,7 @@ export default class LoadModalStore {
 
     get selected_strategy(): TStrategy {
         const strategies = this.recent_strategies.length > 0 ? this.recent_strategies : this.dashboard_strategies;
-        return (
-            strategies.find((ws: { id: string }) => ws.id === this.selected_strategy_id) ??
-            strategies[0]
-        );
+        return strategies.find((ws: { id: string }) => ws.id === this.selected_strategy_id) ?? strategies[0];
     }
 
     get tab_name(): string {
@@ -386,7 +383,9 @@ export default class LoadModalStore {
                 this.drop_zone = document.querySelector('.load-strategy__local-dropzone-area');
 
                 if (this.drop_zone) {
-                    (this.drop_zone as HTMLElement).addEventListener('drop', event => this.handleFileChange(event, false));
+                    (this.drop_zone as HTMLElement).addEventListener('drop', event =>
+                        this.handleFileChange(event, false)
+                    );
                 }
             }
         }

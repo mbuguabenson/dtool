@@ -1,15 +1,12 @@
-import React from 'react';
+import Chart from '../../chart/chart';
 import './smart-charts-tab.scss';
 
 const SmartChartsTab = () => {
     return (
-        <div className="smart-charts-tab">
-             <iframe
-                src="https://charts.deriv.com/deriv"
-                title="Deriv Charts"
-                className="deriv-chart-iframe"
-                allowFullScreen
-            />
+        <div className='smart-charts-tab'>
+            <div className='chart-container-premium'>
+                <Chart show_digits_stats={true} />
+            </div>
         </div>
     );
 };

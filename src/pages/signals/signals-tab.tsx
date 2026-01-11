@@ -144,7 +144,7 @@ const SignalsTab = () => {
                 </div>
                 <div className='stat-card'>
                     <span className='label'>Last Digit</span>
-                    <span className='value'>{currentDigit !== null ? currentDigit : '-'}</span>
+                    <span className='value digit-highlight'>{currentDigit !== null ? currentDigit : '-'}</span>
                 </div>
                 <div className='stat-card'>
                     <span className='label'>Total Ticks</span>

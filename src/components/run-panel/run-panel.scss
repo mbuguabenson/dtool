@@ -239,10 +239,12 @@
         }
     }
 
-    &__stop-button,
     &__run-button {
         width: 40%;
-        border-radius: 4px 0 0 4px !important;
+        border-radius: 4px !important;
+        background: linear-gradient(90deg, #ffa500 0%, #ff444f 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
     }
 
     &__animation {

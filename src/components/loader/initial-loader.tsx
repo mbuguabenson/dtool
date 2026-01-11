@@ -1,14 +1,14 @@
 import { DerivLogo } from '@deriv-com/ui';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import './initial-loader.scss';
 
 const LOADING_MESSAGES = [
-    "Initializing application...",
-    "Connecting to server...",
-    "Loading assets...",
-    "Authenticating secure session...",
-    "Preparing trading workspace..."
+    'Initializing Profithub Engine...',
+    'Securing Quantum Gateway...',
+    'Connecting to Global Markets...',
+    'Calibrating Trading Algorithms...',
+    'Decrypting Secure Session...',
 ];
 
 export default function InitialLoader() {
@@ -16,60 +16,84 @@ export default function InitialLoader() {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setMessageIndex((prev) => (prev + 1) % LOADING_MESSAGES.length);
-        }, 2000);
+            setMessageIndex(prev => (prev + 1) % LOADING_MESSAGES.length);
+        }, 3000);
         return () => clearInterval(interval);
     }, []);
 
+    const whatsappNumber = '+254796428848';
+    const whatsappLink = `https://wa.me/${whatsappNumber.replace('+', '')}`;
+
     return (
-        <div className='initial-loader-container'>
+        <div className='initial-loader-overlay'>
+            <div className='loader-background-glow' />
+
             <motion.div
-                className='prominent-logo-container'
-                initial={{ opacity: 0, scale: 0.8 }}
+                className='loader-content-wrap'
+                initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
             >
-                <div className="profithub-logo-wrapper">
-                    <DerivLogo variant='wallets' className="prominent-logo" />
-                    <span className="brand-name">Profithub</span>
-                </div>
-            </motion.div>
-
-            <motion.div
-                className='loader-content'
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-            >
-                <div className="loading-bar-container">
+                <div className='logo-section'>
                     <motion.div
-                        className="loading-bar"
-                        initial={{ width: "0%" }}
-                        animate={{ width: "100%" }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                        className='logo-glow-ring'
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
                     />
+                    <DerivLogo variant='wallets' className='main-logo-svg' />
+                    <h1 className='main-brand-title'>PROFITHUB</h1>
                 </div>
-                <motion.p
-                    key={messageIndex}
-                    initial={{ opacity: 0, y: 5 }}
+
+                <div className='system-status-container'>
+                    <div className='status-header'>
+                        <span className='pulse-dot' />
+                        <span className='status-label'>SYSTEM INITIALIZATION</span>
+                    </div>
+
+                    <div className='progress-meter'>
+                        <motion.div
+                            className='progress-fill'
+                            initial={{ width: '0%' }}
+                            animate={{ width: '100%' }}
+                            transition={{ duration: 15, ease: 'linear' }}
+                        />
+                    </div>
+
+                    <div className='message-carousel'>
+                        <AnimatePresence mode='wait'>
+                            <motion.p
+                                key={messageIndex}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.5 }}
+                                className='loading-status-msg'
+                            >
+                                {LOADING_MESSAGES[messageIndex]}
+                            </motion.p>
+                        </AnimatePresence>
+                    </div>
+                </div>
+
+                <motion.div
+                    className='customer-care-cta'
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -5 }}
-                    className="loading-text"
+                    transition={{ delay: 1, duration: 0.8 }}
                 >
-                    {LOADING_MESSAGES[messageIndex]}
-                </motion.p>
+                    <a href={whatsappLink} target='_blank' rel='noopener noreferrer' className='whatsapp-support-btn'>
+                        <span className='wa-icon'>💬</span>
+                        <div className='wa-text'>
+                            <span className='wa-label'>CUSTOMER CARE</span>
+                            <span className='wa-number'>{whatsappNumber}</span>
+                        </div>
+                    </a>
+                </motion.div>
             </motion.div>
 
-            <motion.div
-                className='footer-branding'
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-            >
-                <span className="powered-by-text">Powered by</span>
-                <DerivLogo variant='wallets' className="deriv-logo-small" />
-            </motion.div>
+            <div className='loader-footer-simple'>
+                <span className='powered-tag'>POWERED BY DERIV TECHNOLOGY</span>
+            </div>
         </div>
     );
 }
-

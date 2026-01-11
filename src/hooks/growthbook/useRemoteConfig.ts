@@ -5,7 +5,8 @@ import initData from './remote_config.json';
 const remoteConfigQuery = async function () {
     const isProductionOrStaging = process.env.APP_ENV === 'production' || process.env.APP_ENV === 'staging';
     const val = process.env.REMOTE_CONFIG_URL;
-    const REMOTE_CONFIG_URL = val && val.trim() !== '' ? val : 'https://app-config-prod.firebaseio.com/remote_config/deriv-app.json';
+    const REMOTE_CONFIG_URL =
+        val && val.trim() !== '' ? val : 'https://app-config-prod.firebaseio.com/remote_config/deriv-app.json';
     if (isProductionOrStaging && REMOTE_CONFIG_URL === '') {
         throw new Error('Remote Config URL is not set!');
     }

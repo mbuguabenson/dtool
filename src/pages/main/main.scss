@@ -2,7 +2,6 @@
 @use 'components/shared/styles/mixins' as *;
 
 .run-panel {
-
     // fix for the RTL issue on tab active line
     .dc-tabs__active-line {
         right: auto;
@@ -61,7 +60,6 @@
         }
 
         &--active {
-
             // css for onboard tour overlay
             &:before {
                 content: '';
@@ -83,38 +81,52 @@
             overflow: hidden;
 
             &__active-line {
-                background-color: var(--general-main-1);
+                background-color: #00c6ff;
                 transition: none;
             }
 
             &__active {
-                background: rgba(255, 165, 0, 0.15) !important; // Light orange background
-                color: #ffad00 !important; // Yellow/orange text
-                border-bottom: none !important; // No underline
-                border: none !important; // No borders at all
+                background: rgba(0, 198, 255, 0.1) !important;
+                color: #00c6ff !important;
+                border-bottom: none !important;
+                border: none !important;
                 font-weight: 700;
                 transition: all 0.3s ease;
                 border-top-left-radius: 1rem;
                 border-top-right-radius: 1rem;
 
                 svg {
-                    fill: #ffad00 !important; // Yellow/orange icon
+                    fill: #00c6ff !important;
                 }
             }
 
             &__list {
-                background: #6b2d8f; // Deep purple (matching reference image)
+                background: #0b0e18; // Dark blue/black background
                 justify-content: start !important;
                 flex-shrink: 0;
-                overflow-x: hidden; // Disable horizontal scrolling
-                -ms-overflow-style: none;
-                scrollbar-width: none;
+                overflow-x: auto; // Enable horizontal scrolling
+                -ms-overflow-style: auto; // Show scrollbar on IE/Edge
+                scrollbar-width: thin; // Thin scrollbar for Firefox
                 border: none;
                 padding-top: 0.8rem;
-                flex-wrap: wrap; // Allow tabs to wrap if needed
+                flex-wrap: nowrap; // Prevent wrapping to allow scrolling
 
+                // Style the scrollbar
                 &::-webkit-scrollbar {
-                    display: none; // Hide scrollbar completely
+                    height: 4px; // Thin horizontal scrollbar
+                }
+
+                &::-webkit-scrollbar-track {
+                    background: rgba(255, 255, 255, 0.05);
+                }
+
+                &::-webkit-scrollbar-thumb {
+                    background: rgba(255, 255, 255, 0.2);
+                    border-radius: 2px;
+
+                    &:hover {
+                        background: rgba(255, 255, 255, 0.3);
+                    }
                 }
 
                 &--header {
@@ -210,7 +222,7 @@
             }
 
             &__item {
-                height: 4.0rem;
+                height: 4rem;
                 padding: 0 1.6rem;
                 width: auto;
                 @include flex-center;
@@ -253,7 +265,9 @@
         .animation {
             &__button#db-animation {
                 &__run-button {
-                    background-color: var(--purchase-main-1);
+                    background: linear-gradient(90deg, #ffa500 0%, #ff444f 100%) !important;
+                    color: #ffffff !important;
+                    border: none !important;
                 }
 
                 &__stop-button {
@@ -283,7 +297,9 @@
     .animation {
         &__button#db-animation {
             &__run-button {
-                background-color: var(--purchase-main-1);
+                background: linear-gradient(90deg, #ffa500 0%, #ff444f 100%) !important;
+                color: #ffffff !important;
+                border: none !important;
             }
 
             &__stop-button {
@@ -378,7 +394,7 @@
 
         .db-toolbox {
             &__item {
-                height: 4.0rem;
+                height: 4rem;
                 @include flex-center;
                 gap: 0.8rem;
                 padding: 0 1.6rem;
@@ -471,6 +487,8 @@
     background: var(--general-section-1);
     width: 100%;
     height: calc(100vh - 8.8rem);
+    min-height: calc(100vh - 8.8rem); // Ensure minimum height
+    max-height: calc(100vh - 8.8rem); // Prevent overflow
 
     &--active {
         visibility: visible;
@@ -503,7 +521,9 @@
         top: 5.6rem;
         inset-inline-start: 0;
         width: 100vw;
-        height: var(--tab-content-height-mobile);
+        height: calc(100vh - 5.6rem);
+        min-height: calc(100vh - 5.6rem); // Consistent height on mobile
+        max-height: calc(100vh - 5.6rem);
     }
 }
 
@@ -798,7 +818,6 @@
 }
 
 @keyframes blink {
-
     0%,
     100% {
         border: 1px solid $color-red;

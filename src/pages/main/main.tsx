@@ -51,7 +51,9 @@ const EvenOddTab = lazy(() => import('../smart-trading/components/even-odd-tab')
 const OverUnderTab = lazy(() => import('../smart-trading/components/over-under-tab'));
 const AIAnalysisTab = lazy(() => import('../smart-trading/components/ai-analysis-tab'));
 const CirclesAnalysis = lazy(() => import('../circles-analysis/index'));
-const DTrader = lazy(() => import('../dtrader/index'));
+const EasyTool = lazy(() => import('../easy-tool/index'));
+const Strategies = lazy(() => import('../strategies/index'));
+// const DTrader = lazy(() => import('../dtrader/index')); // Removed as per request
 
 const AppWrapper = observer(() => {
     const { connectionStatus } = useApiBase();
@@ -98,9 +100,13 @@ const AppWrapper = observer(() => {
         'smart_auto24',
         'smart_analysis',
         'ai_analysis',
+        'easy_tool',
         'tutorials',
         'circles',
-        'dtrader',
+        'easy_tool',
+        'tutorials',
+        'circles',
+        'strategies',
     ];
     const { isDesktop } = useDevice();
     const location = useLocation();
@@ -272,8 +278,6 @@ const AppWrapper = observer(() => {
         [active_tab]
     );
 
-
-
     const handleLoginGeneration = async () => {
         try {
             // Check TMB status first
@@ -360,7 +364,11 @@ const AppWrapper = observer(() => {
                             <div
                                 label={
                                     <div className='main__tabs-label'>
-                                        <LabelPairedSlidersCaptionRegularIcon height='20px' width='20px' fill='var(--text-general)' />
+                                        <LabelPairedSlidersCaptionRegularIcon
+                                            height='20px'
+                                            width='20px'
+                                            fill='var(--text-general)'
+                                        />
                                         <Localize i18n_default_text='Auto Trader' />
                                     </div>
                                 }
@@ -374,7 +382,11 @@ const AppWrapper = observer(() => {
                             <div
                                 label={
                                     <div className='main__tabs-label'>
-                                        <LabelPairedCopyCaptionRegularIcon height='20px' width='20px' fill='var(--text-general)' />
+                                        <LabelPairedCopyCaptionRegularIcon
+                                            height='20px'
+                                            width='20px'
+                                            fill='var(--text-general)'
+                                        />
                                         <Localize i18n_default_text='Copy Trading' />
                                     </div>
                                 }
@@ -388,7 +400,11 @@ const AppWrapper = observer(() => {
                             <div
                                 label={
                                     <div className='main__tabs-label'>
-                                        <LabelPairedSignalCaptionRegularIcon height='20px' width='20px' fill='var(--text-general)' />
+                                        <LabelPairedSignalCaptionRegularIcon
+                                            height='20px'
+                                            width='20px'
+                                            fill='var(--text-general)'
+                                        />
                                         <Localize i18n_default_text='Signals' />
                                     </div>
                                 }
@@ -403,7 +419,11 @@ const AppWrapper = observer(() => {
                             <div
                                 label={
                                     <div className='main__tabs-label'>
-                                        <LabelPairedLightbulbCaptionRegularIcon height='20px' width='20px' fill='var(--text-general)' />
+                                        <LabelPairedLightbulbCaptionRegularIcon
+                                            height='20px'
+                                            width='20px'
+                                            fill='var(--text-general)'
+                                        />
                                         <Localize i18n_default_text='Free Bots' />
                                     </div>
                                 }
@@ -418,7 +438,11 @@ const AppWrapper = observer(() => {
                             <div
                                 label={
                                     <div className='main__tabs-label'>
-                                        <LabelPairedLightbulbCaptionRegularIcon height='20px' width='20px' fill='var(--text-general)' />
+                                        <LabelPairedLightbulbCaptionRegularIcon
+                                            height='20px'
+                                            width='20px'
+                                            fill='var(--text-general)'
+                                        />
                                         <Localize i18n_default_text='Smart Trading' />
                                     </div>
                                 }
@@ -433,7 +457,11 @@ const AppWrapper = observer(() => {
                             <div
                                 label={
                                     <div className='main__tabs-label'>
-                                        <LabelPairedChartCandlestickCaptionRegularIcon height='20px' width='20px' fill='var(--text-general)' />
+                                        <LabelPairedChartCandlestickCaptionRegularIcon
+                                            height='20px'
+                                            width='20px'
+                                            fill='var(--text-general)'
+                                        />
                                         <Localize i18n_default_text='Smart Analysis' />
                                     </div>
                                 }
@@ -448,7 +476,11 @@ const AppWrapper = observer(() => {
                             <div
                                 label={
                                     <div className='main__tabs-label'>
-                                        <LabelPairedCircleCaptionRegularIcon height='20px' width='20px' fill='var(--text-general)' />
+                                        <LabelPairedCircleCaptionRegularIcon
+                                            height='20px'
+                                            width='20px'
+                                            fill='var(--text-general)'
+                                        />
                                         <Localize i18n_default_text='Even/Odd' />
                                     </div>
                                 }
@@ -463,7 +495,11 @@ const AppWrapper = observer(() => {
                             <div
                                 label={
                                     <div className='main__tabs-label'>
-                                        <LabelPairedArrowUpArrowDownCaptionRegularIcon height='20px' width='20px' fill='var(--text-general)' />
+                                        <LabelPairedArrowUpArrowDownCaptionRegularIcon
+                                            height='20px'
+                                            width='20px'
+                                            fill='var(--text-general)'
+                                        />
                                         <Localize i18n_default_text='Over/Under' />
                                     </div>
                                 }
@@ -497,6 +533,25 @@ const AppWrapper = observer(() => {
                             <div
                                 label={
                                     <div className='main__tabs-label'>
+                                        <LabelPairedLightbulbCaptionRegularIcon
+                                            height='20px'
+                                            width='20px'
+                                            fill='var(--text-general)'
+                                        />
+                                        <Localize i18n_default_text='Easy Tool' />
+                                    </div>
+                                }
+                                id='id-easy-tool'
+                            >
+                                <PageContentWrapper>
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading Easy Tool...')} />}>
+                                        <EasyTool />
+                                    </Suspense>
+                                </PageContentWrapper>
+                            </div>
+                            <div
+                                label={
+                                    <div className='main__tabs-label'>
                                         <LegacyGuide1pxIcon
                                             height='16px'
                                             width='16px'
@@ -521,7 +576,11 @@ const AppWrapper = observer(() => {
                             <div
                                 label={
                                     <div className='main__tabs-label'>
-                                        <LabelPairedCircleCaptionRegularIcon height='20px' width='20px' fill='var(--text-general)' />
+                                        <LabelPairedCircleCaptionRegularIcon
+                                            height='20px'
+                                            width='20px'
+                                            fill='var(--text-general)'
+                                        />
                                         <Localize i18n_default_text='Circles' />
                                     </div>
                                 }
@@ -536,15 +595,19 @@ const AppWrapper = observer(() => {
                             <div
                                 label={
                                     <div className='main__tabs-label'>
-                                        <LabelPairedChartLineCaptionRegularIcon height='20px' width='20px' fill='var(--text-general)' />
-                                        <Localize i18n_default_text='DTrader' />
+                                        <LabelPairedLightbulbCaptionRegularIcon
+                                            height='20px'
+                                            width='20px'
+                                            fill='var(--text-general)'
+                                        />
+                                        <Localize i18n_default_text='Strategies' />
                                     </div>
                                 }
-                                id='id-dtrader'
+                                id='id-strategies'
                             >
                                 <PageContentWrapper>
-                                    <Suspense fallback={<ChunkLoader message={localize('Loading DTrader...')} />}>
-                                        <DTrader passthrough={{ root_store: null as any, WS: null as any }} />
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading Strategies...')} />}>
+                                        <Strategies />
                                     </Suspense>
                                 </PageContentWrapper>
                             </div>
@@ -571,7 +634,7 @@ const AppWrapper = observer(() => {
                 is_visible={is_dialog_open}
                 onCancel={onCancelButtonClick || undefined}
                 onClose={onCloseDialog || undefined}
-                onConfirm={onOkButtonClick || onCloseDialog || (() => { })}
+                onConfirm={onOkButtonClick || onCloseDialog || (() => {})}
                 portal_element_id='modal_root'
                 title={title}
                 login={handleLoginGeneration}

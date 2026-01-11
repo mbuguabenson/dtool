@@ -59,6 +59,19 @@ const TutorialsTabDesktop = observer(({ tutorial_tabs, prev_active_tutorials }: 
                     />
                 )}
             </div>
+            <div className='tutorials-header-actions'>
+                <button
+                    className='btn-customer-care'
+                    onClick={() =>
+                        window.open(
+                            'https://api.whatsapp.com/send/?phone=254796428848&text&type=phone_number&app_absent=0',
+                            '_blank'
+                        )
+                    }
+                >
+                    <span className='whatsapp-icon'>💬</span> Customer Care
+                </button>
+            </div>
             <Tabs
                 className={classNames('tutorials', {
                     'tutorials-guide': prev_active_tutorials === 0,
@@ -70,14 +83,16 @@ const TutorialsTabDesktop = observer(({ tutorial_tabs, prev_active_tutorials }: 
                 onTabItemClick={setActiveTabTutorial}
                 top
             >
-                {tutorial_tabs?.map(
-                    ({ label, content }) =>
-                        content && (
-                            <div label={label} key={`${content}_${label}`}>
-                                {content}
-                            </div>
-                        )
-                )}
+                <>
+                    {tutorial_tabs?.map(
+                        ({ label, content }) =>
+                            content && (
+                                <div label={label} key={`${content}_${label}`}>
+                                    {content}
+                                </div>
+                            )
+                    )}
+                </>
             </Tabs>
         </div>
     );

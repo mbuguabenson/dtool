@@ -11,7 +11,10 @@ export const getBaseTraderHubUrl = (): string => {
 
     const is_staging = hostname.includes('staging');
     const is_test =
-        hostname === 'localhost' || hostname === '127.0.0.1' || hostname.includes('test-') || /^\d+\.\d+\.\d+\.\d+$/.test(hostname);
+        hostname === 'localhost' ||
+        hostname === '127.0.0.1' ||
+        hostname.includes('test-') ||
+        /^\d+\.\d+\.\d+\.\d+$/.test(hostname);
 
     if (is_staging || is_test) {
         return `https://staging-hub.${domain}`;

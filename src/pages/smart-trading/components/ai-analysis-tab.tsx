@@ -2,17 +2,13 @@ import { useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import { useStore } from '@/hooks/useStore';
-import {
-    AnomalyDetector,
-    BacktestingEngine,
-    MultiStepPredictor,
-    NeuralPatternRecognizer,
-} from '@/lib/ai/predictors';
+import { AnomalyDetector, BacktestingEngine, MultiStepPredictor, NeuralPatternRecognizer } from '@/lib/ai/predictors';
 import './smart-analysis-tab.scss';
 
 const AIAnalysisTab = observer(() => {
     const { smart_trading, app } = useStore();
-    const { ticks, symbol, setSymbol, current_price, last_digit, markets, updateDigitStats, active_symbols_data } = smart_trading;
+    const { ticks, symbol, setSymbol, current_price, last_digit, markets, updateDigitStats, active_symbols_data } =
+        smart_trading;
     const ticks_service = app.api_helpers_store?.ticks_service;
     const [isLearning, setIsLearning] = useState(true);
 
@@ -82,8 +78,7 @@ const AIAnalysisTab = observer(() => {
         const backtestResults = backtester.backtest(predictor, ticks, 'match');
 
         // Calculate model confidence
-        const avgConfidence =
-            nextNPredictions.reduce((sum, p) => sum + p.probability, 0) / nextNPredictions.length;
+        const avgConfidence = nextNPredictions.reduce((sum, p) => sum + p.probability, 0) / nextNPredictions.length;
 
         return {
             predictions: nextNPredictions,
@@ -101,10 +96,7 @@ const AIAnalysisTab = observer(() => {
             <div className='smart-analysis-tab'>
                 <div className='flex items-center justify-center' style={{ minHeight: '400px' }}>
                     <div style={{ textAlign: 'center' }}>
-                        <div
-                            className='animate-pulse'
-                            style={{ fontSize: '64px', marginBottom: '16px', opacity: 0.6 }}
-                        >
+                        <div className='animate-pulse' style={{ fontSize: '64px', marginBottom: '16px', opacity: 0.6 }}>
                             🧠
                         </div>
                         <p style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px', color: '#fff' }}>
@@ -242,10 +234,10 @@ const AIAnalysisTab = observer(() => {
                                     pred.confidence === 'very_high'
                                         ? '4px solid #22c55e'
                                         : pred.confidence === 'high'
-                                        ? '4px solid #3b82f6'
-                                        : pred.confidence === 'medium'
-                                        ? '4px solid #eab308'
-                                        : '4px solid #ef4444',
+                                          ? '4px solid #3b82f6'
+                                          : pred.confidence === 'medium'
+                                            ? '4px solid #eab308'
+                                            : '4px solid #ef4444',
                             }}
                         >
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
@@ -284,18 +276,18 @@ const AIAnalysisTab = observer(() => {
                                                 pred.confidence === 'very_high'
                                                     ? 'rgba(34, 197, 94, 0.2)'
                                                     : pred.confidence === 'high'
-                                                    ? 'rgba(59, 130, 246, 0.2)'
-                                                    : pred.confidence === 'medium'
-                                                    ? 'rgba(234, 179, 8, 0.2)'
-                                                    : 'rgba(239, 68, 68, 0.2)',
+                                                      ? 'rgba(59, 130, 246, 0.2)'
+                                                      : pred.confidence === 'medium'
+                                                        ? 'rgba(234, 179, 8, 0.2)'
+                                                        : 'rgba(239, 68, 68, 0.2)',
                                             color:
                                                 pred.confidence === 'very_high'
                                                     ? '#22c55e'
                                                     : pred.confidence === 'high'
-                                                    ? '#3b82f6'
-                                                    : pred.confidence === 'medium'
-                                                    ? '#eab308'
-                                                    : '#ef4444',
+                                                      ? '#3b82f6'
+                                                      : pred.confidence === 'medium'
+                                                        ? '#eab308'
+                                                        : '#ef4444',
                                         }}
                                     >
                                         {pred.confidence.replace('_', ' ').toUpperCase()}
@@ -320,18 +312,16 @@ const AIAnalysisTab = observer(() => {
                                             pred.confidence === 'very_high'
                                                 ? '#22c55e'
                                                 : pred.confidence === 'high'
-                                                ? '#3b82f6'
-                                                : pred.confidence === 'medium'
-                                                ? '#eab308'
-                                                : '#ef4444',
+                                                  ? '#3b82f6'
+                                                  : pred.confidence === 'medium'
+                                                    ? '#eab308'
+                                                    : '#ef4444',
                                         transition: 'width 0.3s ease',
                                     }}
                                 />
                             </div>
 
-                            <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
-                                Method: {pred.method}
-                            </p>
+                            <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>Method: {pred.method}</p>
                         </div>
                     ))}
                 </div>
@@ -352,10 +342,10 @@ const AIAnalysisTab = observer(() => {
                                         anomaly.severity === 'critical'
                                             ? '4px solid #ef4444'
                                             : anomaly.severity === 'high'
-                                            ? '4px solid #f97316'
-                                            : anomaly.severity === 'medium'
-                                            ? '4px solid #eab308'
-                                            : '4px solid #3b82f6',
+                                              ? '4px solid #f97316'
+                                              : anomaly.severity === 'medium'
+                                                ? '4px solid #eab308'
+                                                : '4px solid #3b82f6',
                                 }}
                             >
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
@@ -370,18 +360,18 @@ const AIAnalysisTab = observer(() => {
                                                 anomaly.severity === 'critical'
                                                     ? 'rgba(239, 68, 68, 0.2)'
                                                     : anomaly.severity === 'high'
-                                                    ? 'rgba(249, 115, 22, 0.2)'
-                                                    : anomaly.severity === 'medium'
-                                                    ? 'rgba(234, 179, 8, 0.2)'
-                                                    : 'rgba(59, 130, 246, 0.2)',
+                                                      ? 'rgba(249, 115, 22, 0.2)'
+                                                      : anomaly.severity === 'medium'
+                                                        ? 'rgba(234, 179, 8, 0.2)'
+                                                        : 'rgba(59, 130, 246, 0.2)',
                                             color:
                                                 anomaly.severity === 'critical'
                                                     ? '#ef4444'
                                                     : anomaly.severity === 'high'
-                                                    ? '#f97316'
-                                                    : anomaly.severity === 'medium'
-                                                    ? '#eab308'
-                                                    : '#3b82f6',
+                                                      ? '#f97316'
+                                                      : anomaly.severity === 'medium'
+                                                        ? '#eab308'
+                                                        : '#3b82f6',
                                         }}
                                     >
                                         {anomaly.severity.toUpperCase()}

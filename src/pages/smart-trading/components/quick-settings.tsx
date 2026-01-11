@@ -6,12 +6,7 @@ import './quick-settings.scss';
 
 const QuickSettings = observer(() => {
     const { smart_trading } = useStore();
-    const {
-        use_martingale,
-        martingale_multiplier,
-        speedbot_stake,
-        is_executing,
-    } = smart_trading;
+    const { use_martingale, martingale_multiplier, speedbot_stake, is_executing } = smart_trading;
 
     return (
         <div className='quick-settings-glass'>

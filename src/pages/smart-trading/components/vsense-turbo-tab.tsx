@@ -1,15 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
-import {
-    CartesianGrid,
-    LabelList,
-    Line,
-    LineChart,
-    ResponsiveContainer,
-    XAxis,
-    YAxis,
-} from 'recharts';
+import { CartesianGrid, LabelList, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import ToggleSwitch from '@/components/shared_ui/toggle-switch';
 import { useStore } from '@/hooks/useStore';
 import './vsense-turbo-tab.scss';
@@ -95,20 +87,23 @@ const VSenseTurboTab = observer(() => {
 
     const getStateIcon = () => {
         switch (turbo_bot_state) {
-            case 'STOPPED': return '📡';
-            case 'LISTENING': return '🎧';
-            case 'SETUP': return '⚙️';
-            case 'EXECUTING': return '🔥';
-            case 'COOLDOWN': return '⏳';
-            default: return '🛰️';
+            case 'STOPPED':
+                return '📡';
+            case 'LISTENING':
+                return '🎧';
+            case 'SETUP':
+                return '⚙️';
+            case 'EXECUTING':
+                return '🔥';
+            case 'COOLDOWN':
+                return '⏳';
+            default:
+                return '🛰️';
         }
     };
 
     const probs = calculateProbabilities();
-    const chart_data = useMemo(() => 
-        ticks.slice(-15).map((val, idx) => ({ name: idx, value: val })),
-        [ticks]
-    );
+    const chart_data = useMemo(() => ticks.slice(-15).map((val, idx) => ({ name: idx, value: val })), [ticks]);
 
     const max_count = Math.max(...digit_stats.map(s => s.count), 1);
     const getDigitColor = (digit: number) => `var(--digit-${digit % 10})`;
@@ -118,9 +113,7 @@ const VSenseTurboTab = observer(() => {
             {/* Mission Header */}
             <div className='card status-mission-header'>
                 <div className='state-monitor'>
-                    <div className={classNames('status-indicator', turbo_bot_state)}>
-                        {getStateIcon()}
-                    </div>
+                    <div className={classNames('status-indicator', turbo_bot_state)}>{getStateIcon()}</div>
                     <div className='state-text'>
                         <div className='label'>Mission Status</div>
                         <div className='value'>
@@ -163,9 +156,13 @@ const VSenseTurboTab = observer(() => {
                         disabled={!is_connected}
                     >
                         {is_turbo_bot_running ? (
-                            <><span>⏹</span> ABORT MISSION</>
+                            <>
+                                <span>⏹</span> ABORT MISSION
+                            </>
                         ) : (
-                            <><span>🚀</span> INITIATE TURBO</>
+                            <>
+                                <span>🚀</span> INITIATE TURBO
+                            </>
                         )}
                     </button>
                 </div>
@@ -182,8 +179,10 @@ const VSenseTurboTab = observer(() => {
                         <div className='digit-freq-circles'>
                             {digit_stats.map(stat => (
                                 <div key={stat.digit} className='digit-circle-stat'>
-                                    <div 
-                                        className={classNames('circle-outer', { 'is-max': stat.count === max_count && stat.count > 0 })}
+                                    <div
+                                        className={classNames('circle-outer', {
+                                            'is-max': stat.count === max_count && stat.count > 0,
+                                        })}
                                         style={{ color: getDigitColor(stat.digit) }}
                                     >
                                         <div className='circle-inner'>
@@ -200,20 +199,31 @@ const VSenseTurboTab = observer(() => {
                     <div className='card trend-card'>
                         <h3>Real-time Digit Trend</h3>
                         <div className='chart-container-premium'>
-                            <ResponsiveContainer width="100%" height={200}>
+                            <ResponsiveContainer width='100%' height={200}>
                                 <LineChart data={chart_data} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-                                    <XAxis dataKey="name" hide />
+                                    <CartesianGrid
+                                        strokeDasharray='3 3'
+                                        vertical={false}
+                                        stroke='rgba(255,255,255,0.05)'
+                                    />
+                                    <XAxis dataKey='name' hide />
                                     <YAxis domain={[0, 9]} ticks={[0, 2, 4, 6, 8, 9]} hide />
-                                    <Line 
-                                        type="monotone" 
-                                        dataKey="value" 
-                                        stroke="#8b5cf6" 
-                                        strokeWidth={3} 
-                                        dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 4, stroke: '#fff' }} 
+                                    <Line
+                                        type='monotone'
+                                        dataKey='value'
+                                        stroke='#8b5cf6'
+                                        strokeWidth={3}
+                                        dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 4, stroke: '#fff' }}
                                         isAnimationActive={true}
                                     >
-                                        <LabelList dataKey="value" position="top" offset={10} fill="#fff" fontSize={10} fontWeight={700} />
+                                        <LabelList
+                                            dataKey='value'
+                                            position='top'
+                                            offset={10}
+                                            fill='#fff'
+                                            fontSize={10}
+                                            fontWeight={700}
+                                        />
                                     </Line>
                                 </LineChart>
                             </ResponsiveContainer>
@@ -231,18 +241,31 @@ const VSenseTurboTab = observer(() => {
                                     <div className='card-main'>
                                         <div className='target-info'>
                                             <span className='lbl'>TARGET</span>
-                                            <span className='val'>{sig.targetDigit !== undefined ? sig.targetDigit : sig.targetSide}</span>
+                                            <span className='val'>
+                                                {sig.targetDigit !== undefined ? sig.targetDigit : sig.targetSide}
+                                            </span>
                                         </div>
                                         <div className='confidence-circle'>
-                                            <svg viewBox="0 0 36 36" className="circular-chart">
-                                                <path className="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                                <path className="circle" strokeDasharray={`${sig.confidence}, 100`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                                <text x="18" y="20.35" className="percentage">{sig.confidence}%</text>
+                                            <svg viewBox='0 0 36 36' className='circular-chart'>
+                                                <path
+                                                    className='circle-bg'
+                                                    d='M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831'
+                                                />
+                                                <path
+                                                    className='circle'
+                                                    strokeDasharray={`${sig.confidence}, 100`}
+                                                    d='M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831'
+                                                />
+                                                <text x='18' y='20.35' className='percentage'>
+                                                    {sig.confidence}%
+                                                </text>
                                             </svg>
                                         </div>
                                     </div>
                                     <div className='reasoning-tooltip'>
-                                        {sig.reasoning.map((r, idx) => <p key={idx}>{r}</p>)}
+                                        {sig.reasoning.map((r, idx) => (
+                                            <p key={idx}>{r}</p>
+                                        ))}
                                     </div>
                                 </div>
                             ))}
@@ -260,7 +283,7 @@ const VSenseTurboTab = observer(() => {
                             <div className='last-event'>LAST TRIGGER EVENT</div>
                             <div className='event-value'>{turbo_last_signal || 'Searching for patterns...'}</div>
                         </div>
-                        
+
                         <div className='distribution-minified'>
                             <div className='stat-row'>
                                 <span>Even/Odd</span>

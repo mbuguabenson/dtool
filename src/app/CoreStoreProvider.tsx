@@ -70,12 +70,20 @@ const CoreStoreProvider: React.FC<{ children: React.ReactNode }> = observer(({ c
 
     useEffect(() => {
         if (client && activeAccount) {
-            console.log('[CoreStoreProvider] Client and ActiveAccount found. Logging in.', { activeAccount, activeLoginid });
+            console.log('[CoreStoreProvider] Client and ActiveAccount found. Logging in.', {
+                activeAccount,
+                activeLoginid,
+            });
             client?.setLoginId(activeLoginid);
             client?.setAccountList(accountList);
             client?.setIsLoggedIn(true);
         } else {
-            console.log('[CoreStoreProvider] Waiting for login conditions:', { client: !!client, activeAccount, activeLoginid, accountListLength: accountList?.length });
+            console.log('[CoreStoreProvider] Waiting for login conditions:', {
+                client: !!client,
+                activeAccount,
+                activeLoginid,
+                accountListLength: accountList?.length,
+            });
         }
     }, [accountList, activeAccount, activeLoginid, client]);
 

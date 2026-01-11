@@ -35,10 +35,13 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
                     <div className='hero-text'>
                         <div className='hero-badge'>{localize('Platform of Choice')}</div>
                         <Text as='h1' color='prominent' size={isDesktop ? 'xl' : 'm'} weight='bold'>
-                            {localize('Welcome back,')} {client.loginid || localize('Trader')}!
+                            {localize('Welcome back,')}{' '}
+                            {client.account_settings?.first_name || client.loginid || localize('Trader')}!
                         </Text>
                         <Text as='p' color='prominent' size={isDesktop ? 's' : 'xs'}>
-                            {localize('Your next successful trade starts here. What would you like to build or trade today?')}
+                            {localize(
+                                'Your next successful trade starts here. What would you like to build or trade today?'
+                            )}
                         </Text>
 
                         <div className='hero-actions'>
@@ -48,6 +51,30 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
                                 text={localize('Load Bot')}
                                 onClick={() => load_modal.toggleLoadModal()}
                                 primary
+                                large={isDesktop}
+                                medium={!isDesktop}
+                            />
+                            <Button
+                                className='hero-learn-button'
+                                has_effect
+                                text={localize('Get Started')}
+                                onClick={() => handleTabChange(17)} // Redirect to Strategies tab
+                                tertiary
+                                large={isDesktop}
+                                medium={!isDesktop}
+                            />
+                            <Button
+                                className='hero-whatsapp-button'
+                                has_effect
+                                text={localize('Inquiry')}
+                                icon={<span className='whatsapp-icon'>💬</span>}
+                                onClick={() =>
+                                    window.open(
+                                        'https://api.whatsapp.com/send/?phone=254796428848&text&type=phone_number&app_absent=0',
+                                        '_blank'
+                                    )
+                                }
+                                tertiary
                                 large={isDesktop}
                                 medium={!isDesktop}
                             />

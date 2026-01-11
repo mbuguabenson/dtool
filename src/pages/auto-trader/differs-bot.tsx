@@ -13,7 +13,7 @@ const DiffersBot = observer(() => {
         trade_message,
         is_market_unstable,
         strategy_target_digit,
-        is_running
+        is_running,
     } = auto_trader;
 
     const is_active = active_strategy === 'DIFFERS';
@@ -50,7 +50,7 @@ const DiffersBot = observer(() => {
             </div>
 
             {is_active && (
-                <div className={classNames('differs-bot__message', { 'unstable': is_market_unstable })}>
+                <div className={classNames('differs-bot__message', { unstable: is_market_unstable })}>
                     {trade_message}
                 </div>
             )}

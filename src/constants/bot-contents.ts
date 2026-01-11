@@ -25,8 +25,11 @@ export const DBOT_TABS: TDashboardTabIndex = Object.freeze({
     ADVANCED_OVER_UNDER: 10,
     SMART_AUTO24: 11,
     SMART_ANALYSIS: 12,
-    TUTORIALS: 13,
-    CIRCLES: 14,
+    AI_ANALYSIS: 13,
+    EASY_TOOL: 14,
+    TUTORIALS: 15,
+    CIRCLES: 16,
+    STRATEGIES: 17,
 });
 
 export const MAX_STRATEGIES = 10;
@@ -45,8 +48,11 @@ export const TAB_IDS = [
     'id-adv-over-under',
     'id-smart-auto24',
     'id-smart-analysis',
+    'id-ai-analysis',
+    'id-easy-tool',
     'id-tutorials',
     'id-circles',
+    'id-strategies',
 ];
 
 export const DEBOUNCE_INTERVAL_TIME = 500;

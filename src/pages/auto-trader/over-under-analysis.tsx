@@ -33,7 +33,6 @@ const OverUnderAnalysis = observer(() => {
     const matchesProb = digit_stats[selectedDigit]?.percentage || 0;
     const differsProb = 100 - matchesProb;
 
-
     const is_strategy_active = auto_trader.active_strategy === 'OVER_UNDER';
     const { strategy_status, trade_message, is_market_unstable, is_running, setActiveStrategy } = auto_trader;
 
@@ -62,7 +61,7 @@ const OverUnderAnalysis = observer(() => {
             </div>
 
             {is_strategy_active && (
-                <div className={classNames('strategy-status-panel', { 'unstable': is_market_unstable })}>
+                <div className={classNames('strategy-status-panel', { unstable: is_market_unstable })}>
                     <div className='status-row'>
                         <span className='label'>Status:</span>
                         <span className={classNames('value', strategy_status.toLowerCase())}>{strategy_status}</span>

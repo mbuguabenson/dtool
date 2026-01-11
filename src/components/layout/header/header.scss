@@ -10,9 +10,8 @@
     &__account-settings,
     .notifications__wrapper,
     &__menu {
-
-        svg>path,
-        svg>g>path {
+        svg > path,
+        svg > g > path {
             fill: var(--text-prominent);
         }
     }
@@ -51,7 +50,8 @@
             position: relative;
             width: 36px;
             height: 36px;
-            background: linear-gradient(135deg, #ff444f 0%, #ff7a82 100%);
+            background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+            color: #ffffff;
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -90,10 +90,11 @@
                 font-size: 1.6rem;
                 color: var(--text-prominent);
                 letter-spacing: -0.02em;
-                background: linear-gradient(to bottom, var(--text-prominent), rgba(var(--text-prominent-rgb), 0.7));
-                background-clip: text;
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
+                // Remove gradient that may cause visibility issues
+                // Use solid color for better visibility
+                display: block;
+                opacity: 1;
+                z-index: 1;
             }
 
             .brand-subtitle {
@@ -218,7 +219,7 @@
             box-shadow: 0 0 2px 0 var(--du-shadow-box, #00000014);
         }
 
-        .deriv-account-switcher__balance+svg>path {
+        .deriv-account-switcher__balance + svg > path {
             fill: var(--text-general);
         }
 

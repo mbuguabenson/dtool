@@ -32,7 +32,7 @@ export default class ClientStore {
     is_logging_out = false;
 
     // TODO: fix with self exclusion
-    updateSelfExclusion = () => { };
+    updateSelfExclusion = () => {};
 
     private authDataSubscription: { unsubscribe: () => void } | null = null;
     private balanceSubscription: { unsubscribe: () => void } | null = null;
@@ -75,7 +75,7 @@ export default class ClientStore {
 
         reaction(
             () => this.loginid,
-            (loginid) => {
+            loginid => {
                 if (loginid) {
                     this.unsubscribeBalance(); // Unsubscribe from previous account if any
                     setTimeout(() => this.subscribeToBalance(), 1000); // Subscribe for new account
@@ -161,7 +161,7 @@ export default class ClientStore {
             is_current_mf || //is_currently logged in mf account via tradershub
             (financial_shortcode || gaming_shortcode || mt_gaming_shortcode
                 ? (eu_shortcode_regex.test(financial_shortcode) && gaming_shortcode !== 'svg') ||
-                eu_shortcode_regex.test(gaming_shortcode)
+                  eu_shortcode_regex.test(gaming_shortcode)
                 : eu_excluded_regex.test(this.residence))
         );
     }

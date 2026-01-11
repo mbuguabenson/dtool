@@ -50,21 +50,46 @@
                     animation: pulse-ring 2s infinite;
                 }
 
-                &.STOPPED { color: #94a3b8; background: rgba(148, 163, 184, 0.1); }
-                &.LISTENING { color: #10b981; background: rgba(16, 185, 129, 0.1); }
-                &.SETUP { color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
-                &.CONFIRMING { color: #6366f1; background: rgba(99, 102, 241, 0.1); }
-                &.EXECUTING { 
-                    color: #ec4899; 
+                &.STOPPED {
+                    color: #94a3b8;
+                    background: rgba(148, 163, 184, 0.1);
+                }
+                &.LISTENING {
+                    color: #10b981;
+                    background: rgba(16, 185, 129, 0.1);
+                }
+                &.SETUP {
+                    color: #f59e0b;
+                    background: rgba(245, 158, 11, 0.1);
+                }
+                &.CONFIRMING {
+                    color: #6366f1;
+                    background: rgba(99, 102, 241, 0.1);
+                }
+                &.EXECUTING {
+                    color: #ec4899;
                     background: rgba(236, 72, 153, 0.1);
                     animation: glitch 0.5s infinite;
                 }
-                &.COOLDOWN { color: #3b82f6; background: rgba(59, 130, 246, 0.1); }
+                &.COOLDOWN {
+                    color: #3b82f6;
+                    background: rgba(59, 130, 246, 0.1);
+                }
             }
 
             .state-text {
-                .label { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; }
-                .value { font-size: 1.5rem; font-weight: 800; color: #fff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
+                .label {
+                    font-size: 0.75rem;
+                    color: #94a3b8;
+                    text-transform: uppercase;
+                    letter-spacing: 0.1em;
+                }
+                .value {
+                    font-size: 1.5rem;
+                    font-weight: 800;
+                    color: #fff;
+                    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+                }
             }
         }
 
@@ -88,14 +113,20 @@
                     background: linear-gradient(135deg, #10b981, #059669);
                     color: white;
                     box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
-                    &:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(16, 185, 129, 0.6); }
+                    &:hover {
+                        transform: scale(1.05);
+                        box-shadow: 0 0 30px rgba(16, 185, 129, 0.6);
+                    }
                 }
 
                 &.stop {
                     background: linear-gradient(135deg, #ef4444, #dc2626);
                     color: white;
                     box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
-                    &:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(239, 68, 68, 0.6); }
+                    &:hover {
+                        transform: scale(1.05);
+                        box-shadow: 0 0 30px rgba(239, 68, 68, 0.6);
+                    }
                 }
 
                 &:disabled {
@@ -125,8 +156,13 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
-            
-            h3 { font-size: 1.25rem; font-weight: 700; margin: 0; color: #f8fafc; }
+
+            h3 {
+                font-size: 1.25rem;
+                font-weight: 700;
+                margin: 0;
+                color: #f8fafc;
+            }
             .v-sense-tag {
                 background: rgba(139, 92, 246, 0.15);
                 color: #a78bfa;
@@ -144,7 +180,7 @@
             padding: 1rem;
             margin-bottom: 1rem;
             border-left: 4px solid #6366f1;
-            
+
             .last-event {
                 font-family: 'JetBrains Mono', monospace;
                 font-size: 0.875rem;
@@ -169,14 +205,24 @@
                 border-radius: 0.75rem;
                 border: 1px solid rgba(255, 255, 255, 0.05);
 
-                .label { font-size: 0.7rem; color: #94a3b8; margin-bottom: 0.25rem; }
-                .value { 
-                    font-size: 1.125rem; 
+                .label {
+                    font-size: 0.7rem;
+                    color: #94a3b8;
+                    margin-bottom: 0.25rem;
+                }
+                .value {
+                    font-size: 1.125rem;
                     font-weight: 700;
-                    
-                    &.SAFE { color: #10b981; }
-                    &.AVOID { color: #f59e0b; }
-                    &.STOP { color: #ef4444; }
+
+                    &.SAFE {
+                        color: #10b981;
+                    }
+                    &.AVOID {
+                        color: #f59e0b;
+                    }
+                    &.STOP {
+                        color: #ef4444;
+                    }
                 }
             }
         }
@@ -190,8 +236,13 @@
 
         .setting-group {
             margin-bottom: 1rem;
-            label { display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.75rem; }
-            
+            label {
+                display: block;
+                font-size: 0.8rem;
+                color: #94a3b8;
+                margin-bottom: 0.75rem;
+            }
+
             .toggle-row {
                 display: flex;
                 justify-content: space-between;
@@ -199,15 +250,18 @@
                 background: rgba(30, 41, 59, 0.4);
                 padding: 0.75rem 1rem;
                 border-radius: 0.75rem;
-                
-                span { font-size: 0.9rem; font-weight: 500; }
+
+                span {
+                    font-size: 0.9rem;
+                    font-weight: 500;
+                }
             }
 
             .risk-selector {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 0.5rem;
-                
+
                 .risk-btn {
                     padding: 0.75rem;
                     background: rgba(30, 41, 59, 1);
@@ -229,33 +283,65 @@
         }
 
         .performance-summary {
-            h4 { font-size: 0.875rem; color: #94a3b8; margin-bottom: 1rem; text-transform: uppercase; }
-            
+            h4 {
+                font-size: 0.875rem;
+                color: #94a3b8;
+                margin-bottom: 1rem;
+                text-transform: uppercase;
+            }
+
             .metric-row {
                 display: flex;
                 justify-content: space-between;
                 margin-bottom: 0.75rem;
                 font-size: 0.9rem;
-                
-                .val { font-weight: 700; }
-                .profit { color: #10b981; }
-                .loss { color: #ef4444; }
+
+                .val {
+                    font-weight: 700;
+                }
+                .profit {
+                    color: #10b981;
+                }
+                .loss {
+                    color: #ef4444;
+                }
             }
         }
     }
 }
 
 @keyframes pulse-ring {
-    0% { transform: scale(0.95); opacity: 0.5; }
-    50% { transform: scale(1.1); opacity: 0.1; }
-    100% { transform: scale(0.95); opacity: 0.5; }
+    0% {
+        transform: scale(0.95);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.1;
+    }
+    100% {
+        transform: scale(0.95);
+        opacity: 0.5;
+    }
 }
 
 @keyframes glitch {
-    0% { transform: translate(0); }
-    20% { transform: translate(-2px, 2px); }
-    40% { transform: translate(-2px, -2px); }
-    60% { transform: translate(2px, 2px); }
-    80% { transform: translate(2px, -2px); }
-    100% { transform: translate(0); }
+    0% {
+        transform: translate(0);
+    }
+    20% {
+        transform: translate(-2px, 2px);
+    }
+    40% {
+        transform: translate(-2px, -2px);
+    }
+    60% {
+        transform: translate(2px, 2px);
+    }
+    80% {
+        transform: translate(2px, -2px);
+    }
+    100% {
+        transform: translate(0);
+    }
 }

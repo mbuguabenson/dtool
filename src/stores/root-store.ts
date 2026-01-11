@@ -1,3 +1,5 @@
+import { action, makeObservable, observable, reaction, runInAction } from 'mobx';
+import { api_base } from '@/external/bot-skeleton/services/api/api-base';
 import AnalysisStore from './analysis-store';
 import AppStore from './app-store';
 import AutoTraderStore from './auto-trader-store';
@@ -99,5 +101,7 @@ export default class RootStore {
         this.chart_store = new ChartStore(this);
         this.blockly_store = new BlocklyStore(this);
         this.data_collection_store = new DataCollectionStore(this, this.core);
+
+        api_base.common_store = this.common;
     }
 }

@@ -253,6 +253,43 @@
     .dc-tabs {
         &__wrapper {
             padding: 1.6rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.6rem;
+
+            .tutorials-header-actions {
+                padding: 0 0.8rem;
+                margin-bottom: 0.8rem;
+
+                .btn-customer-care {
+                    width: 100%;
+                    padding: 1.2rem;
+                    background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    font-weight: bold;
+                    font-size: 1.4rem;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.8rem;
+                    transition:
+                        transform 0.2s ease,
+                        box-shadow 0.2s ease;
+                    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
+
+                    &:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 6px 16px rgba(37, 211, 102, 0.3);
+                    }
+
+                    .whatsapp-icon {
+                        font-size: 1.8rem;
+                    }
+                }
+            }
 
             &__group {
                 @include flex-center;
@@ -515,7 +552,6 @@
 
     &__search {
         @include mobile-or-tablet-screen {
-
             .tutorials-wrap,
             .faq__wrapper {
                 overflow: unset;

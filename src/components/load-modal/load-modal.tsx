@@ -95,7 +95,7 @@ const LoadModal: React.FC = observer(() => {
                 }
             }}
             onEntered={onEntered}
-            elements_to_ignore={([document.activeElement].filter(Boolean) as HTMLElement[])}
+            elements_to_ignore={[document.activeElement].filter(Boolean) as HTMLElement[]}
         >
             <Modal.Body>
                 <Tabs

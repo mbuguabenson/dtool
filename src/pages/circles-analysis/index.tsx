@@ -63,11 +63,7 @@ const CirclesAnalysis = observer(() => {
                 <div className='header-left'>
                     <div className='market-selector-wrapper'>
                         <label>Select Market</label>
-                        <select
-                            value={symbol}
-                            onChange={e => setSymbol(e.target.value)}
-                            className='premium-select'
-                        >
+                        <select value={symbol} onChange={e => setSymbol(e.target.value)} className='premium-select'>
                             {markets.map(group => (
                                 <optgroup key={group.group} label={group.group}>
                                     {group.items.map(item => (

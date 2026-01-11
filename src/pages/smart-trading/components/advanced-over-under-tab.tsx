@@ -178,8 +178,8 @@ const calculateRiskScore = (analyses: ThresholdAnalysis[], recentDigits: number[
         overallRisk === 'LOW'
             ? 'Safe to trade with recommended stakes'
             : overallRisk === 'MEDIUM'
-            ? 'Trade with caution, reduce stakes'
-            : 'High risk - avoid trading or use minimum stakes';
+              ? 'Trade with caution, reduce stakes'
+              : 'High risk - avoid trading or use minimum stakes';
 
     return {
         volatility: Math.min(volatility, 100),
@@ -200,8 +200,8 @@ const generateEntryRecommendations = (
             analysis.underPercent > analysis.overPercent
                 ? 'UNDER'
                 : analysis.overPercent > analysis.underPercent
-                ? 'OVER'
-                : null;
+                  ? 'OVER'
+                  : null;
 
         const dominanceMargin = Math.abs(analysis.underPercent - analysis.overPercent);
 
@@ -235,7 +235,8 @@ const generateEntryRecommendations = (
 
 const AdvancedOverUnderTab = observer(() => {
     const { smart_trading, app } = useStore();
-    const { ticks, current_price, last_digit, symbol, setSymbol, markets, updateDigitStats, active_symbols_data } = smart_trading;
+    const { ticks, current_price, last_digit, symbol, setSymbol, markets, updateDigitStats, active_symbols_data } =
+        smart_trading;
     const ticks_service = app.api_helpers_store?.ticks_service;
 
     const [selectedThreshold, setSelectedThreshold] = useState<'3-6' | '2-7' | '1-8'>('3-6');
@@ -333,10 +334,10 @@ const AdvancedOverUnderTab = observer(() => {
     }, [currentAnalysis, selectedThreshold]);
 
     return (
-        <div className="advanced-over-under-tab">
+        <div className='advanced-over-under-tab'>
             {/* Header */}
-            <div className="premium-market-header">
-                <div className="market-select-glass">
+            <div className='premium-market-header'>
+                <div className='market-select-glass'>
                     <label>MARKET</label>
                     <select value={symbol} onChange={e => setSymbol(e.target.value)}>
                         {markets.map(group => (
@@ -351,30 +352,30 @@ const AdvancedOverUnderTab = observer(() => {
                     </select>
                 </div>
 
-                <div className="price-display-glass">
-                    <span className="lbl">LIVE PRICE</span>
-                    <span className="val">{current_price}</span>
+                <div className='price-display-glass'>
+                    <span className='lbl'>LIVE PRICE</span>
+                    <span className='val'>{current_price}</span>
                 </div>
 
-                <div className="digit-display-glass">
-                    <span className="lbl">LAST DIGIT</span>
-                    <div className="digit-box">{last_digit !== null ? last_digit : '-'}</div>
+                <div className='digit-display-glass'>
+                    <span className='lbl'>LAST DIGIT</span>
+                    <div className='digit-box'>{last_digit !== null ? last_digit : '-'}</div>
                 </div>
             </div>
 
             {/* Title and Signal Badge */}
-            <div className="tab-header">
-                <h1 className="tab-title">
-                    <span className="icon">💰</span>
+            <div className='tab-header'>
+                <h1 className='tab-title'>
+                    <span className='icon'>💰</span>
                     Advanced Over/Under
                 </h1>
                 <div className={classNames('signal-badge', signalClass)}>{signal}</div>
             </div>
 
             {/* Last 20 Digits */}
-            <div className="last-digits-section">
-                <div className="section-label">Last 20 Digits</div>
-                <div className="digits-row">
+            <div className='last-digits-section'>
+                <div className='section-label'>Last 20 Digits</div>
+                <div className='digits-row'>
                     {ticks.slice(-20).map((digit, idx) => (
                         <div key={idx} className={classNames('digit-chip', `d-${digit}`)}>
                             {digit}
@@ -384,57 +385,66 @@ const AdvancedOverUnderTab = observer(() => {
             </div>
 
             {/* Main Analysis Display */}
-            <div className="main-analysis-display">
-                <div className="analysis-card under-card">
-                    <div className="percentage-display">{currentAnalysis.underPercent.toFixed(1)}%</div>
-                    <div className="card-label">
+            <div className='main-analysis-display'>
+                <div className='analysis-card under-card'>
+                    <div className='percentage-display'>{currentAnalysis.underPercent.toFixed(1)}%</div>
+                    <div className='card-label'>
                         Under (0-{THRESHOLDS[selectedThreshold].under[THRESHOLDS[selectedThreshold].under.length - 1]})
-                        <span className="trend-icon">📉</span>
+                        <span className='trend-icon'>📉</span>
                     </div>
-                    <div className="progress-bar">
-                        <div className="progress-fill under-fill" style={{ width: `${currentAnalysis.underPercent}%` }} />
+                    <div className='progress-bar'>
+                        <div
+                            className='progress-fill under-fill'
+                            style={{ width: `${currentAnalysis.underPercent}%` }}
+                        />
                     </div>
-                    <div className="strongest-label">Strongest Digit: {strongestUnder}</div>
+                    <div className='strongest-label'>Strongest Digit: {strongestUnder}</div>
                 </div>
 
-                <div className="analysis-card over-card">
-                    <div className="percentage-display">{currentAnalysis.overPercent.toFixed(1)}%</div>
-                    <div className="card-label">
-                        Over ({THRESHOLDS[selectedThreshold].over[0]}-9) <span className="trend-icon">📈</span>
+                <div className='analysis-card over-card'>
+                    <div className='percentage-display'>{currentAnalysis.overPercent.toFixed(1)}%</div>
+                    <div className='card-label'>
+                        Over ({THRESHOLDS[selectedThreshold].over[0]}-9) <span className='trend-icon'>📈</span>
                     </div>
-                    <div className="progress-bar">
-                        <div className="progress-fill over-fill" style={{ width: `${currentAnalysis.overPercent}%` }} />
+                    <div className='progress-bar'>
+                        <div className='progress-fill over-fill' style={{ width: `${currentAnalysis.overPercent}%` }} />
                     </div>
-                    <div className="strongest-label">Strongest Digit: {strongestOver}</div>
+                    <div className='strongest-label'>Strongest Digit: {strongestOver}</div>
                 </div>
             </div>
 
             {/* Metrics Row */}
-            <div className="metrics-row">
-                <div className="metric-box">
-                    <div className="metric-label">Market Power</div>
-                    <div className="metric-value">
+            <div className='metrics-row'>
+                <div className='metric-box'>
+                    <div className='metric-label'>Market Power</div>
+                    <div className='metric-value'>
                         {Math.max(currentAnalysis.underPercent, currentAnalysis.overPercent).toFixed(1)}%
                     </div>
                 </div>
-                <div className="metric-box">
-                    <div className="metric-label">Volatility</div>
-                    <div className="metric-value">{riskAssessment.volatility.toFixed(1)}%</div>
+                <div className='metric-box'>
+                    <div className='metric-label'>Volatility</div>
+                    <div className='metric-value'>{riskAssessment.volatility.toFixed(1)}%</div>
                 </div>
-                <div className="metric-box">
-                    <div className="metric-label">Confirmed Ticks</div>
-                    <div className="metric-value">{ticks.length}</div>
+                <div className='metric-box'>
+                    <div className='metric-label'>Confirmed Ticks</div>
+                    <div className='metric-value'>{ticks.length}</div>
                 </div>
             </div>
 
             {/* Predicted Contracts */}
-            <div className="predicted-section">
-                <div className="section-label">
+            <div className='predicted-section'>
+                <div className='section-label'>
                     Predicted {currentAnalysis.underPercent > currentAnalysis.overPercent ? 'Under' : 'Over'} Contracts:
                 </div>
-                <div className="contracts-row">
+                <div className='contracts-row'>
                     {predictedContracts.map(digit => (
-                        <div key={digit} className={classNames('contract-chip', currentAnalysis.underPercent > currentAnalysis.overPercent ? 'under' : 'over')}>
+                        <div
+                            key={digit}
+                            className={classNames(
+                                'contract-chip',
+                                currentAnalysis.underPercent > currentAnalysis.overPercent ? 'under' : 'over'
+                            )}
+                        >
                             {currentAnalysis.underPercent > currentAnalysis.overPercent ? 'Under' : 'Over'} {digit}
                         </div>
                     ))}
@@ -442,19 +452,20 @@ const AdvancedOverUnderTab = observer(() => {
             </div>
 
             {/* How it works */}
-            <div className="how-it-works">
-                <div className="how-title">How Advanced Over/Under Works:</div>
-                <div className="how-text">
-                    Phase 1 analyzes initial market conditions. If conditions are met, Phase 2 confirms with 15 additional
-                    ticks. When confidence reaches 56% or higher with increasing trend, a RUN NOW signal appears (orange with
-                    glow). You have maximum 20 ticks to trade. Exit signal appears if market changes or time expires.
+            <div className='how-it-works'>
+                <div className='how-title'>How Advanced Over/Under Works:</div>
+                <div className='how-text'>
+                    Phase 1 analyzes initial market conditions. If conditions are met, Phase 2 confirms with 15
+                    additional ticks. When confidence reaches 56% or higher with increasing trend, a RUN NOW signal
+                    appears (orange with glow). You have maximum 20 ticks to trade. Exit signal appears if market
+                    changes or time expires.
                 </div>
             </div>
 
             {/* Threshold Selector */}
-            <div className="threshold-selector">
-                <div className="selector-label">Select Threshold:</div>
-                <div className="threshold-tabs">
+            <div className='threshold-selector'>
+                <div className='selector-label'>Select Threshold:</div>
+                <div className='threshold-tabs'>
                     {Object.entries(THRESHOLDS).map(([key, config]) => (
                         <button
                             key={key}
@@ -463,52 +474,55 @@ const AdvancedOverUnderTab = observer(() => {
                                 active: selectedThreshold === key,
                             })}
                         >
-                            <div className="tab-name">{config.name}</div>
-                            <div className="tab-multiplier">x{config.multiplier}</div>
+                            <div className='tab-name'>{config.name}</div>
+                            <div className='tab-multiplier'>x{config.multiplier}</div>
                         </button>
                     ))}
                 </div>
             </div>
 
             {/* Multi-Threshold Comparison */}
-            <div className="comparison-grid">
+            <div className='comparison-grid'>
                 {allAnalyses.map(analysis => (
-                    <div key={analysis.threshold} className="comparison-card">
-                        <div className="card-title">{analysis.threshold}</div>
+                    <div key={analysis.threshold} className='comparison-card'>
+                        <div className='card-title'>{analysis.threshold}</div>
 
-                        <div className="comparison-bars">
-                            <div className="bar-item">
-                                <div className="bar-header">
-                                    <span className="bar-label">UNDER</span>
-                                    <span className="bar-percent">{analysis.underPercent.toFixed(1)}%</span>
+                        <div className='comparison-bars'>
+                            <div className='bar-item'>
+                                <div className='bar-header'>
+                                    <span className='bar-label'>UNDER</span>
+                                    <span className='bar-percent'>{analysis.underPercent.toFixed(1)}%</span>
                                 </div>
-                                <div className="bar-track">
-                                    <div className="bar-fill under-fill" style={{ width: `${analysis.underPercent}%` }} />
+                                <div className='bar-track'>
+                                    <div
+                                        className='bar-fill under-fill'
+                                        style={{ width: `${analysis.underPercent}%` }}
+                                    />
                                 </div>
                             </div>
 
-                            <div className="bar-item">
-                                <div className="bar-header">
-                                    <span className="bar-label">OVER</span>
-                                    <span className="bar-percent">{analysis.overPercent.toFixed(1)}%</span>
+                            <div className='bar-item'>
+                                <div className='bar-header'>
+                                    <span className='bar-label'>OVER</span>
+                                    <span className='bar-percent'>{analysis.overPercent.toFixed(1)}%</span>
                                 </div>
-                                <div className="bar-track">
-                                    <div className="bar-fill over-fill" style={{ width: `${analysis.overPercent}%` }} />
+                                <div className='bar-track'>
+                                    <div className='bar-fill over-fill' style={{ width: `${analysis.overPercent}%` }} />
                                 </div>
                             </div>
                         </div>
 
-                        <div className="card-metrics">
-                            <div className="metric-item">
-                                <span className="metric-label">Strength</span>
-                                <span className="metric-value">{analysis.strength}</span>
+                        <div className='card-metrics'>
+                            <div className='metric-item'>
+                                <span className='metric-label'>Strength</span>
+                                <span className='metric-value'>{analysis.strength}</span>
                             </div>
-                            <div className="metric-item">
-                                <span className="metric-label">Confidence</span>
-                                <span className="metric-value">{analysis.confidence.toFixed(0)}%</span>
+                            <div className='metric-item'>
+                                <span className='metric-label'>Confidence</span>
+                                <span className='metric-value'>{analysis.confidence.toFixed(0)}%</span>
                             </div>
-                            <div className="metric-item full-width">
-                                <span className="metric-label">Expected Value</span>
+                            <div className='metric-item full-width'>
+                                <span className='metric-label'>Expected Value</span>
                                 <span
                                     className={classNames('metric-value', 'ev-value', {
                                         positive: analysis.expectedPayout > 0,
@@ -525,14 +539,14 @@ const AdvancedOverUnderTab = observer(() => {
             </div>
 
             {/* Risk Assessment */}
-            <div className="risk-assessment-card">
-                <div className="card-title">Risk Assessment</div>
+            <div className='risk-assessment-card'>
+                <div className='card-title'>Risk Assessment</div>
 
-                <div className="risk-metrics-grid">
-                    <div className="risk-metric">
-                        <div className="risk-label">Market Volatility</div>
-                        <div className="risk-value">{riskAssessment.volatility.toFixed(0)}%</div>
-                        <div className="risk-bar">
+                <div className='risk-metrics-grid'>
+                    <div className='risk-metric'>
+                        <div className='risk-label'>Market Volatility</div>
+                        <div className='risk-value'>{riskAssessment.volatility.toFixed(0)}%</div>
+                        <div className='risk-bar'>
                             <div
                                 className={classNames('risk-fill', {
                                     low: riskAssessment.volatility < 30,
@@ -544,19 +558,19 @@ const AdvancedOverUnderTab = observer(() => {
                         </div>
                     </div>
 
-                    <div className="risk-metric">
-                        <div className="risk-label">Trend Strength</div>
-                        <div className="risk-value">{riskAssessment.trendStrength.toFixed(0)}%</div>
-                        <div className="risk-bar">
-                            <div className="risk-fill" style={{ width: `${riskAssessment.trendStrength}%` }} />
+                    <div className='risk-metric'>
+                        <div className='risk-label'>Trend Strength</div>
+                        <div className='risk-value'>{riskAssessment.trendStrength.toFixed(0)}%</div>
+                        <div className='risk-bar'>
+                            <div className='risk-fill' style={{ width: `${riskAssessment.trendStrength}%` }} />
                         </div>
                     </div>
 
-                    <div className="risk-metric">
-                        <div className="risk-label">Overall Confidence</div>
-                        <div className="risk-value">{riskAssessment.confidence.toFixed(0)}%</div>
-                        <div className="risk-bar">
-                            <div className="risk-fill" style={{ width: `${riskAssessment.confidence}%` }} />
+                    <div className='risk-metric'>
+                        <div className='risk-label'>Overall Confidence</div>
+                        <div className='risk-value'>{riskAssessment.confidence.toFixed(0)}%</div>
+                        <div className='risk-bar'>
+                            <div className='risk-fill' style={{ width: `${riskAssessment.confidence}%` }} />
                         </div>
                     </div>
                 </div>
@@ -568,38 +582,38 @@ const AdvancedOverUnderTab = observer(() => {
                         high: riskAssessment.overallRisk === 'HIGH',
                     })}
                 >
-                    <div className="risk-badge-label">{riskAssessment.overallRisk} RISK</div>
-                    <div className="risk-recommendation">{riskAssessment.recommendation}</div>
+                    <div className='risk-badge-label'>{riskAssessment.overallRisk} RISK</div>
+                    <div className='risk-recommendation'>{riskAssessment.recommendation}</div>
                 </div>
             </div>
 
             {/* Correlation Heatmap (Optional) */}
             {showHeatmap && (
-                <div className="heatmap-card">
-                    <div className="heatmap-header">
-                        <div className="card-title">Correlation Matrix</div>
-                        <button onClick={() => setShowHeatmap(false)} className="hide-btn">
+                <div className='heatmap-card'>
+                    <div className='heatmap-header'>
+                        <div className='card-title'>Correlation Matrix</div>
+                        <button onClick={() => setShowHeatmap(false)} className='hide-btn'>
                             Hide
                         </button>
                     </div>
 
-                    <div className="heatmap-grid">
-                        <div className="heatmap-cell header-cell"></div>
+                    <div className='heatmap-grid'>
+                        <div className='heatmap-cell header-cell'></div>
                         {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => (
-                            <div key={i} className="heatmap-cell header-cell">
+                            <div key={i} className='heatmap-cell header-cell'>
                                 {i}
                             </div>
                         ))}
 
                         {correlationMatrix.map((row, i) => (
-                            <div key={i} className="heatmap-row">
-                                <div className="heatmap-cell header-cell">{i}</div>
+                            <div key={i} className='heatmap-row'>
+                                <div className='heatmap-cell header-cell'>{i}</div>
                                 {row.map((value, j) => {
                                     const intensity = value / 20;
                                     return (
                                         <div
                                             key={j}
-                                            className="heatmap-cell data-cell"
+                                            className='heatmap-cell data-cell'
                                             style={{
                                                 backgroundColor: `rgba(168, 85, 247, ${intensity})`,
                                                 color: intensity > 0.5 ? 'white' : 'inherit',
@@ -617,7 +631,7 @@ const AdvancedOverUnderTab = observer(() => {
             )}
 
             {!showHeatmap && (
-                <button onClick={() => setShowHeatmap(true)} className="show-heatmap-btn">
+                <button onClick={() => setShowHeatmap(true)} className='show-heatmap-btn'>
                     Show Correlation Heatmap
                 </button>
             )}

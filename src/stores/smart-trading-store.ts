@@ -26,7 +26,20 @@ type TDerivResponse = {
     proposal?: { id: string };
 };
 
-export type TSmartSubtab = 'speed' | 'bulk' | 'automated' | 'analysis' | 'even_odd' | 'over_under' | 'advanced_ou' | 'differs' | 'matches' | 'charts' | 'turbo' | 'vsense_turbo';
+export type TSmartSubtab =
+    | 'speed'
+    | 'bulk'
+    | 'automated'
+    | 'analysis'
+    | 'even_odd'
+    | 'over_under'
+    | 'advanced_ou'
+    | 'differs'
+    | 'matches'
+    | 'charts'
+    | 'turbo'
+    | 'vsense_turbo'
+    | 'money_maker_ultra';
 
 export type TSmartDigitStat = {
     digit: number;
@@ -154,11 +167,13 @@ export default class SmartTradingStore {
     @observable accessor last_digit: number | null = null;
     @observable accessor is_connected = false;
     @observable accessor markets: { group: string; items: { value: string; label: string }[] }[] = [];
-    @observable accessor active_symbols_data: Record<string, { pip: number; symbol: string; display_name: string }> = {};
+    @observable accessor active_symbols_data: Record<string, { pip: number; symbol: string; display_name: string }> =
+        {};
 
     // V-SENSE™ TurboExec Bot State
     @observable accessor is_turbo_bot_running: boolean = false;
-    @observable accessor turbo_bot_state: 'STOPPED' | 'LISTENING' | 'SETUP' | 'CONFIRMING' | 'EXECUTING' | 'COOLDOWN' = 'STOPPED';
+    @observable accessor turbo_bot_state: 'STOPPED' | 'LISTENING' | 'SETUP' | 'CONFIRMING' | 'EXECUTING' | 'COOLDOWN' =
+        'STOPPED';
     @observable accessor turbo_settings = {
         max_risk: 0.05,
         is_bulk_enabled: false,
@@ -166,6 +181,27 @@ export default class SmartTradingStore {
     };
     @observable accessor turbo_cooldown_ticks: number = 0;
     @observable accessor turbo_last_signal: string = '';
+
+    // Money Maker Ultra States
+    @observable accessor is_money_maker_ultra_running = false;
+    @observable accessor ultra_volatility_threshold = 1.5; // σ multiplier
+    @observable accessor ultra_momentum_mode: 'shadow_scalper' | 'flash_overunder' | 'momentum_pulse' =
+        'shadow_scalper';
+    @observable accessor ultra_heartbeat_count = 0;
+    @observable accessor ultra_alpha_score = 0; // 0-100 health score
+    @observable accessor ultra_session_trades = 0;
+    @observable accessor ultra_circuit_breaker_active = false;
+    @observable accessor ultra_circuit_breaker_until: number | null = null;
+    @observable accessor ultra_last_losses: number[] = []; // Timestamps of recent losses
+    @observable accessor ultra_volatility_sigma = 0; // Current standard deviation
+    @observable accessor ultra_momentum_velocity = 0; // 0-100 market speed
+    @observable accessor ultra_start_balance = 0;
+    @observable accessor is_ultra_loop_processing = false;
+    @observable accessor ultra_console_logs: Array<{
+        timestamp: number;
+        message: string;
+        type: 'info' | 'success' | 'error';
+    }> = [];
 
     @observable accessor active_subtab: TSmartSubtab = 'speed';
     @observable accessor v_sense_signals: VSenseSignal[] = [];
@@ -217,20 +253,38 @@ export default class SmartTradingStore {
         const over = slice.filter(d => d > 4).length; // 5,6,7,8,9
         const under = slice.length - over; // 0,1,2,3,4
 
+        // Calculate Rise/Fall based on price movement
+        // We need price ticks for this, not just last digits
+        // Assuming we might need a separate price_ticks array if 'ticks' only stores digits
+        // But for now, let's use a simple heuristic if 'ticks' is digits or just provide the data structure
+
+        let rises = 0;
+        let falls = 0;
+        for (let i = 1; i < slice.length; i++) {
+            if (slice[i] > slice[i - 1]) rises++;
+            else if (slice[i] < slice[i - 1]) falls++;
+        }
+        const trend_total = rises + falls || 1;
+
         return {
             total: slice.length,
-            even, odd, over, under,
+            even,
+            odd,
+            over,
+            under,
             evenProb: slice.length ? (even / slice.length) * 100 : 0,
             oddProb: slice.length ? (odd / slice.length) * 100 : 0,
             overProb: slice.length ? (over / slice.length) * 100 : 0,
             underProb: slice.length ? (under / slice.length) * 100 : 0,
+            riseProb: (rises / trend_total) * 100,
+            fallProb: (falls / trend_total) * 100,
         };
     }
 
     @action
     setStatsSampleSize = (size: number) => {
         this.stats_sample_size = size;
-        // Trigger a re-fetch or re-calculation if needed, 
+        // Trigger a re-fetch or re-calculation if needed,
         // but typically ticks are strictly updated via updateDigitStats
     };
 
@@ -509,6 +563,10 @@ export default class SmartTradingStore {
         });
 
         this.updatePowerHistory(stats);
+
+        // Loop with concurrency guard
+        this.runMoneyMakerUltraLoop();
+
         this.checkStrategyTriggers();
     };
 
@@ -605,19 +663,43 @@ export default class SmartTradingStore {
             }
         }
         try {
-            const symbols = await (ApiHelpers.instance as unknown as { active_symbols: { retrieveActiveSymbols: () => Promise<Array<{ is_trading_suspended: number; market_display_name?: string; market: string; symbol: string; display_name: string; pip: number }>> } }).active_symbols.retrieveActiveSymbols();
+            const symbols = await (
+                ApiHelpers.instance as unknown as {
+                    active_symbols: {
+                        retrieveActiveSymbols: () => Promise<
+                            Array<{
+                                is_trading_suspended: number;
+                                market_display_name?: string;
+                                market: string;
+                                symbol: string;
+                                display_name: string;
+                                pip: number;
+                            }>
+                        >;
+                    };
+                }
+            ).active_symbols.retrieveActiveSymbols();
             runInAction(() => {
                 if (symbols && Array.isArray(symbols)) {
                     const groups: Record<string, { group: string; items: { value: string; label: string }[] }> = {};
                     const symbolData: Record<string, { pip: number; symbol: string; display_name: string }> = {};
 
-                    symbols.forEach((s: { is_trading_suspended: number | boolean; market_display_name?: string; market: string; symbol: string; display_name: string; pip: number }) => {
-                        if (s.is_trading_suspended) return;
-                        const market_name = s.market_display_name || s.market;
-                        if (!groups[market_name]) groups[market_name] = { group: market_name, items: [] };
-                        groups[market_name].items.push({ value: s.symbol, label: s.display_name });
-                        symbolData[s.symbol] = s;
-                    });
+                    symbols.forEach(
+                        (s: {
+                            is_trading_suspended: number | boolean;
+                            market_display_name?: string;
+                            market: string;
+                            symbol: string;
+                            display_name: string;
+                            pip: number;
+                        }) => {
+                            if (s.is_trading_suspended) return;
+                            const market_name = s.market_display_name || s.market;
+                            if (!groups[market_name]) groups[market_name] = { group: market_name, items: [] };
+                            groups[market_name].items.push({ value: s.symbol, label: s.display_name });
+                            symbolData[s.symbol] = s;
+                        }
+                    );
                     this.markets = Object.values(groups).sort((a, b) => a.group.localeCompare(b.group));
                     this.active_symbols_data = symbolData;
                 }
@@ -932,7 +1014,8 @@ export default class SmartTradingStore {
                         const last_digits = this.ticks.slice(-(strategy.check_last_x || 5));
                         const target = strategy.target_pattern === 'Even' ? 0 : 1;
                         triggered =
-                            last_digits.length === (strategy.check_last_x || 5) && last_digits.every(d => d % 2 === target);
+                            last_digits.length === (strategy.check_last_x || 5) &&
+                            last_digits.every(d => d % 2 === target);
                         break;
                     }
                     case 'even_odd_percentages': {
@@ -945,7 +1028,9 @@ export default class SmartTradingStore {
                         const is_greater = strategy.condition === 'Greater than';
                         triggered =
                             last_digits.length === (strategy.check_last_x || 3) &&
-                            last_digits.every(d => (is_greater ? d > strategy.threshold_val! : d < strategy.threshold_val!));
+                            last_digits.every(d =>
+                                is_greater ? d > strategy.threshold_val! : d < strategy.threshold_val!
+                            );
                         break;
                     }
                     case 'over_under_percentages': {
@@ -1051,14 +1136,18 @@ export default class SmartTradingStore {
                 const second_is_even = is_even(second_most);
                 const least_is_even = is_even(least_appearing);
 
-                const even_pct = this.digit_stats.filter(s => is_even(s.digit)).reduce((acc, s) => acc + s.percentage, 0);
+                const even_pct = this.digit_stats
+                    .filter(s => is_even(s.digit))
+                    .reduce((acc, s) => acc + s.percentage, 0);
                 const odd_pct = 100 - even_pct;
 
                 // Check for unstable market (decreasing power)
                 const history = strategy.power_history || [];
                 if (history.length >= 2) {
                     const current_dominant_pct = Math.max(even_pct, odd_pct);
-                    const prev_even = history[history.length - 2].filter((_, i) => is_even(i)).reduce((a, b) => a + b, 0);
+                    const prev_even = history[history.length - 2]
+                        .filter((_, i) => is_even(i))
+                        .reduce((a, b) => a + b, 0);
                     const prev_odd = 100 - prev_even;
                     const prev_dominant_pct = Math.max(prev_even, prev_odd);
 
@@ -1081,7 +1170,11 @@ export default class SmartTradingStore {
                         const most_power = getPowerTrend(most_appearing);
                         const least_power = getPowerTrend(least_appearing);
 
-                        if (entry_digit_power === 'increasing' || most_power === 'increasing' || least_power === 'increasing') {
+                        if (
+                            entry_digit_power === 'increasing' ||
+                            most_power === 'increasing' ||
+                            least_power === 'increasing'
+                        ) {
                             return { action: 'TRADE', contractType: 'DIGITEVEN', confidence: even_pct };
                         }
                     }
@@ -1095,7 +1188,11 @@ export default class SmartTradingStore {
                         const most_power = getPowerTrend(most_appearing);
                         const least_power = getPowerTrend(least_appearing);
 
-                        if (entry_digit_power === 'increasing' || most_power === 'increasing' || least_power === 'increasing') {
+                        if (
+                            entry_digit_power === 'increasing' ||
+                            most_power === 'increasing' ||
+                            least_power === 'increasing'
+                        ) {
                             return { action: 'TRADE', contractType: 'DIGITODD', confidence: odd_pct };
                         }
                     }
@@ -1114,11 +1211,12 @@ export default class SmartTradingStore {
 
                 // Track aggregate power trend
                 const history = strategy.power_history || [];
-                const prev_pct = history.length >= 2
-                    ? (is_over
-                        ? history[history.length - 2].slice(5).reduce((a, b) => a + b, 0)
-                        : history[history.length - 2].slice(0, 5).reduce((a, b) => a + b, 0))
-                    : best_bias_pct;
+                const prev_pct =
+                    history.length >= 2
+                        ? is_over
+                            ? history[history.length - 2].slice(5).reduce((a, b) => a + b, 0)
+                            : history[history.length - 2].slice(0, 5).reduce((a, b) => a + b, 0)
+                        : best_bias_pct;
 
                 const power_increasing = best_bias_pct > prev_pct;
                 const power_decreasing = best_bias_pct < prev_pct;
@@ -1133,10 +1231,14 @@ export default class SmartTradingStore {
 
                 // Suggestions
                 if (is_over) {
-                    const sorted_over = [5, 6, 7, 8, 9].sort((a, b) => this.digit_stats[b].percentage - this.digit_stats[a].percentage);
+                    const sorted_over = [5, 6, 7, 8, 9].sort(
+                        (a, b) => this.digit_stats[b].percentage - this.digit_stats[a].percentage
+                    );
                     strategy.suggested_prediction = `OVER ${Math.min(sorted_over[0], sorted_over[1])}`;
                 } else {
-                    const sorted_under = [0, 1, 2, 3, 4].sort((a, b) => this.digit_stats[b].percentage - this.digit_stats[a].percentage);
+                    const sorted_under = [0, 1, 2, 3, 4].sort(
+                        (a, b) => this.digit_stats[b].percentage - this.digit_stats[a].percentage
+                    );
                     strategy.suggested_prediction = `UNDER ${Math.max(sorted_under[0], sorted_under[1])}`;
                 }
 
@@ -1147,14 +1249,18 @@ export default class SmartTradingStore {
 
                     if (is_over) {
                         // Find highest power digit in over range (5-9)
-                        const over_digits = this.digit_stats.filter(s => s.digit > 4).sort((a, b) => b.percentage - a.percentage);
+                        const over_digits = this.digit_stats
+                            .filter(s => s.digit > 4)
+                            .sort((a, b) => b.percentage - a.percentage);
                         const highest_over_digit = over_digits[0]?.digit;
                         if (last_digit === highest_over_digit && getPowerTrend(highest_over_digit) === 'increasing') {
                             should_enter = true;
                         }
                     } else {
                         // Find highest power digit in under range (0-4)
-                        const under_digits = this.digit_stats.filter(s => s.digit <= 4).sort((a, b) => b.percentage - a.percentage);
+                        const under_digits = this.digit_stats
+                            .filter(s => s.digit <= 4)
+                            .sort((a, b) => b.percentage - a.percentage);
                         const highest_under_digit = under_digits[0]?.digit;
                         if (last_digit === highest_under_digit && getPowerTrend(highest_under_digit) === 'increasing') {
                             should_enter = true;
@@ -1167,7 +1273,7 @@ export default class SmartTradingStore {
                             action: 'TRADE',
                             contractType: is_over ? 'DIGITOVER' : 'DIGITUNDER',
                             prediction: strategy.prediction || (is_over ? 4 : 5),
-                            confidence: best_bias_pct
+                            confidence: best_bias_pct,
                         };
                     } else {
                         strategy.market_message = `WAIT - Entry signal pending (${best_bias_pct.toFixed(1)}%)`;
@@ -1195,10 +1301,10 @@ export default class SmartTradingStore {
                 }
                 strategy.is_unstable = false;
 
-                // selected digit should NOT be most, 2nd most, or least. 
+                // selected digit should NOT be most, 2nd most, or least.
                 // digit to differ should be below 10% and decreasingly.
-                const valid_digits = [2, 3, 4, 5, 6, 7].filter(d =>
-                    d !== most_appearing && d !== second_most && d !== least_appearing
+                const valid_digits = [2, 3, 4, 5, 6, 7].filter(
+                    d => d !== most_appearing && d !== second_most && d !== least_appearing
                 );
 
                 const stats_2_7 = this.digit_stats.filter(s => valid_digits.includes(s.digit));
@@ -1230,7 +1336,12 @@ export default class SmartTradingStore {
 
                 if (increasing_target !== undefined) {
                     strategy.market_message = `TRADING MATCHES ${increasing_target}...`;
-                    return { action: 'TRADE', contractType: 'DIGITMATCH', prediction: increasing_target, confidence: 20 };
+                    return {
+                        action: 'TRADE',
+                        contractType: 'DIGITMATCH',
+                        prediction: increasing_target,
+                        confidence: 20,
+                    };
                 }
                 strategy.market_message = 'Waiting for power surge...';
                 return { action: 'WAIT' };
@@ -1248,7 +1359,8 @@ export default class SmartTradingStore {
         if (strategy.enable_tp_sl && strategy.profit_loss >= strategy.take_profit) return false;
 
         // Individual bot Max Consecutive Losses
-        if (strategy.is_max_loss_enabled && strategy.consecutive_losses >= strategy.max_consecutive_losses) return false;
+        if (strategy.is_max_loss_enabled && strategy.consecutive_losses >= strategy.max_consecutive_losses)
+            return false;
 
         // Global Max Stake Limit (still useful as a safety)
         if (this.is_max_stake_enabled && strategy.current_stake > this.max_stake_limit) return false;
@@ -1287,14 +1399,19 @@ export default class SmartTradingStore {
                     duration: strategy.ticks,
                     duration_unit: 't',
                     symbol: this.symbol,
-                    ...((['DIGITOVER', 'DIGITUNDER', 'DIGITMATCH', 'DIGITDIFF'].includes(trade_type || '')) && prediction !== undefined ? { barrier: String(prediction) } : {}),
+                    ...(['DIGITOVER', 'DIGITUNDER', 'DIGITMATCH', 'DIGITDIFF'].includes(trade_type || '') &&
+                    prediction !== undefined
+                        ? { barrier: String(prediction) }
+                        : {}),
                 }),
-                timeoutPromise(10000, 'Proposal timed out')
+                timeoutPromise(10000, 'Proposal timed out'),
             ]);
 
             if (proposal.error) {
                 console.warn('Strategy Proposal Error:', proposal.error.message);
-                runInAction(() => { strategy.status = 'waiting'; });
+                runInAction(() => {
+                    strategy.status = 'waiting';
+                });
                 return;
             }
 
@@ -1304,12 +1421,14 @@ export default class SmartTradingStore {
                     buy: proposal.proposal.id,
                     price: strategy.current_stake,
                 }),
-                timeoutPromise(10000, 'Buy timed out')
+                timeoutPromise(10000, 'Buy timed out'),
             ]);
 
             if (buy.error) {
                 console.warn('Strategy Buy Error:', buy.error.message);
-                runInAction(() => { strategy.status = 'waiting'; });
+                runInAction(() => {
+                    strategy.status = 'waiting';
+                });
                 return;
             }
 
@@ -1536,14 +1655,13 @@ export default class SmartTradingStore {
         }
 
         if (this.turbo_bot_state === 'LISTENING') {
-            const valid_signals = this.v_sense_signals.filter(s =>
-                s.confidence >= this.turbo_settings.min_confidence &&
-                s.status === 'SAFE'
+            const valid_signals = this.v_sense_signals.filter(
+                s => s.confidence >= this.turbo_settings.min_confidence && s.status === 'SAFE'
             );
 
             if (valid_signals.length > 0) {
                 const best_signal = valid_signals.reduce((prev, current) =>
-                    (prev.confidence > current.confidence) ? prev : current
+                    prev.confidence > current.confidence ? prev : current
                 );
 
                 this.executeTurboTrade(best_signal);
@@ -1585,10 +1703,14 @@ export default class SmartTradingStore {
 
     getTurboContractType = (signal: VSenseSignal) => {
         switch (signal.strategy) {
-            case 'DIFFERS': return 'DIGITDIFF';
-            case 'EVEN_ODD': return signal.targetSide === 'EVEN' ? 'DIGITEVEN' : 'DIGITODD';
-            case 'OVER_UNDER': return signal.targetSide === 'OVER' ? 'DIGITOVER' : 'DIGITUNDER';
-            default: return 'DIGITDIFF';
+            case 'DIFFERS':
+                return 'DIGITDIFF';
+            case 'EVEN_ODD':
+                return signal.targetSide === 'EVEN' ? 'DIGITEVEN' : 'DIGITODD';
+            case 'OVER_UNDER':
+                return signal.targetSide === 'OVER' ? 'DIGITOVER' : 'DIGITUNDER';
+            default:
+                return 'DIGITDIFF';
         }
     };
 
@@ -1658,20 +1780,22 @@ export default class SmartTradingStore {
                     const second_most = sorted_by_freq[1].digit;
                     const least_frequent = sorted_by_freq[sorted_by_freq.length - 1].digit;
 
-                    const differs_targets = [2, 3, 4, 5, 6, 7].filter(d =>
-                        d !== most_frequent &&
-                        d !== second_most &&
-                        d !== least_frequent &&
-                        digit_percentages[d] < 10
+                    const differs_targets = [2, 3, 4, 5, 6, 7].filter(
+                        d =>
+                            d !== most_frequent &&
+                            d !== second_most &&
+                            d !== least_frequent &&
+                            digit_percentages[d] < 10
                     );
 
                     // Calculate overall market score
                     const ev_skew = Math.abs(even_pct - odd_pct);
                     const ou_skew = Math.abs(over_pct - under_pct);
                     const score = Math.max(ev_skew, ou_skew);
-                    const reason = ev_skew > ou_skew
-                        ? `Strong ${even_pct > odd_pct ? 'Even' : 'Odd'} bias (${score.toFixed(1)}%)`
-                        : `Strong ${over_pct > under_pct ? 'Over' : 'Under'} bias (${score.toFixed(1)}%)`;
+                    const reason =
+                        ev_skew > ou_skew
+                            ? `Strong ${even_pct > odd_pct ? 'Even' : 'Odd'} bias (${score.toFixed(1)}%)`
+                            : `Strong ${over_pct > under_pct ? 'Over' : 'Under'} bias (${score.toFixed(1)}%)`;
 
                     return {
                         symbol,
@@ -1729,7 +1853,7 @@ export default class SmartTradingStore {
                 duration,
                 duration_unit: 't',
                 symbol: this.symbol,
-                ...((prediction !== undefined) ? { barrier: String(prediction) } : {}),
+                ...(prediction !== undefined ? { barrier: String(prediction) } : {}),
             });
 
             if (proposal.error) return;
@@ -1772,8 +1896,249 @@ export default class SmartTradingStore {
                     }
                 }
             );
-        } catch (e) {
-            console.error('Turbo Exec Error:', e);
+        } catch (error) {
+            console.error('Turbo contract error:', error);
+        }
+    };
+
+    // --- Money Maker Ultra Methods ---
+    @action
+    startMoneyMakerUltra = () => {
+        if (this.ultra_circuit_breaker_active) {
+            this.addUltraLog('Circuit breaker active. Cannot start.', 'error');
+            return;
+        }
+
+        this.is_money_maker_ultra_running = true;
+        this.ultra_session_trades = 0;
+        this.ultra_heartbeat_count = 0;
+        this.ultra_last_losses = [];
+        this.ultra_start_balance = parseFloat(this.root_store.client.balance as string) || 0;
+        this.addUltraLog('Money Maker Ultra INITIATED', 'success');
+
+        // Start the loop logic
+        this.runMoneyMakerUltraLoop();
+    };
+
+    @action
+    stopMoneyMakerUltra = () => {
+        this.is_money_maker_ultra_running = false;
+        this.addUltraLog('Money Maker Ultra TERMINATED', 'info');
+    };
+
+    @action
+    setUltraMomentumMode = (mode: 'shadow_scalper' | 'flash_overunder' | 'momentum_pulse') => {
+        this.ultra_momentum_mode = mode;
+        this.addUltraLog(`Strategy switched to: ${mode.toUpperCase().replace('_', ' ')}`, 'info');
+    };
+
+    @action
+    addUltraLog = (message: string, type: 'info' | 'success' | 'error') => {
+        const log = { timestamp: Date.now(), message, type };
+        this.ultra_console_logs = [...this.ultra_console_logs.slice(-99), log];
+    };
+
+    @action
+    calculateVolatilitySigma = (): number => {
+        if (this.ticks.length < 20) return 0;
+
+        const last20 = this.ticks.slice(-20);
+        const changes: number[] = [];
+
+        for (let i = 1; i < last20.length; i++) {
+            changes.push(Math.abs(last20[i] - last20[i - 1]));
+        }
+
+        const mean = changes.reduce((a, b) => a + b, 0) / changes.length;
+        const variance = changes.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / changes.length;
+
+        return Math.sqrt(variance);
+    };
+
+    @action
+    calculateAlphaScore = (): number => {
+        let score = 0;
+        const totalTrades = this.wins + this.losses;
+        if (totalTrades > 0) {
+            const winRate = this.wins / totalTrades;
+            score += winRate * 40;
+        }
+        if (this.ticks.length >= 1000) score += 20;
+        else if (this.ticks.length >= 100) score += 10;
+        else if (this.ticks.length >= 20) score += 5;
+        if (this.is_connected) score += 20;
+        if (!this.ultra_circuit_breaker_active) score += 20;
+        return Math.min(100, Math.max(0, score));
+    };
+
+    @action
+    checkCircuitBreaker = () => {
+        const now = Date.now();
+        this.ultra_last_losses = this.ultra_last_losses.filter(t => now - t < 30000);
+
+        if (this.ultra_last_losses.length >= 3) {
+            this.ultra_circuit_breaker_active = true;
+            this.ultra_circuit_breaker_until = now + 120000;
+            this.is_money_maker_ultra_running = false;
+            this.addUltraLog('CIRCUIT BREAKER TRIGGERED - Cooling down', 'error');
+
+            setTimeout(() => {
+                runInAction(() => {
+                    this.ultra_circuit_breaker_active = false;
+                    this.ultra_circuit_breaker_until = null;
+                    this.addUltraLog('Circuit breaker RESET', 'success');
+                });
+            }, 120000);
+        }
+    };
+
+    @action
+    runMoneyMakerUltraLoop = async () => {
+        if (!this.is_money_maker_ultra_running || this.is_ultra_loop_processing) return;
+
+        this.is_ultra_loop_processing = true;
+
+        try {
+            runInAction(() => {
+                this.ultra_heartbeat_count++;
+                this.ultra_volatility_sigma = this.calculateVolatilitySigma();
+                this.ultra_alpha_score = this.calculateAlphaScore();
+                this.ultra_momentum_velocity = Math.min(100, (this.ultra_volatility_sigma || 0) * 50);
+            });
+
+            if (this.ticks.length >= 20) {
+                const signal = await this.evaluateUltraStrategy();
+                if (signal && this.is_money_maker_ultra_running) {
+                    await this.executeUltraTrade(signal);
+                }
+            }
+        } catch (error) {
+            console.error('Ultra loop error:', error);
+        } finally {
+            runInAction(() => {
+                this.is_ultra_loop_processing = false;
+            });
+        }
+    };
+
+    @action
+    evaluateUltraStrategy = async (): Promise<{ type: string; prediction?: number } | null> => {
+        if (!this.is_connected || this.ticks.length < 20) return null;
+
+        switch (this.ultra_momentum_mode) {
+            case 'shadow_scalper':
+                return this.evaluateShadowScalper();
+            case 'flash_overunder':
+                return this.evaluateFlashOverUnder();
+            case 'momentum_pulse':
+                return this.evaluateMomentumPulse();
+            default:
+                return null;
+        }
+    };
+
+    @action
+    evaluateShadowScalper = (): { type: string; prediction?: number } | null => {
+        const coldDigits = this.digit_stats.filter(d => d.percentage < 8).sort((a, b) => a.percentage - b.percentage);
+
+        if (coldDigits.length === 0) return null;
+        const coldestDigit = coldDigits[0].digit;
+
+        if (this.ultra_volatility_sigma < 1.0) {
+            this.addUltraLog(`Shadow Scalper: DIFFERS on ${coldestDigit}`, 'info');
+            return { type: 'DIGITDIFF', prediction: coldestDigit };
+        } else {
+            const hotDigit = this.digit_stats.reduce((max, d) => (d.percentage > max.percentage ? d : max)).digit;
+            this.addUltraLog(`Shadow Scalper: MATCHES on ${hotDigit}`, 'info');
+            return { type: 'DIGITMATCH', prediction: hotDigit };
+        }
+    };
+
+    @action
+    evaluateFlashOverUnder = (): { type: string; prediction?: number } | null => {
+        const last5 = this.ticks.slice(-5);
+        if (last5.length < 5) return null;
+
+        if (last5.every(d => d > 6)) {
+            this.addUltraLog('Flash O/U: All >6 detect, OVER 5', 'info');
+            return { type: 'DIGITOVER', prediction: 5 };
+        } else if (last5.every(d => d < 3)) {
+            this.addUltraLog('Flash O/U: All <3 detect, UNDER 4', 'info');
+            return { type: 'DIGITUNDER', prediction: 4 };
+        }
+        return null;
+    };
+
+    @action
+    evaluateMomentumPulse = (): { type: string; prediction?: number } | null => {
+        if (this.ticks.length < 10) return null;
+        const last = this.last_digit ?? 0;
+        if (last % 2 === 0) {
+            this.addUltraLog('Momentum Pulse: EVEN signal', 'info');
+            return { type: 'DIGITEVEN' };
+        } else {
+            this.addUltraLog('Momentum Pulse: ODD signal', 'info');
+            return { type: 'DIGITODD' };
+        }
+    };
+
+    @action
+    executeUltraTrade = async (trade: { type: string; prediction?: number }) => {
+        if (this.ultra_circuit_breaker_active || !api_base.api) return;
+
+        // Ping Guard
+        const ping = this.root_store.common.latency;
+        if (ping > 300) {
+            this.addUltraLog(`High ping detected (${ping}ms) - Aborting trade`, 'error');
+            return;
+        }
+
+        // Balance Safety (Circuit breaker if 20% drawdown)
+        const currentBalance = parseFloat(this.root_store.client.balance as string) || 0;
+        if (this.ultra_start_balance > 0 && currentBalance < this.ultra_start_balance * 0.8) {
+            this.addUltraLog(
+                `Emergency Stop: 20% drawdown reached (Start: ${this.ultra_start_balance}, Current: ${currentBalance})`,
+                'error'
+            );
+            this.is_money_maker_ultra_running = false;
+            return;
+        }
+
+        const stake = this.speedbot_stake || 0.35;
+        this.ultra_session_trades++;
+        this.addUltraLog(`Executing ${trade.type} signal...`, 'success');
+
+        try {
+            const proposal = await api_base.api.send({
+                proposal: 1,
+                amount: stake,
+                basis: 'stake',
+                contract_type: trade.type,
+                currency: this.root_store.client.currency || 'USD',
+                duration: 1,
+                duration_unit: 't',
+                symbol: this.symbol,
+                ...(trade.prediction !== undefined ? { barrier: String(trade.prediction) } : {}),
+            });
+
+            if (proposal.error) {
+                this.addUltraLog(`Proposal error: ${proposal.error.message}`, 'error');
+                return;
+            }
+
+            const buy = await api_base.api.send({
+                buy: proposal.proposal.id,
+                price: stake,
+            });
+
+            if (buy.error) {
+                this.addUltraLog(`Buy error: ${buy.error.message}`, 'error');
+                return;
+            }
+
+            this.addUltraLog(`Trade EXECUTED: ${buy.buy.contract_id}`, 'success');
+        } catch (error) {
+            this.addUltraLog(`Execution error: ${error}`, 'error');
         }
     };
 }

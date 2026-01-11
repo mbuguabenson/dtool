@@ -78,12 +78,14 @@
     &__run-button {
         width: fit-content;
         height: 100% !important;
-        border-start-end-radius: 0 !important;
-        border-end-end-radius: 0 !important;
-        background-color: var(--purchase-main-1);
+        padding: 0 2rem !important;
+        border-radius: 4px !important;
+        background: linear-gradient(90deg, #ffa500 0%, #ff444f 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
 
         &:hover {
-            background-color: var(--purchase-main-1) !important;
+            background: linear-gradient(90deg, #ffb733 0%, #ff5c66 100%) !important;
         }
     }
 
@@ -194,7 +196,6 @@
     &--running {
         #{$animation}__progress {
             .circular-wrapper {
-
                 &.completed,
                 &.active {
                     .static-circle {

@@ -62,6 +62,7 @@ class APIBase {
     reconnect_attempts = 0;
     max_reconnect_attempts = 5;
     reconnect_timeout: ReturnType<typeof setTimeout> | null = null;
+    ping_interval: ReturnType<typeof setInterval> | null = null;
 
     unsubscribeAllSubscriptions = () => {
         this.current_auth_subscriptions?.forEach(subscription_promise => {
@@ -130,6 +131,7 @@ class APIBase {
             await this.authorizeAndSubscribe();
         }
 
+        this.startPingLoop();
         chart_api.init(force_create_connection);
     }
 
@@ -231,12 +233,12 @@ class APIBase {
             }
             this.subscribe();
             // this.getSelfExclusion(); commented this so we dont call it from two places
-        } catch (e) {
+        } catch (e: any) {
             console.error('[API] Authorization Exception:', e);
             this.is_authorized = false;
             // Only clear auth data if it's a real failure, not just a timeout during initialization
             // but for now, we follow the existing logic of clearing if fails.
-            if (e.message !== 'Auth Timeout') {
+            if (e?.message !== 'Auth Timeout') {
                 clearAuthData();
             }
             setIsAuthorized(false);
@@ -310,12 +312,36 @@ class APIBase {
         this.subscriptions.forEach(s => s.unsubscribe());
         this.subscriptions = [];
 
+        if (this.ping_interval) {
+            clearInterval(this.ping_interval);
+            this.ping_interval = null;
+        }
+
         // Resetting timeout resolvers
         const global_timeouts = globalObserver.getState('global_timeouts') ?? [];
 
         global_timeouts.forEach((_: unknown, i: number) => {
             clearTimeout(i);
         });
+    }
+
+    startPingLoop() {
+        if (this.ping_interval) clearInterval(this.ping_interval);
+        this.ping_interval = setInterval(() => this.measureLatency(), 5000); // Every 5 seconds
+    }
+
+    async measureLatency() {
+        if (!this.api || this.api.connection.readyState !== 1) return;
+        const start = Date.now();
+        try {
+            await this.api.send({ ping: 1 });
+            const latency = Date.now() - start;
+            if (this.common_store) {
+                this.common_store.setLatency(latency);
+            }
+        } catch (e) {
+            console.error('Ping error:', e);
+        }
     }
 }
 

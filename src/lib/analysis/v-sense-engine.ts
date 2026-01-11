@@ -57,7 +57,7 @@ export class VSenseEngine {
         // Momentum calculation (last 15 vs previous)
         const recentWindow = this.ticks.slice(-15);
         const prevWindow = this.ticks.slice(-45, -15);
-        
+
         const recentCounts = new Array(10).fill(0);
         recentWindow.forEach(d => recentCounts[d]++);
         const recentPower = recentCounts.map(c => (c / (recentWindow.length || 1)) * 100);
@@ -109,8 +109,8 @@ export class VSenseEngine {
             reasoning: [
                 `Target digit ${target} shows distribution stretch`,
                 state.momentum[target] < 0 ? 'Power is decreasing as expected' : 'Power stabilizing',
-                stretch ? 'Market expansion confirmed' : 'Normal distribution'
-            ]
+                stretch ? 'Market expansion confirmed' : 'Normal distribution',
+            ],
         };
     }
 
@@ -132,8 +132,10 @@ export class VSenseEngine {
         if (dominant === 'EVEN' ? evenPower >= 55 : oddPower >= 55) score += 20;
         if (appearsTwice) score += 25;
         // Check if dominant power is increasing
-        const recent10 = state.digits.slice(-10).filter(d => (dominant === 'EVEN' ? d % 2 === 0 : d % 2 !== 0)).length / 10;
-        const prev10 = state.digits.slice(-20, -10).filter(d => (dominant === 'EVEN' ? d % 2 === 0 : d % 2 !== 0)).length / 10;
+        const recent10 =
+            state.digits.slice(-10).filter(d => (dominant === 'EVEN' ? d % 2 === 0 : d % 2 !== 0)).length / 10;
+        const prev10 =
+            state.digits.slice(-20, -10).filter(d => (dominant === 'EVEN' ? d % 2 === 0 : d % 2 !== 0)).length / 10;
         if (recent10 > prev10) score += 20;
         if (appearsTwice) score += 20;
 
@@ -148,8 +150,8 @@ export class VSenseEngine {
             reasoning: [
                 `${dominant} dominance detected (${(dominant === 'EVEN' ? evenPower : oddPower).toFixed(1)}%)`,
                 `Mean-reversion potential for ${sideToTrade}`,
-                appearsTwice ? `Frequency start for ${sideToTrade} detected` : 'Waiting for compression'
-            ]
+                appearsTwice ? `Frequency start for ${sideToTrade} detected` : 'Waiting for compression',
+            ],
         };
     }
 
@@ -169,7 +171,7 @@ export class VSenseEngine {
         let score = 15;
         if (dominant === 'UNDER' ? underPower >= 55 : overPower >= 55) score += 20;
         if (appearsTwice) score += 25;
-        
+
         const recent10 = state.digits.slice(-10).filter(d => (dominant === 'UNDER' ? d <= 4 : d >= 5)).length / 10;
         const prev10 = state.digits.slice(-20, -10).filter(d => (dominant === 'UNDER' ? d <= 4 : d >= 5)).length / 10;
         if (recent10 > prev10) score += 20;
@@ -186,8 +188,8 @@ export class VSenseEngine {
             reasoning: [
                 `${dominant} range dominance (${(dominant === 'UNDER' ? underPower : overPower).toFixed(1)}%)`,
                 `${sideToTrade} suppression detected`,
-                appearsTwice ? `Reversion trigger active` : 'Waiting for range shift'
-            ]
+                appearsTwice ? `Reversion trigger active` : 'Waiting for range shift',
+            ],
         };
     }
 }

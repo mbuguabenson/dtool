@@ -79,6 +79,15 @@ const Cards = observer(({ search_query, handleTabChange }: TCardProps) => {
             tag: localize('Pro'),
             tagType: 'pro',
         },
+        {
+            id: 'easy-tool',
+            title: localize('Easy Tool'),
+            icon: LabelPairedSlidersCaptionRegularIcon, // Using similar icon or import a new one if available
+            description: localize('Simple analysis tools for quick trading decisions'),
+            tabIndex: DBOT_TABS.EASY_TOOL,
+            tag: localize('New'),
+            tagType: 'hot',
+        },
     ];
 
     const filteredItems = quickAccessItems.filter(

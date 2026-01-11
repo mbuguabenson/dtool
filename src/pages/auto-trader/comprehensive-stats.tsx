@@ -21,7 +21,8 @@ const ComprehensiveStats = observer(() => {
     // Logic Helper
     const getSignalStatus = (primaryPct: number, label: string) => {
         if (primaryPct >= 58) return { status: 'HIGH SIGNAL', color: '#10b981', glow: true, msg: `Trade: ${label}` };
-        if (primaryPct >= 55) return { status: 'WAITING...', color: '#eab308', glow: false, msg: `Confirming ${label}` };
+        if (primaryPct >= 55)
+            return { status: 'WAITING...', color: '#eab308', glow: false, msg: `Confirming ${label}` };
         return { status: 'ANALYZING', color: '#8b9bb4', glow: false, msg: 'Market Balanced' };
     };
 
@@ -32,14 +33,19 @@ const ComprehensiveStats = observer(() => {
 
     if (max_pct >= 55) {
         overall_glow = true;
-        if (even_pct === max_pct) glow_color = 'rgba(59, 130, 246, 0.5)'; // Blue
-        else if (odd_pct === max_pct) glow_color = 'rgba(236, 72, 153, 0.5)'; // Pink
-        else if (over_pct === max_pct) glow_color = 'rgba(244, 63, 94, 0.5)'; // Red
+        if (even_pct === max_pct)
+            glow_color = 'rgba(59, 130, 246, 0.5)'; // Blue
+        else if (odd_pct === max_pct)
+            glow_color = 'rgba(236, 72, 153, 0.5)'; // Pink
+        else if (over_pct === max_pct)
+            glow_color = 'rgba(244, 63, 94, 0.5)'; // Red
         else if (under_pct === max_pct) glow_color = 'rgba(16, 185, 129, 0.5)'; // Green
     }
 
-    const eo_status = even_pct > odd_pct ? getSignalStatus(even_pct, 'DIGITEVEN') : getSignalStatus(odd_pct, 'DIGITODD');
-    const ou_status = over_pct > under_pct ? getSignalStatus(over_pct, 'DIGITOVER') : getSignalStatus(under_pct, 'DIGITUNDER');
+    const eo_status =
+        even_pct > odd_pct ? getSignalStatus(even_pct, 'DIGITEVEN') : getSignalStatus(odd_pct, 'DIGITODD');
+    const ou_status =
+        over_pct > under_pct ? getSignalStatus(over_pct, 'DIGITOVER') : getSignalStatus(under_pct, 'DIGITUNDER');
 
     return (
         <div className='market-stats-premium' style={{ gridTemplateColumns: '1fr' }}>
@@ -48,10 +54,22 @@ const ComprehensiveStats = observer(() => {
                 style={{ '--glow-color': glow_color } as React.CSSProperties}
             >
                 {/* Header for Combined Card */}
-                <div className='card-header' style={{ marginBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
-                    <span className='title' style={{ fontSize: '1rem', color: 'var(--text-prominent)' }}>MARKET OVERVIEW</span>
+                <div
+                    className='card-header'
+                    style={{
+                        marginBottom: '1rem',
+                        borderBottom: '1px solid rgba(255,255,255,0.1)',
+                        paddingBottom: '0.5rem',
+                    }}
+                >
+                    <span className='title' style={{ fontSize: '1rem', color: 'var(--text-prominent)' }}>
+                        MARKET OVERVIEW
+                    </span>
                     {(eo_status.status === 'HIGH SIGNAL' || ou_status.status === 'HIGH SIGNAL') && (
-                        <span className='status-badge' style={{ color: '#10b981', borderColor: '#10b981', background: 'rgba(16, 185, 129, 0.1)' }}>
+                        <span
+                            className='status-badge'
+                            style={{ color: '#10b981', borderColor: '#10b981', background: 'rgba(16, 185, 129, 0.1)' }}
+                        >
                             ACTION RECOMMENDED
                         </span>
                     )}
@@ -85,12 +103,18 @@ const ComprehensiveStats = observer(() => {
                             </div>
                         </div>
                     </div>
-                    <div className='card-footer' style={{ marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: 'none', textAlign: 'right' }}>
+                    <div
+                        className='card-footer'
+                        style={{ marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: 'none', textAlign: 'right' }}
+                    >
                         {eo_status.msg}
                     </div>
                 </div>
 
-                <div className='divider' style={{ height: '1px', background: 'rgba(255,255,255,0.1)', margin: '1rem 0' }} />
+                <div
+                    className='divider'
+                    style={{ height: '1px', background: 'rgba(255,255,255,0.1)', margin: '1rem 0' }}
+                />
 
                 {/* Over / Under Section */}
                 <div className='sub-section'>
@@ -120,7 +144,10 @@ const ComprehensiveStats = observer(() => {
                             </div>
                         </div>
                     </div>
-                    <div className='card-footer' style={{ marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: 'none', textAlign: 'right' }}>
+                    <div
+                        className='card-footer'
+                        style={{ marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: 'none', textAlign: 'right' }}
+                    >
                         {ou_status.msg}
                     </div>
                 </div>

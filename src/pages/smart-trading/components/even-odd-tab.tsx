@@ -7,16 +7,8 @@ import './even-odd-tab.scss';
 
 const EvenOddTab = observer(() => {
     const { smart_trading, app } = useStore();
-    const {
-        ticks,
-        current_price,
-        last_digit,
-        symbol,
-        setSymbol,
-        markets,
-        updateDigitStats,
-        active_symbols_data,
-    } = smart_trading;
+    const { ticks, current_price, last_digit, symbol, setSymbol, markets, updateDigitStats, active_symbols_data } =
+        smart_trading;
     const ticks_service = app.api_helpers_store?.ticks_service;
 
     const [signalTime, setSignalTime] = useState(0);
@@ -77,16 +69,19 @@ const EvenOddTab = observer(() => {
             oddPercent: (oddCount / total) * 100,
             evenCount,
             oddCount,
-            total
+            total,
         };
     };
 
-    const analysis = useMemo(() => ({
-        last10: analyzeEvenOdd(ticks, 10),
-        last25: analyzeEvenOdd(ticks, 25),
-        last50: analyzeEvenOdd(ticks, 50),
-        last100: analyzeEvenOdd(ticks, 100)
-    }), [ticks]);
+    const analysis = useMemo(
+        () => ({
+            last10: analyzeEvenOdd(ticks, 10),
+            last25: analyzeEvenOdd(ticks, 25),
+            last50: analyzeEvenOdd(ticks, 50),
+            last100: analyzeEvenOdd(ticks, 100),
+        }),
+        [ticks]
+    );
 
     const power = useMemo(() => {
         const evenPower = analysis.last100.evenPercent;
@@ -94,7 +89,7 @@ const EvenOddTab = observer(() => {
         return {
             dominant: evenPower > oddPower ? 'EVEN' : 'ODD',
             dominantPercent: Math.max(evenPower, oddPower),
-            weakness: Math.min(evenPower, oddPower)
+            weakness: Math.min(evenPower, oddPower),
         };
     }, [analysis]);
 
@@ -123,7 +118,9 @@ const EvenOddTab = observer(() => {
 
     const signal = useMemo(() => {
         const maxPower = power.dominantPercent;
-        const isIncreasing = trend === 'INCREASING' || (power.dominant === 'EVEN' ? analysis.last10.evenPercent > 55 : analysis.last10.oddPercent > 55);
+        const isIncreasing =
+            trend === 'INCREASING' ||
+            (power.dominant === 'EVEN' ? analysis.last10.evenPercent > 55 : analysis.last10.oddPercent > 55);
 
         let action = 'NEUTRAL';
         if (maxPower >= 56 && isIncreasing) action = 'TRADE NOW';
@@ -138,20 +135,20 @@ const EvenOddTab = observer(() => {
             return {
                 action,
                 confidence: 'HIGH',
-                recommendation: `${power.dominant} at ${maxPower.toFixed(1)}% - POWERFUL SIGNAL`
+                recommendation: `${power.dominant} at ${maxPower.toFixed(1)}% - POWERFUL SIGNAL`,
             };
         }
         if (action === 'WAIT') {
             return {
                 action,
                 confidence: 'MEDIUM',
-                recommendation: 'Market momentum is building. Wait for confirmation.'
+                recommendation: 'Market momentum is building. Wait for confirmation.',
             };
         }
         return {
             action: 'NEUTRAL',
             confidence: 'LOW',
-            recommendation: 'Market is balanced. Waiting for dominance.'
+            recommendation: 'Market is balanced. Waiting for dominance.',
         };
     }, [power, trend, analysis, lastAction]);
 
@@ -180,7 +177,12 @@ const EvenOddTab = observer(() => {
 
                 <div className='digit-display-glass'>
                     <span className='lbl'>CURRENT DIGIT</span>
-                    <div className={classNames('digit-box', { 'even': last_digit !== null && last_digit % 2 === 0, 'odd': last_digit !== null && last_digit % 2 !== 0 })}>
+                    <div
+                        className={classNames('digit-box', {
+                            even: last_digit !== null && last_digit % 2 === 0,
+                            odd: last_digit !== null && last_digit % 2 !== 0,
+                        })}
+                    >
                         {last_digit !== null ? last_digit : '-'}
                     </div>
                 </div>
@@ -199,51 +201,70 @@ const EvenOddTab = observer(() => {
                 <div className='card-header'>Signal Recommendation</div>
                 <div className='rec-content'>
                     <div className='rec-title'>{signal.recommendation}</div>
-                    <p>{power.dominant} power is at {power.dominantPercent.toFixed(1)}% and {trend.toLowerCase()}. Market momentum is {volatility.level.toLowerCase()}!</p>
+                    <p>
+                        {power.dominant} power is at {power.dominantPercent.toFixed(1)}% and {trend.toLowerCase()}.
+                        Market momentum is {volatility.level.toLowerCase()}!
+                    </p>
                 </div>
             </div>
 
             <div className='power-cards-grid'>
-                <div className={classNames('power-card even', { 'active': power.dominant === 'EVEN' })}>
+                <div className={classNames('power-card even', { active: power.dominant === 'EVEN' })}>
                     <div className='top-row'>
                         <span className='pct'>{analysis.last100.evenPercent.toFixed(1)}%</span>
-                        <div className='mini-chart-icon'><div className='trend-up'></div></div>
+                        <div className='mini-chart-icon'>
+                            <div className='trend-up'></div>
+                        </div>
                     </div>
                     <div className='label'>EVEN (Current Power)</div>
                     <div className='stat-bars'>
                         <div className='stat-row'>
                             <span>Last 10 ticks</span>
-                            <div className='bar-wrapper'><div className='bar-fill' style={{ width: `${analysis.last10.evenPercent}%` }}></div></div>
+                            <div className='bar-wrapper'>
+                                <div className='bar-fill' style={{ width: `${analysis.last10.evenPercent}%` }}></div>
+                            </div>
                         </div>
                         <div className='stat-row'>
                             <span>Last 50 ticks</span>
-                            <div className='bar-wrapper'><div className='bar-fill' style={{ width: `${analysis.last50.evenPercent}%` }}></div></div>
+                            <div className='bar-wrapper'>
+                                <div className='bar-fill' style={{ width: `${analysis.last50.evenPercent}%` }}></div>
+                            </div>
                         </div>
                         <div className='stat-row'>
                             <span>Last hour (100 ticks)</span>
-                            <div className='bar-wrapper shadow'><div className='bar-fill' style={{ width: `${analysis.last100.evenPercent}%` }}></div></div>
+                            <div className='bar-wrapper shadow'>
+                                <div className='bar-fill' style={{ width: `${analysis.last100.evenPercent}%` }}></div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div className={classNames('power-card odd', { 'active': power.dominant === 'ODD' })}>
+                <div className={classNames('power-card odd', { active: power.dominant === 'ODD' })}>
                     <div className='top-row'>
                         <span className='pct'>{analysis.last100.oddPercent.toFixed(1)}%</span>
-                        <div className='mini-chart-icon'><div className='trend-up'></div></div>
+                        <div className='mini-chart-icon'>
+                            <div className='trend-up'></div>
+                        </div>
                     </div>
                     <div className='label'>ODD (Current Power)</div>
                     <div className='stat-bars'>
                         <div className='stat-row'>
                             <span>Last 10 ticks</span>
-                            <div className='bar-wrapper'><div className='bar-fill' style={{ width: `${analysis.last10.oddPercent}%` }}></div></div>
+                            <div className='bar-wrapper'>
+                                <div className='bar-fill' style={{ width: `${analysis.last10.oddPercent}%` }}></div>
+                            </div>
                         </div>
                         <div className='stat-row'>
                             <span>Last 50 ticks</span>
-                            <div className='bar-wrapper'><div className='bar-fill' style={{ width: `${analysis.last50.oddPercent}%` }}></div></div>
+                            <div className='bar-wrapper'>
+                                <div className='bar-fill' style={{ width: `${analysis.last50.oddPercent}%` }}></div>
+                            </div>
                         </div>
                         <div className='stat-row'>
                             <span>Last hour (100 ticks)</span>
-                            <div className='bar-wrapper shadow'><div className='bar-fill' style={{ width: `${analysis.last100.oddPercent}%` }}></div></div>
+                            <div className='bar-wrapper shadow'>
+                                <div className='bar-fill' style={{ width: `${analysis.last100.oddPercent}%` }}></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -269,16 +290,22 @@ const EvenOddTab = observer(() => {
                 </div>
                 <div className='metric-box change-recent'>
                     <span className='lbl'>Recent Change</span>
-                    <span className='val'>{Math.abs(analysis.last10.evenPercent - analysis.last25.evenPercent).toFixed(1)}%</span>
+                    <span className='val'>
+                        {Math.abs(analysis.last10.evenPercent - analysis.last25.evenPercent).toFixed(1)}%
+                    </span>
                     <span className='sub'>Last 10 ticks</span>
                 </div>
             </div>
 
             <div
-                className={classNames('big-action-button', power.dominant.toLowerCase(), { 'executing': smart_trading.is_executing })}
+                className={classNames('big-action-button', power.dominant.toLowerCase(), {
+                    executing: smart_trading.is_executing,
+                })}
                 onClick={() => smart_trading.manualTrade(power.dominant === 'EVEN' ? 'DIGITEVEN' : 'DIGITODD')}
             >
-                {smart_trading.is_executing ? 'EXECUTING...' : `TRADE ${power.dominant} NOW - ${power.dominantPercent.toFixed(1)}%`}
+                {smart_trading.is_executing
+                    ? 'EXECUTING...'
+                    : `TRADE ${power.dominant} NOW - ${power.dominantPercent.toFixed(1)}%`}
             </div>
 
             <div className='last-digits-tape'>

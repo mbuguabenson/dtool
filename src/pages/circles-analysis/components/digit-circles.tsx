@@ -13,7 +13,10 @@ const DigitCircles = observer(() => {
                 const dashOffset = dashArray - (dashArray * stat.percentage) / 100;
 
                 return (
-                    <div key={stat.digit} className={`digit-circle-card digit-${stat.digit} ${isActive ? 'active' : ''}`}>
+                    <div
+                        key={stat.digit}
+                        className={`digit-circle-card digit-${stat.digit} ${isActive ? 'active' : ''}`}
+                    >
                         {isActive && <div className='active-indicator'>▼</div>}
                         <div className='circle-svg-wrapper'>
                             <svg width='70' height='70' viewBox='0 0 70 70'>

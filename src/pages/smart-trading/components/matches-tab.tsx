@@ -174,10 +174,10 @@ const MatchesTab = observer(() => {
     const frequencies = useMemo(() => analyzeFrequency(ticks), [ticks]);
 
     return (
-        <div className="matches-tab">
+        <div className='matches-tab'>
             {/* Header */}
-            <div className="premium-market-header">
-                <div className="market-select-glass">
+            <div className='premium-market-header'>
+                <div className='market-select-glass'>
                     <label>MARKET</label>
                     <select value={symbol} onChange={e => setSymbol(e.target.value)}>
                         {markets.map(group => (
@@ -192,26 +192,26 @@ const MatchesTab = observer(() => {
                     </select>
                 </div>
 
-                <div className="price-display-glass">
-                    <span className="lbl">LIVE PRICE</span>
-                    <span className="val">{current_price}</span>
+                <div className='price-display-glass'>
+                    <span className='lbl'>LIVE PRICE</span>
+                    <span className='val'>{current_price}</span>
                 </div>
 
-                <div className="digit-display-glass">
-                    <span className="lbl">LAST DIGIT</span>
-                    <div className="digit-box">{last_digit !== null ? last_digit : '-'}</div>
+                <div className='digit-display-glass'>
+                    <span className='lbl'>LAST DIGIT</span>
+                    <div className='digit-box'>{last_digit !== null ? last_digit : '-'}</div>
                 </div>
             </div>
 
             <QuickSettings />
 
             {/* Title */}
-            <div className="tab-header">
-                <h2 className="tab-title">Matches Analysis</h2>
+            <div className='tab-header'>
+                <h2 className='tab-title'>Matches Analysis</h2>
             </div>
 
             {/* Top 3 Matches */}
-            <div className="top-matches-grid">
+            <div className='top-matches-grid'>
                 {topMatches.map((match, index) => {
                     const freq = frequencies.find(f => f.digit === match.digit);
                     const label = index === 0 ? 'Most Appearing' : index === 1 ? '2nd Most' : '3rd Most';
@@ -226,27 +226,27 @@ const MatchesTab = observer(() => {
                             })}
                             onClick={() => (smart_trading.speedbot_prediction = match.digit)}
                         >
-                            <div className="card-label">{label}</div>
-                            <div className="digit-display">{match.digit}</div>
-                            <div className="percentage">{match.probability.toFixed(1)}%</div>
-                            <div className="appeared-count">Appeared {freq?.count || 0} times</div>
+                            <div className='card-label'>{label}</div>
+                            <div className='digit-display'>{match.digit}</div>
+                            <div className='percentage'>{match.probability.toFixed(1)}%</div>
+                            <div className='appeared-count'>Appeared {freq?.count || 0} times</div>
                         </div>
                     );
                 })}
             </div>
 
             {/* Scan Digit Feature */}
-            <div className="scan-feature-section">
-                <div className="feature-title">Scan Digit Feature</div>
-                <div className="feature-text">
+            <div className='scan-feature-section'>
+                <div className='feature-title'>Scan Digit Feature</div>
+                <div className='feature-text'>
                     Digit to Match: <strong>{topMatches[0]?.digit ?? '-'}</strong> appeared{' '}
                     {frequencies.find(f => f.digit === topMatches[0]?.digit)?.count || 0} times,{' '}
                     {topMatches[0]?.probability.toFixed(1)}%
                 </div>
-                <div className="action-buttons-row">
-                    <button className="scan-btn">Scan Last 12 Ticks</button>
+                <div className='action-buttons-row'>
+                    <button className='scan-btn'>Scan Last 12 Ticks</button>
                     <button
-                        className={classNames('manual-trade-btn', { 'executing': smart_trading.is_executing })}
+                        className={classNames('manual-trade-btn', { executing: smart_trading.is_executing })}
                         onClick={() => smart_trading.manualTrade('DIGITMATCH', speedbot_prediction)}
                     >
                         {smart_trading.is_executing ? 'EXECUTING...' : 'MANUAL TRADE'}
@@ -255,9 +255,9 @@ const MatchesTab = observer(() => {
             </div>
 
             {/* All Digits Grid */}
-            <div className="all-digits-section">
-                <h3 className="section-title">All Digits Match Analysis</h3>
-                <div className="digits-grid">
+            <div className='all-digits-section'>
+                <h3 className='section-title'>All Digits Match Analysis</h3>
+                <div className='digits-grid'>
                     {allMatches.map(match => {
                         const freq = frequencies.find(f => f.digit === match.digit);
                         const isHot = freq && freq.percentage > 11;
@@ -273,11 +273,11 @@ const MatchesTab = observer(() => {
                                 })}
                                 onClick={() => (smart_trading.speedbot_prediction = match.digit)}
                             >
-                                <div className="digit-number">{match.digit}</div>
-                                <div className="match-percent">{match.probability.toFixed(1)}%</div>
-                                <div className="gap-info">Gap: {freq?.gap || 0}</div>
-                                <div className="confidence-badge">{match.confidence}</div>
-                                <div className="status-label">{isHot ? 'Hot' : isCold ? 'Cold' : 'Neutral'}</div>
+                                <div className='digit-number'>{match.digit}</div>
+                                <div className='match-percent'>{match.probability.toFixed(1)}%</div>
+                                <div className='gap-info'>Gap: {freq?.gap || 0}</div>
+                                <div className='confidence-badge'>{match.confidence}</div>
+                                <div className='status-label'>{isHot ? 'Hot' : isCold ? 'Cold' : 'Neutral'}</div>
                             </div>
                         );
                     })}

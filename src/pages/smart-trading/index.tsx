@@ -13,6 +13,7 @@ import MatchesTab from './components/matches-tab';
 import OverUnderTab from './components/over-under-tab';
 import SmartAuto24Tab from './components/smart-auto24-tab';
 import VSenseTurboTab from './components/vsense-turbo-tab';
+import MoneyMakerUltraTab from './money-maker-ultra-tab';
 import './smart-trading.scss';
 
 const SmartTrading = observer(() => {
@@ -120,7 +121,12 @@ const SmartTrading = observer(() => {
                 >
                     📈 Charts
                 </button>
-
+                <button
+                    className={`sub-tab ${active_subtab === 'money_maker_ultra' ? 'active' : ''}`}
+                    onClick={() => smart_trading.setActiveSubtab('money_maker_ultra')}
+                >
+                    💎 ULTRA
+                </button>
             </div>
 
             {active_subtab === 'bulk' && <BulkTradingView />}
@@ -132,7 +138,12 @@ const SmartTrading = observer(() => {
             {active_subtab === 'differs' && <DiffersTab />}
             {active_subtab === 'matches' && <MatchesTab />}
             {active_subtab === 'vsense_turbo' && <VSenseTurboTab />}
-            {active_subtab === 'charts' && <div style={{ height: '70vh' }}><Chart show_digits_stats={false} /></div>}
+            {active_subtab === 'money_maker_ultra' && <MoneyMakerUltraTab />}
+            {active_subtab === 'charts' && (
+                <div style={{ height: '70vh' }}>
+                    <Chart show_digits_stats={false} />
+                </div>
+            )}
 
             {/^(speed|vsense_turbo|even_odd|over_under|advanced_ou|differs|matches)$/.test(active_subtab) && (
                 <>

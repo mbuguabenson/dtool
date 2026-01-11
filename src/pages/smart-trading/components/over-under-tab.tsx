@@ -84,13 +84,7 @@ const calculateDigitPower = (digit: number, recentDigits: number[]): DigitPower 
     const powerScore = frequencyPercent * 0.5 + momentum * 0.4 - gap * 0.1;
 
     const strength: DigitPower['strength'] =
-        powerScore >= 15
-            ? 'VERY STRONG'
-            : powerScore >= 10
-                ? 'STRONG'
-                : powerScore >= 5
-                    ? 'MODERATE'
-                    : 'WEAK';
+        powerScore >= 15 ? 'VERY STRONG' : powerScore >= 10 ? 'STRONG' : powerScore >= 5 ? 'MODERATE' : 'WEAK';
 
     return {
         frequency: frequencyPercent,
@@ -109,10 +103,10 @@ const calculateConfidence = (analysis: OverUnderAnalysis): Confidence => {
         maxPercent >= 65
             ? 'VERY HIGH'
             : maxPercent >= 60
-                ? 'HIGH'
-                : maxPercent >= 55 || difference >= 20
-                    ? 'MEDIUM'
-                    : 'LOW';
+              ? 'HIGH'
+              : maxPercent >= 55 || difference >= 20
+                ? 'MEDIUM'
+                : 'LOW';
 
     return {
         level,
@@ -121,18 +115,14 @@ const calculateConfidence = (analysis: OverUnderAnalysis): Confidence => {
     };
 };
 
-const generatePrediction = (
-    analysis: OverUnderAnalysis,
-    power: DigitPower,
-    confidence: Confidence
-): Prediction => {
+const generatePrediction = (analysis: OverUnderAnalysis, power: DigitPower, confidence: Confidence): Prediction => {
     // Determine dominant side
     const dominant =
         analysis.underPercent > analysis.overPercent
             ? 'UNDER'
             : analysis.overPercent > analysis.underPercent
-                ? 'OVER'
-                : 'BALANCED';
+              ? 'OVER'
+              : 'BALANCED';
 
     // Check if current digit is hot
     const isCurrentHot = power.strength === 'VERY STRONG' || power.strength === 'STRONG';
@@ -163,7 +153,8 @@ const generatePrediction = (
 
 const OverUnderTab = observer(() => {
     const { smart_trading, app } = useStore();
-    const { ticks, current_price, last_digit, symbol, setSymbol, markets, updateDigitStats, active_symbols_data } = smart_trading;
+    const { ticks, current_price, last_digit, symbol, setSymbol, markets, updateDigitStats, active_symbols_data } =
+        smart_trading;
     const ticks_service = app.api_helpers_store?.ticks_service;
 
     const [selectedDigit, setSelectedDigit] = useState(4);
@@ -248,14 +239,22 @@ const OverUnderTab = observer(() => {
     }, [ticks, selectedDigit, analysis]);
 
     // Get under/over digit ranges
-    const underRange = selectedDigit === 0 ? 'None' : `0, ${Array.from({ length: selectedDigit }, (_, i) => i).slice(1).join(', ')}`;
-    const overRange = selectedDigit === 9 ? 'None' : Array.from({ length: 9 - selectedDigit }, (_, i) => selectedDigit + 1 + i).join(', ');
+    const underRange =
+        selectedDigit === 0
+            ? 'None'
+            : `0, ${Array.from({ length: selectedDigit }, (_, i) => i)
+                  .slice(1)
+                  .join(', ')}`;
+    const overRange =
+        selectedDigit === 9
+            ? 'None'
+            : Array.from({ length: 9 - selectedDigit }, (_, i) => selectedDigit + 1 + i).join(', ');
 
     return (
-        <div className="over-under-tab">
+        <div className='over-under-tab'>
             {/* Header with Market Selection, Price, and Last Digit */}
-            <div className="premium-market-header">
-                <div className="market-select-glass">
+            <div className='premium-market-header'>
+                <div className='market-select-glass'>
                     <label>MARKET</label>
                     <select value={symbol} onChange={e => setSymbol(e.target.value)}>
                         {markets.map(group => (
@@ -270,13 +269,13 @@ const OverUnderTab = observer(() => {
                     </select>
                 </div>
 
-                <div className="price-display-glass">
-                    <span className="lbl">LIVE PRICE</span>
-                    <span className="val">{current_price}</span>
+                <div className='price-display-glass'>
+                    <span className='lbl'>LIVE PRICE</span>
+                    <span className='val'>{current_price}</span>
                 </div>
 
-                <div className="digit-display-glass">
-                    <span className="lbl">LAST DIGIT</span>
+                <div className='digit-display-glass'>
+                    <span className='lbl'>LAST DIGIT</span>
                     <div
                         className={classNames('digit-box', {
                             over: last_digit !== null && last_digit > selectedDigit,
@@ -292,7 +291,7 @@ const OverUnderTab = observer(() => {
             <QuickSettings />
 
             {/* Title */}
-            <div className="analysis-header">
+            <div className='analysis-header'>
                 <h2>
                     Under (0-{selectedDigit}) / Over ({selectedDigit + 1}-9) Analysis (Last {ticks.length} Ticks)
                 </h2>
@@ -300,27 +299,27 @@ const OverUnderTab = observer(() => {
 
             {/* Prediction Badge */}
             <div className={classNames('prediction-badge-large', prediction.prediction.toLowerCase())}>
-                <div className="badge-content">
-                    <div className="prediction-text">{prediction.prediction}</div>
-                    <div className="reasoning-text">{prediction.reasoning}</div>
+                <div className='badge-content'>
+                    <div className='prediction-text'>{prediction.prediction}</div>
+                    <div className='reasoning-text'>{prediction.reasoning}</div>
                 </div>
             </div>
 
             {/* Under/Over Cards Row */}
-            <div className="under-over-cards-row">
+            <div className='under-over-cards-row'>
                 <div
                     className={classNames('uo-card under-card', {
                         dominant: analysis.underPercent > analysis.overPercent,
                     })}
                 >
-                    <div className="uo-card-header">
-                        <span className="label">Under ({underRange || 'None'})</span>
-                        <span className="percentage">{analysis.underPercent.toFixed(1)}%</span>
+                    <div className='uo-card-header'>
+                        <span className='label'>Under ({underRange || 'None'})</span>
+                        <span className='percentage'>{analysis.underPercent.toFixed(1)}%</span>
                     </div>
-                    <div className="progress-bar">
-                        <div className="progress-fill under-fill" style={{ width: `${analysis.underPercent}%` }} />
+                    <div className='progress-bar'>
+                        <div className='progress-fill under-fill' style={{ width: `${analysis.underPercent}%` }} />
                     </div>
-                    <div className="card-footer">
+                    <div className='card-footer'>
                         Highest: Sept {ticks.length > 0 ? Math.max(...ticks.filter(d => d < selectedDigit)) : 0} (
                         {ticks.filter(d => d < selectedDigit).length}x)
                     </div>
@@ -331,14 +330,14 @@ const OverUnderTab = observer(() => {
                         dominant: analysis.overPercent > analysis.underPercent,
                     })}
                 >
-                    <div className="uo-card-header">
-                        <span className="label">Over ({overRange || 'None'})</span>
-                        <span className="percentage">{analysis.overPercent.toFixed(1)}%</span>
+                    <div className='uo-card-header'>
+                        <span className='label'>Over ({overRange || 'None'})</span>
+                        <span className='percentage'>{analysis.overPercent.toFixed(1)}%</span>
                     </div>
-                    <div className="progress-bar">
-                        <div className="progress-fill over-fill" style={{ width: `${analysis.overPercent}%` }} />
+                    <div className='progress-bar'>
+                        <div className='progress-fill over-fill' style={{ width: `${analysis.overPercent}%` }} />
                     </div>
-                    <div className="card-footer">
+                    <div className='card-footer'>
                         Highest: Sept {ticks.length > 0 ? Math.max(...ticks.filter(d => d > selectedDigit)) || 0 : 0} (
                         {ticks.filter(d => d > selectedDigit).length}x)
                     </div>
@@ -346,53 +345,59 @@ const OverUnderTab = observer(() => {
             </div>
 
             {/* Metrics Row */}
-            <div className="metrics-row">
-                <div className="metric-box volatility-box">
-                    <div className="metric-label">Market Volatility</div>
-                    <div className="metric-value">{metrics.volatility.toFixed(2)}</div>
+            <div className='metrics-row'>
+                <div className='metric-box volatility-box'>
+                    <div className='metric-label'>Market Volatility</div>
+                    <div className='metric-value'>{metrics.volatility.toFixed(2)}</div>
                 </div>
-                <div className="metric-box change-box">
-                    <div className="metric-label">Change Rate</div>
-                    <div className="metric-value">{metrics.changeRate.toFixed(1)}%</div>
+                <div className='metric-box change-box'>
+                    <div className='metric-label'>Change Rate</div>
+                    <div className='metric-value'>{metrics.changeRate.toFixed(1)}%</div>
                 </div>
-                <div className="metric-box power-box">
-                    <div className="metric-label">Market Power</div>
-                    <div className="metric-value">{metrics.marketPower.toFixed(1)}%</div>
+                <div className='metric-box power-box'>
+                    <div className='metric-label'>Market Power</div>
+                    <div className='metric-value'>{metrics.marketPower.toFixed(1)}%</div>
                 </div>
             </div>
 
             {/* Action Button */}
             <button
-                className={classNames('action-button', prediction.prediction.toLowerCase(), { 'executing': smart_trading.is_executing })}
-                onClick={() => smart_trading.manualTrade(
-                    prediction.prediction === 'OVER' ? 'DIGITOVER' : 'DIGITUNDER',
-                    selectedDigit
-                )}
+                className={classNames('action-button', prediction.prediction.toLowerCase(), {
+                    executing: smart_trading.is_executing,
+                })}
+                onClick={() =>
+                    smart_trading.manualTrade(
+                        prediction.prediction === 'OVER' ? 'DIGITOVER' : 'DIGITUNDER',
+                        selectedDigit
+                    )
+                }
             >
                 {smart_trading.is_executing ? 'EXECUTING...' : prediction.prediction}
             </button>
 
             {/* Large Under/Over Display */}
-            <div className="large-uo-display">
-                <div className="large-title">Under (0-{selectedDigit}) / Over ({selectedDigit + 1}-9) Analysis</div>
-                <div className="large-cards-row">
-                    <div className="large-card under-large">
-                        <div className="large-label">Under (0-{selectedDigit})</div>
-                        <div className="large-percentage">{analysis.underPercent.toFixed(1)}%</div>
-                        <div className="large-footer">Highest: Sept 3 (6x)</div>
+            <div className='large-uo-display'>
+                <div className='large-title'>
+                    Under (0-{selectedDigit}) / Over ({selectedDigit + 1}-9) Analysis
+                </div>
+                <div className='large-cards-row'>
+                    <div className='large-card under-large'>
+                        <div className='large-label'>Under (0-{selectedDigit})</div>
+                        <div className='large-percentage'>{analysis.underPercent.toFixed(1)}%</div>
+                        <div className='large-footer'>Highest: Sept 3 (6x)</div>
                     </div>
-                    <div className="large-card over-large">
-                        <div className="large-label">Over ({selectedDigit + 1}-9)</div>
-                        <div className="large-percentage">{analysis.overPercent.toFixed(1)}%</div>
-                        <div className="large-footer">Highest: Sept 9 (6x)</div>
+                    <div className='large-card over-large'>
+                        <div className='large-label'>Over ({selectedDigit + 1}-9)</div>
+                        <div className='large-percentage'>{analysis.overPercent.toFixed(1)}%</div>
+                        <div className='large-footer'>Highest: Sept 9 (6x)</div>
                     </div>
                 </div>
             </div>
 
             {/* Digit Selector */}
-            <div className="digit-selector-section">
-                <div className="selector-title">Select Digit for Over/Under Analysis</div>
-                <div className="digit-selector-grid">
+            <div className='digit-selector-section'>
+                <div className='selector-title'>Select Digit for Over/Under Analysis</div>
+                <div className='digit-selector-grid'>
                     {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(digit => {
                         const digitPow = digitPowerMap[digit];
                         const isSelected = digit === selectedDigit;
@@ -415,36 +420,36 @@ const OverUnderTab = observer(() => {
             </div>
 
             {/* Current Digit Power Card */}
-            <div className="digit-power-card">
-                <div className="power-card-header">
-                    <span className="power-title">Digit {selectedDigit} Prediction Power</span>
+            <div className='digit-power-card'>
+                <div className='power-card-header'>
+                    <span className='power-title'>Digit {selectedDigit} Prediction Power</span>
                     <span className={classNames('strength-badge', power.strength.toLowerCase().replace(' ', '-'))}>
                         {power.strength}
                     </span>
                 </div>
-                <div className="power-metrics-grid">
-                    <div className="power-metric">
-                        <div className="power-metric-label">Frequency (Last 50)</div>
-                        <div className="power-metric-value">{power.frequency.toFixed(1)}%</div>
-                        <div className="power-metric-sub">{Math.round((power.frequency / 100) * 50)} ticks</div>
+                <div className='power-metrics-grid'>
+                    <div className='power-metric'>
+                        <div className='power-metric-label'>Frequency (Last 50)</div>
+                        <div className='power-metric-value'>{power.frequency.toFixed(1)}%</div>
+                        <div className='power-metric-sub'>{Math.round((power.frequency / 100) * 50)} ticks</div>
                     </div>
-                    <div className="power-metric">
-                        <div className="power-metric-label">Momentum (Last 25)</div>
-                        <div className="power-metric-value">{power.momentum.toFixed(1)}%</div>
-                        <div className="power-metric-sub">{Math.round((power.momentum / 100) * 25)} ticks</div>
+                    <div className='power-metric'>
+                        <div className='power-metric-label'>Momentum (Last 25)</div>
+                        <div className='power-metric-value'>{power.momentum.toFixed(1)}%</div>
+                        <div className='power-metric-sub'>{Math.round((power.momentum / 100) * 25)} ticks</div>
                     </div>
-                    <div className="power-metric">
-                        <div className="power-metric-label">Prediction Confidence</div>
-                        <div className="confidence-bar-wrapper">
-                            <div className="confidence-bar">
+                    <div className='power-metric'>
+                        <div className='power-metric-label'>Prediction Confidence</div>
+                        <div className='confidence-bar-wrapper'>
+                            <div className='confidence-bar'>
                                 <div
-                                    className="confidence-fill"
+                                    className='confidence-fill'
                                     style={{ width: `${Math.min(power.powerScore * 5, 100)}%` }}
                                 />
                             </div>
-                            <span className="confidence-badge">{confidence.level}</span>
+                            <span className='confidence-badge'>{confidence.level}</span>
                         </div>
-                        <div className="power-metric-value confidence-percent">
+                        <div className='power-metric-value confidence-percent'>
                             {Math.min(power.powerScore * 5, 100).toFixed(1)}% Confidence
                         </div>
                     </div>
@@ -452,32 +457,34 @@ const OverUnderTab = observer(() => {
             </div>
 
             {/* Progress Bars for Over/Under */}
-            <div className="side-progress-bars">
-                <div className="side-bar-row">
-                    <span className="side-label">Over ({selectedDigit + 1}-9)</span>
-                    <div className="side-bar over-bar">
-                        <div className="side-bar-fill over-fill" style={{ width: `${analysis.overPercent}%` }} />
+            <div className='side-progress-bars'>
+                <div className='side-bar-row'>
+                    <span className='side-label'>Over ({selectedDigit + 1}-9)</span>
+                    <div className='side-bar over-bar'>
+                        <div className='side-bar-fill over-fill' style={{ width: `${analysis.overPercent}%` }} />
                     </div>
-                    <span className="side-percentage">{analysis.overPercent.toFixed(1)}%</span>
+                    <span className='side-percentage'>{analysis.overPercent.toFixed(1)}%</span>
                 </div>
-                <div className="side-bar-row">
-                    <span className="side-label">Under (0-{selectedDigit})</span>
-                    <div className="side-bar under-bar">
-                        <div className="side-bar-fill under-fill" style={{ width: `${analysis.underPercent}%` }} />
+                <div className='side-bar-row'>
+                    <span className='side-label'>Under (0-{selectedDigit})</span>
+                    <div className='side-bar under-bar'>
+                        <div className='side-bar-fill under-fill' style={{ width: `${analysis.underPercent}%` }} />
                     </div>
-                    <span className="side-percentage">{analysis.underPercent.toFixed(1)}%</span>
+                    <span className='side-percentage'>{analysis.underPercent.toFixed(1)}%</span>
                 </div>
             </div>
 
             {/* Digit Appearance Text */}
-            <div className="digit-appearance-text">
+            <div className='digit-appearance-text'>
                 Digit {selectedDigit} appeared {analysis.currentCount} times ({analysis.currentPercent.toFixed(1)}%)
             </div>
 
             {/* Visual Timeline - Last 40 Digits */}
-            <div className="visual-timeline">
-                <div className="timeline-title">Last 40 Digits (U = Under, O = Over, C = Current Digit {selectedDigit})</div>
-                <div className="timeline-grid">
+            <div className='visual-timeline'>
+                <div className='timeline-title'>
+                    Last 40 Digits (U = Under, O = Over, C = Current Digit {selectedDigit})
+                </div>
+                <div className='timeline-grid'>
                     {ticks.slice(-40).map((digit, idx) => {
                         const status = digit < selectedDigit ? 'U' : digit > selectedDigit ? 'O' : 'C';
                         const isLatest = idx === ticks.slice(-40).length - 1;

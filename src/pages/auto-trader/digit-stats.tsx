@@ -24,9 +24,10 @@ const DigitStats = observer(() => {
                         const latest = ticks[ticks.length - 1];
                         // Convert quotes to digits - Access store ACTIVE SYMBOLS safely
                         const active_symbols = smart_trading.active_symbols_data;
-                        const decimals = active_symbols && active_symbols[symbol]?.pip
-                            ? String(active_symbols[symbol].pip).split('.')[1]?.length || 2
-                            : 2;
+                        const decimals =
+                            active_symbols && active_symbols[symbol]?.pip
+                                ? String(active_symbols[symbol].pip).split('.')[1]?.length || 2
+                                : 2;
 
                         const digits = ticks.map(t => {
                             let quote_val = t.quote;
@@ -74,14 +75,17 @@ const DigitStats = observer(() => {
 
     return (
         <div className='digit-stats'>
-            <div className='digit-stats__header' style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <div
+                className='digit-stats__header'
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}
+            >
                 <div className='digit-stats__title' style={{ marginBottom: 0 }}>
                     <Localize i18n_default_text='Digit Distribution' />
                 </div>
                 <div className='stats-controls'>
                     <select
                         value={stats_sample_size}
-                        onChange={(e) => setStatsSampleSize(Number(e.target.value))}
+                        onChange={e => setStatsSampleSize(Number(e.target.value))}
                         className='premium-select'
                         style={{
                             background: 'var(--general-main-1)',
@@ -90,7 +94,7 @@ const DigitStats = observer(() => {
                             padding: '0.5rem 1rem',
                             borderRadius: '8px',
                             cursor: 'pointer',
-                            outline: 'none'
+                            outline: 'none',
                         }}
                     >
                         <option value={25}>25 Ticks</option>

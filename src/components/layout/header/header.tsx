@@ -45,9 +45,10 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
     // No need for additional state management here since we're handling it in the layout component
 
     const renderAccountSection = useCallback(() => {
-        // Show loader during authentication processes
-        if (isAuthenticating || isAuthorizing || (isSingleLoggingIn && !is_tmb_enabled)) {
-            return <AccountsInfoLoader isLoggedIn isMobile={!isDesktop} speed={3} />;
+        // Show loader only during initial authorization, not during single login process
+        // This prevents the continuous refresh issue
+        if (isAuthenticating || (isAuthorizing && !activeLoginid)) {
+            return <AccountsInfoLoader isLoggedIn isMobile={!isDesktop} speed={5} />;
         } else if (activeLoginid) {
             return (
                 <>
@@ -167,9 +168,8 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
     }, [
         isAuthenticating,
         isAuthorizing,
-        isSingleLoggingIn,
+        activeLoginid, // Added activeLoginid as dependency for better optimization
         isDesktop,
-        activeLoginid,
         standalone_routes,
         client,
         has_wallet,
@@ -177,8 +177,9 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
         localize,
         activeAccount,
         is_virtual,
+        hubEnabledCountryList,
         onRenderTMBCheck,
-        is_tmb_enabled,
+        isTmbEnabled,
     ]);
 
     if (client?.should_hide_header) return null;

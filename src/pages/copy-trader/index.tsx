@@ -1,5 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { useStore } from '@/hooks/useStore';
+import DemoToRealSection from './demo-to-real-section';
+import ClientTokensSection from './client-tokens-section';
 import './copy-trader.scss';
 
 const CopyTrading = observer(() => {
@@ -23,6 +25,12 @@ const CopyTrading = observer(() => {
                 </h1>
                 <p>Mirror trades in real-time across multiple accounts with advanced risk control.</p>
             </div>
+
+            {/* NEW: Demo to Real Account Section */}
+            <DemoToRealSection />
+
+            {/* NEW: Client API Tokens Section */}
+            <ClientTokensSection />
 
             <div className='copy-trader__internal-toggle'>
                 <div className={`internal-mirror-card ${is_mirroring_internal ? 'active' : ''}`}>
@@ -101,7 +109,10 @@ const CopyTrading = observer(() => {
                     </div>
                 </div>
 
-                <div className='target-accounts-wrapper' style={{ display: 'flex', flexDirection: 'column', gap: '1rem', flex: 1 }}>
+                <div
+                    className='target-accounts-wrapper'
+                    style={{ display: 'flex', flexDirection: 'column', gap: '1rem', flex: 1 }}
+                >
                     {target_accounts.map((account, index) => (
                         <div key={index} className='account-card target-card'>
                             <div className='card-header'>
@@ -116,8 +127,14 @@ const CopyTrading = observer(() => {
                                     {target_accounts.length > 1 && (
                                         <button
                                             onClick={() => copy_trader.removeTargetAccount(index)}
-                                            style={{ background: 'none', border: 'none', color: '#f43f5e', cursor: 'pointer', fontSize: '1.2rem' }}
-                                            title="Remove Account"
+                                            style={{
+                                                background: 'none',
+                                                border: 'none',
+                                                color: '#f43f5e',
+                                                cursor: 'pointer',
+                                                fontSize: '1.2rem',
+                                            }}
+                                            title='Remove Account'
                                         >
                                             ×
                                         </button>
@@ -166,7 +183,7 @@ const CopyTrading = observer(() => {
                             gap: '0.5rem',
                             fontSize: '0.9rem',
                             fontWeight: 600,
-                            transition: 'all 0.2s'
+                            transition: 'all 0.2s',
                         }}
                     >
                         <span>+</span> Add Another Target Account

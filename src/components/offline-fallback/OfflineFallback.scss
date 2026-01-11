@@ -23,7 +23,7 @@
         font-size: 2.5rem;
         font-weight: 600;
         margin-bottom: 1rem;
-        color: var(--text-red, #ff444f);
+        color: #00c6ff;
     }
 
     &__message {
@@ -42,7 +42,7 @@
         padding: 12px 20px;
         background: rgb(255 68 79 / 10%);
         border-radius: 8px;
-        border-left: 4px solid var(--text-red, #ff444f);
+        border-left: 4px solid #00c6ff;
         font-weight: 500;
     }
 
@@ -114,7 +114,7 @@
 }
 
 // Mobile responsive
-@media (width <= 768px) {
+@media (width <=768px) {
     .offline-fallback {
         &__container {
             padding: 20px 15px;

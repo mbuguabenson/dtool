@@ -57,7 +57,10 @@ export default class AutoTraderStore {
 
         return {
             total: slice.length,
-            even, odd, over, under,
+            even,
+            odd,
+            over,
+            under,
             evenProb: slice.length ? (even / slice.length) * 100 : 0,
             oddProb: slice.length ? (odd / slice.length) * 100 : 0,
             overProb: slice.length ? (over / slice.length) * 100 : 0,
@@ -323,11 +326,13 @@ export default class AutoTraderStore {
         const least = sorted[sorted.length - 1];
 
         // Find candidate: 2-7, not most, not 2nd most, not least
-        const candidates = stats.filter(s =>
-            s.digit >= 2 && s.digit <= 7 &&
-            s.digit !== most.digit &&
-            s.digit !== secondMost.digit &&
-            s.digit !== least.digit
+        const candidates = stats.filter(
+            s =>
+                s.digit >= 2 &&
+                s.digit <= 7 &&
+                s.digit !== most.digit &&
+                s.digit !== secondMost.digit &&
+                s.digit !== least.digit
         );
 
         // Find one with Power < 10% and decreasing
@@ -416,7 +421,8 @@ export default class AutoTraderStore {
         const prevStats = this.historical_stats[0];
         let prevProb = 0;
         if (prevStats) {
-            let prevUnder = 0, prevOver = 0;
+            let prevUnder = 0,
+                prevOver = 0;
             prevStats.forEach(s => {
                 if (s.digit < 5) prevUnder += s.count;
                 else prevOver += s.count;
@@ -479,7 +485,7 @@ export default class AutoTraderStore {
             return;
         }
 
-        // Debounce / Check if already trading not implemented in this simple version, 
+        // Debounce / Check if already trading not implemented in this simple version,
         // relying on the loop speed. In production, need a 'is_trading' flag lock.
         // For now, let's assume one trade per tick is throttled by API response anyway.
 
@@ -571,7 +577,6 @@ export default class AutoTraderStore {
                     });
                 }
             }, 2500);
-
         } catch (e) {
             console.error(e);
         }

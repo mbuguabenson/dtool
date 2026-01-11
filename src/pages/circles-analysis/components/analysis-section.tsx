@@ -32,10 +32,12 @@ const AnalysisSection = observer(
                         {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(d => (
                             <div
                                 key={d}
-                                className={`digit-box ${(type === 'M_D' && d === analysis.match_diff_digit) || (type === 'U_O' && d === analysis.over_under_threshold)
-                                    ? 'selected'
-                                    : ''
-                                    }`}
+                                className={`digit-box ${
+                                    (type === 'M_D' && d === analysis.match_diff_digit) ||
+                                    (type === 'U_O' && d === analysis.over_under_threshold)
+                                        ? 'selected'
+                                        : ''
+                                }`}
                                 onClick={() => {
                                     if (type === 'M_D') analysis.setMatchDiffDigit(d);
                                     if (type === 'U_O') analysis.setOverUnderThreshold(d);

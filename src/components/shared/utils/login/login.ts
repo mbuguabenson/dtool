@@ -45,7 +45,7 @@ export const loginUrl = ({ language }: TLoginUrl) => {
 
         // Force redirect to current origin to avoid localhost default
         const redirect_param = `&redirect_uri=${window.location.protocol}//${window.location.host}${window.location.pathname}`;
-        
+
         const url = `https://oauth.${oauth_domain}/oauth2/authorize?app_id=${getAppId()}&l=${language}${marketing_queries}&brand=${website_name.toLowerCase()}${redirect_param}`;
         return url;
     };

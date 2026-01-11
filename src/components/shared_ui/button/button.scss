@@ -1,9 +1,9 @@
 @use 'components/shared/styles/mixins' as *;
 
 :root {
-    --button-primary-default: #ff444f;
-    --text-colored-background: #fff;
-    --button-primary-hover: #eb3e48;
+    --button-primary-default: #0072ff;
+    --text-colored-background: #ffffff;
+    --button-primary-hover: #00c6ff;
     --button-secondary-default: #6e6e6e;
 }
 
@@ -90,11 +90,12 @@
     }
 
     &--primary {
-        background: var(--button-primary-default);
+        background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
         color: var(--text-colored-background);
 
         &:hover:not([disabled]) {
-            background: var(--button-primary-hover);
+            background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+            box-shadow: 0 4px 15px rgba(0, 198, 255, 0.4);
         }
 
         &:active:not([disabled]) {
