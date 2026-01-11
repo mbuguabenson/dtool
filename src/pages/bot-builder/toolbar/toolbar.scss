@@ -47,7 +47,7 @@
                 padding-right: 0.4rem;
             }
 
-            > * {
+            >* {
                 align-self: center;
             }
 
@@ -70,7 +70,7 @@
             padding-inline-end: 0.8rem;
         }
 
-        > * {
+        >* {
             @include desktop-screen {
                 align-self: center;
             }
@@ -114,7 +114,7 @@
                 }
             }
 
-            > * {
+            >* {
                 align-self: center;
             }
         }
@@ -134,7 +134,7 @@
         @include mobile-or-tablet-screen {
             background-color: var(--general-main-1);
             position: absolute;
-            top: 10;
+            top: 6.4rem;
             overflow-y: auto;
             scrollbar-width: none;
             height: calc(100% - 5rem);
