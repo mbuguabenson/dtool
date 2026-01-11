@@ -525,12 +525,12 @@
     }
 
     @include mobile-or-tablet-screen {
-        top: 5.6rem;
+        top: 10.8rem;
         inset-inline-start: 0;
         width: 100vw;
-        height: calc(100vh - 5.6rem);
-        min-height: calc(100vh - 5.6rem); // Consistent height on mobile
-        max-height: calc(100vh - 5.6rem);
+        height: calc(100vh - 10.8rem);
+        min-height: calc(100vh - 10.8rem); // Consistent height on mobile
+        max-height: calc(100vh - 10.8rem);
     }
 }
 
