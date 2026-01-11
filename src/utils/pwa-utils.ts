@@ -46,6 +46,12 @@ class PWAManager {
      * Register service worker (for all devices to enable offline functionality)
      */
     async registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
+        // Disable Service Worker on localhost to prevent asset loading issues (503s)
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            console.log('[PWA] Service worker disabled on localhost');
+            return null;
+        }
+
         if (!('serviceWorker' in navigator)) {
             console.warn('[PWA] Service workers not supported');
             return null;

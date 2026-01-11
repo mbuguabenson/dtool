@@ -1,7 +1,7 @@
 import { isStaging } from '../url/helpers';
 
 export const APP_IDS = {
-    LOCALHOST: 114784,
+    LOCALHOST: 117122,
     TMP_STAGING: 113831,
     STAGING: 113831,
     STAGING_BE: 113831,
@@ -58,7 +58,6 @@ const getDefaultServerURL = () => {
     }
 
     const loginid = window.localStorage.getItem('active_loginid') ?? active_loginid_from_url;
-    const is_real = loginid && !/^(VRT|VRW)/.test(loginid);
 
     // Force use of main load balancer for consistency
     const server_url = 'ws.derivws.com';
@@ -132,9 +131,8 @@ export const checkAndSetEndpointFromUrl = () => {
             const params = url_params.toString();
             const hash = location.hash;
 
-            location.href = `${location.protocol}//${location.hostname}${location.pathname}${
-                params ? `?${params}` : ''
-            }${hash || ''}`;
+            location.href = `${location.protocol}//${location.hostname}${location.pathname}${params ? `?${params}` : ''
+                }${hash || ''}`;
 
             return true;
         }
