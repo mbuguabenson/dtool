@@ -147,6 +147,8 @@
                                 width: 100%;
                                 overflow-x: auto;
                                 padding: 0.8rem 1.6rem 0;
+                                z-index: 10;
+                                position: relative;
                             }
                         }
                     }
