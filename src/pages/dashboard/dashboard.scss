@@ -77,6 +77,12 @@
         gap: 4rem;
     }
 
+    @media (max-width: 480px) {
+        padding: 3rem 1.5rem; // Reduced padding
+        min-height: auto; // Remove large min-height
+        gap: 3rem;
+    }
+
     .hero-bg-blobs {
         position: absolute;
         top: 0;
@@ -85,6 +91,7 @@
         bottom: 0;
         z-index: 1;
         pointer-events: none;
+        overflow: hidden; // Ensure blobs don't cause overflow
 
         .blob {
             position: absolute;
@@ -125,6 +132,7 @@
         position: relative;
         z-index: 10;
         flex: 1;
+        width: 100%; // Ensure text takes full width
 
         .hero-badge {
             display: inline-flex;
@@ -167,7 +175,8 @@
             filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.1));
 
             @media (max-width: 480px) {
-                font-size: 4rem;
+                font-size: 2.8rem; // Reduced font size significantly
+                letter-spacing: -0.1rem;
             }
         }
 
@@ -182,6 +191,11 @@
             @media (max-width: 1024px) {
                 margin: 0 auto 4rem;
             }
+
+            @media (max-width: 480px) {
+                font-size: 1.6rem; // Reduced font size
+                margin-bottom: 2.4rem;
+            }
         }
 
         .hero-actions {
@@ -190,6 +204,12 @@
 
             @media (max-width: 1024px) {
                 justify-content: center;
+            }
+
+            @media (max-width: 480px) {
+                flex-direction: column; // Stack buttons vertically
+                width: 100%;
+                gap: 1.2rem;
             }
 
             .hero-load-button {
@@ -206,6 +226,13 @@
                     inset 0 0 15px rgba(255, 255, 255, 0.2);
                 transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
                 cursor: pointer;
+
+                @media (max-width: 480px) {
+                    width: 100%; // Full width
+                    height: 5.6rem; // Slightly smaller height
+                    padding: 0; // Reset padding
+                    font-size: 1.6rem;
+                }
 
                 &:hover {
                     box-shadow: 0 15px 50px rgba(255, 68, 79, 0.5);
@@ -225,6 +252,13 @@
                 backdrop-filter: blur(10px);
                 transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
                 cursor: pointer;
+
+                @media (max-width: 480px) {
+                    width: 100%; // Full width
+                    height: 5.6rem;
+                    padding: 0;
+                    font-size: 1.6rem;
+                }
 
                 &:hover {
                     background: rgba(255, 255, 255, 0.2);
@@ -251,6 +285,13 @@
                     inset 0 0 15px rgba(255, 255, 255, 0.2);
                 transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
                 cursor: pointer;
+
+                @media (max-width: 480px) {
+                    width: 100%;
+                    height: 5.6rem;
+                    justify-content: center;
+                    font-size: 1.6rem;
+                }
 
                 &:hover {
                     box-shadow: 0 15px 50px rgba(37, 211, 102, 0.5);
@@ -281,8 +322,11 @@
         min-width: 380px;
 
         @media (max-width: 480px) {
-            min-width: 100%;
-            padding: 3.2rem;
+            min-width: unset; // Remove min-width
+            width: 100%; // Full width
+            padding: 2.4rem; // Reduced padding
+            gap: 2rem;
+            border-radius: 3.2rem;
         }
 
         .stat-item {
@@ -296,6 +340,10 @@
                 font-weight: 700;
                 letter-spacing: 0.15rem;
                 text-transform: uppercase;
+
+                @media (max-width: 480px) {
+                    font-size: 1.2rem; // Smaller label on mobile
+                }
             }
 
             .stat-value {
@@ -307,6 +355,10 @@
                 -webkit-background-clip: text;
                 background-clip: text;
                 -webkit-text-fill-color: transparent;
+
+                @media (max-width: 480px) {
+                    font-size: 2.4rem; // Smaller value on mobile
+                }
             }
         }
 
@@ -328,6 +380,7 @@
 }
 
 @keyframes pulse-dot {
+
     0%,
     100% {
         opacity: 1;
@@ -393,7 +446,7 @@
     padding: 0 6.4rem;
 
     @media (max-width: 480px) {
-        padding: 0 2.4rem;
+        padding: 0 1.5rem; // Consistent reduced padding
     }
 }
 
@@ -405,8 +458,9 @@
     padding: 0 6.4rem 4.8rem;
 
     @media (max-width: 480px) {
-        padding: 0 2.4rem 4.8rem;
+        padding: 0 1.5rem 3rem; // Consistent reduced padding
         grid-template-columns: 1fr;
+        gap: 1.5rem;
     }
 }
 
