@@ -17,7 +17,7 @@
             top: 0;
             left: 0;
             width: 100vw;
-            z-index: var(--zindex-drawer);
+            z-index: 15; // Increased to be above main tabs (tabs are at z-index 10)
             height: calc(100% - env(safe-area-inset-bottom, 0));
             padding-bottom: env(safe-area-inset-bottom, 0);
 
