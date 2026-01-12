@@ -511,25 +511,27 @@ const AppWrapper = observer(() => {
                                     </Suspense>
                                 </PageContentWrapper>
                             </div>
-                            <div
-                                label={
-                                    <div className='main__tabs-label'>
-                                        <LabelPairedPuzzlePieceTwoCaptionBoldIcon
-                                            height='20px'
-                                            width='20px'
-                                            fill='var(--text-general)'
-                                        />
-                                        <Localize i18n_default_text='AI Analysis' />
-                                    </div>
-                                }
-                                id='id-ai-analysis'
-                            >
-                                <PageContentWrapper>
-                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                        <AIAnalysisTab />
-                                    </Suspense>
-                                </PageContentWrapper>
-                            </div>
+                            {false && ( // AI Analysis Tab - Hidden
+                                <div
+                                    label={
+                                        <div className='main__tabs-label'>
+                                            <LabelPairedPuzzlePieceTwoCaptionBoldIcon
+                                                height='20px'
+                                                width='20px'
+                                                fill='var(--text-general)'
+                                            />
+                                            <Localize i18n_default_text='AI Analysis' />
+                                        </div>
+                                    }
+                                    id='id-ai-analysis'
+                                >
+                                    <PageContentWrapper>
+                                        <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
+                                            <AIAnalysisTab />
+                                        </Suspense>
+                                    </PageContentWrapper>
+                                </div>
+                            )}
                             <div
                                 label={
                                     <div className='main__tabs-label'>
@@ -549,30 +551,32 @@ const AppWrapper = observer(() => {
                                     </Suspense>
                                 </PageContentWrapper>
                             </div>
-                            <div
-                                label={
-                                    <div className='main__tabs-label'>
-                                        <LegacyGuide1pxIcon
-                                            height='16px'
-                                            width='16px'
-                                            fill='var(--text-general)'
-                                            className='icon-general-fill-g-path'
-                                        />
-                                        <Localize i18n_default_text='Tutorials' />
+                            {false && ( // Tutorials Tab - Hidden
+                                <div
+                                    label={
+                                        <div className='main__tabs-label'>
+                                            <LegacyGuide1pxIcon
+                                                height='16px'
+                                                width='16px'
+                                                fill='var(--text-general)'
+                                                className='icon-general-fill-g-path'
+                                            />
+                                            <Localize i18n_default_text='Tutorials' />
+                                        </div>
+                                    }
+                                    id='id-tutorials'
+                                >
+                                    <div className='tutorials-wrapper'>
+                                        <Suspense
+                                            fallback={
+                                                <ChunkLoader message={localize('Please wait, loading tutorials...')} />
+                                            }
+                                        >
+                                            <Tutorial handleTabChange={handleTabChange} />
+                                        </Suspense>
                                     </div>
-                                }
-                                id='id-tutorials'
-                            >
-                                <div className='tutorials-wrapper'>
-                                    <Suspense
-                                        fallback={
-                                            <ChunkLoader message={localize('Please wait, loading tutorials...')} />
-                                        }
-                                    >
-                                        <Tutorial handleTabChange={handleTabChange} />
-                                    </Suspense>
                                 </div>
-                            </div>
+                            )}
                             <div
                                 label={
                                     <div className='main__tabs-label'>
@@ -634,7 +638,7 @@ const AppWrapper = observer(() => {
                 is_visible={is_dialog_open}
                 onCancel={onCancelButtonClick || undefined}
                 onClose={onCloseDialog || undefined}
-                onConfirm={onOkButtonClick || onCloseDialog || (() => {})}
+                onConfirm={onOkButtonClick || onCloseDialog || (() => { })}
                 portal_element_id='modal_root'
                 title={title}
                 login={handleLoginGeneration}

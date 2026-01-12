@@ -18,6 +18,13 @@
             font-size: 1.4rem;
             color: var(--text-less-prominent);
             margin: 0;
+
+            &.sub-hint {
+                font-size: 1.2rem;
+                color: var(--brand-blue);
+                font-weight: 600;
+                margin-top: 0.5rem;
+            }
         }
     }
 

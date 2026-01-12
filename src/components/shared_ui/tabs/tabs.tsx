@@ -91,14 +91,21 @@ const Tabs = ({
         if (should_update_hash) {
             // if hash is in url, find which tab index correlates to it
             const hash = location.hash.slice(1);
-            const hash_index = children.findIndex(child => child && child.props && child.props.hash === hash);
+            const childrenArray = React.Children.toArray(children);
+            const hash_index = childrenArray.findIndex(
+                child => child && typeof child === 'object' && 'props' in child && child.props && child.props.hash === hash
+            );
             const has_hash = hash_index > -1;
 
             if (has_hash) {
                 initial_index_to_show = hash_index;
             } else {
                 // if no hash is in url but component has passed hash prop, set hash of the tab shown
-                const child_props = children[initial_index_to_show]?.props;
+                const childAtIndex = childrenArray[initial_index_to_show];
+                const child_props =
+                    childAtIndex && typeof childAtIndex === 'object' && 'props' in childAtIndex
+                        ? childAtIndex.props
+                        : null;
                 const current_id = child_props && child_props.hash;
                 if (current_id) {
                     pushHash(current_id);
@@ -134,7 +141,7 @@ const Tabs = ({
         setActiveLineStyle();
     };
 
-    const valid_children = children.filter(child => child);
+    const valid_children = React.Children.toArray(children).filter(child => child);
 
     if (is_scrollable) {
         tab_width = 'unset';

@@ -56,6 +56,13 @@ export default class CopyTraderStore {
     @observable accessor is_mirroring_internal = false;
     @observable accessor internal_multiplier = 1;
 
+    // Demo to Real Account mirroring
+    @observable accessor selected_real_account_loginid: string = '';
+    @observable accessor is_demo_to_real_active = false;
+    @observable accessor demo_to_real_status: 'idle' | 'connecting' | 'active' | 'error' = 'idle';
+    @observable accessor demo_to_real_error = '';
+    private real_account_ws: WebSocket | null = null;
+
     constructor(root_store: RootStore) {
         makeObservable(this);
         this.root_store = root_store;
@@ -66,6 +73,10 @@ export default class CopyTraderStore {
             contract => {
                 if (this.is_mirroring_internal && contract) {
                     this.handleSourceTrade(contract);
+                }
+                // Also mirror to real account if demo-to-real is active
+                if (this.is_demo_to_real_active && contract) {
+                    this.mirrorTradeToRealAccount(contract);
                 }
             }
         );
@@ -290,5 +301,207 @@ export default class CopyTraderStore {
                 }
             }
         });
+    }
+
+    @action
+    setSelectedRealAccount = (loginid: string) => {
+        this.selected_real_account_loginid = loginid;
     };
+
+    @action
+    startDemoToRealCopy = async () => {
+        const { client } = this.root_store;
+
+        if (!this.selected_real_account_loginid) {
+            this.demo_to_real_error = 'Please select a real account';
+            this.demo_to_real_status = 'error';
+            return;
+        }
+
+        if (!client.is_virtual) {
+            this.demo_to_real_error = 'You must be on a demo account to use this feature';
+            this.demo_to_real_status = 'error';
+            return;
+        }
+
+        this.demo_to_real_status = 'connecting';
+        this.demo_to_real_error = '';
+
+        // Get token for the selected real account
+        const real_token = client.getTokenForAccount(this.selected_real_account_loginid);
+
+        if (!real_token) {
+            this.demo_to_real_error = 'Token not found for selected account';
+            this.demo_to_real_status = 'error';
+            return;
+        }
+
+        // Connect to real account with extracted token
+        this.connectRealAccount(real_token);
+    };
+
+    @action
+    stopDemoToRealCopy = () => {
+        if (this.real_account_ws) {
+            this.real_account_ws.close();
+            this.real_account_ws = null;
+        }
+        this.is_demo_to_real_active = false;
+        this.demo_to_real_status = 'idle';
+    };
+
+    @action
+    connectRealAccount = (token: string) => {
+        if (this.real_account_ws) {
+            this.real_account_ws.close();
+        }
+
+        const app_id = getAppId();
+        const ws = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${app_id}`);
+
+        this.real_account_ws = ws;
+
+        ws.onopen = () => {
+            ws.send(JSON.stringify({ authorize: token }));
+        };
+
+        ws.onmessage = msg => {
+            const data = JSON.parse(msg.data);
+
+            if (data.error) {
+                console.error('Demo to Real Auth Error:', data.error.message);
+                runInAction(() => {
+                    this.demo_to_real_status = 'error';
+                    this.demo_to_real_error = data.error.message;
+                });
+                return;
+            }
+
+            if (data.msg_type === 'authorize') {
+                runInAction(() => {
+                    this.demo_to_real_status = 'active';
+                    this.is_demo_to_real_active = true;
+                });
+                console.log('Demo to Real account connected successfully');
+            }
+
+            // Handle buy response for demo-to-real
+            if (data.msg_type === 'buy') {
+                console.log('Trade copied to real account:', data);
+            }
+        };
+
+        ws.onerror = () => {
+            runInAction(() => {
+                this.demo_to_real_status = 'error';
+                this.demo_to_real_error = 'Connection error';
+            });
+        };
+
+        ws.onclose = () => {
+            runInAction(() => {
+                if (this.is_demo_to_real_active) {
+                    this.demo_to_real_status = 'idle';
+                    this.is_demo_to_real_active = false;
+                }
+            });
+        };
+    };
+
+    @action
+    mirrorTradeToRealAccount = async (contract: ProposalOpenContract) => {
+        if (!this.is_demo_to_real_active || !this.real_account_ws) return;
+
+        const { client } = this.root_store;
+        const original_stake =
+            parseFloat(String(contract.buy_price || (contract as any).stake || (contract as any).amount)) || 1;
+        const stake = original_stake * this.internal_multiplier;
+
+        try {
+            const real_account = client.accounts[this.selected_real_account_loginid];
+            const currency = real_account?.currency || 'USD';
+
+            // Step 1: Get proposal on real account
+            const proposal_request = {
+                proposal: 1,
+                amount: stake,
+                basis: 'stake',
+                contract_type: contract.contract_type,
+                currency: currency,
+                duration: 1,
+                duration_unit: 't',
+                symbol: contract.underlying,
+            };
+
+            this.real_account_ws.send(JSON.stringify(proposal_request));
+
+            // Wait for proposal response
+            const proposal_response = await new Promise<any>((resolve, reject) => {
+                const handler = (event: MessageEvent) => {
+                    const data = JSON.parse(event.data);
+                    if (data.msg_type === 'proposal') {
+                        this.real_account_ws!.removeEventListener('message', handler);
+                        resolve(data);
+                    } else if (data.error) {
+                        this.real_account_ws!.removeEventListener('message', handler);
+                        reject(data.error);
+                    }
+                };
+                this.real_account_ws!.addEventListener('message', handler);
+                setTimeout(() => reject(new Error('Proposal timeout')), 5000);
+            });
+
+            if (proposal_response.error) {
+                console.error('Demo to Real Proposal Error:', proposal_response.error);
+                runInAction(() => {
+                    this.trade_history.unshift({
+                        timestamp: Date.now(),
+                        market: String(contract.underlying),
+                        stake: stake,
+                        status: 'Failed',
+                        message: 'Proposal Error: ' + proposal_response.error.message,
+                        target_label: 'Real Account',
+                    });
+                });
+                return;
+            }
+
+            const proposal_id = proposal_response.proposal?.id;
+            if (!proposal_id) return;
+
+            // Step 2: Buy the contract on real account
+            const buy_request = {
+                buy: proposal_id,
+                price: stake,
+            };
+
+            this.real_account_ws.send(JSON.stringify(buy_request));
+
+            runInAction(() => {
+                this.trade_history.unshift({
+                    timestamp: Date.now(),
+                    market: String(contract.underlying),
+                    stake: stake,
+                    status: 'Success',
+                    message: 'Trade copied to real account',
+                    target_label: 'Real Account',
+                    contract_id: proposal_id,
+                });
+            });
+
+            console.log(`Copied trade to real account with stake ${stake}`);
+        } catch (error: any) {
+            console.error('Demo to Real mirror error:', error);
+            runInAction(() => {
+                this.trade_history.unshift({
+                    timestamp: Date.now(),
+                    market: String(contract.underlying),
+                    stake: stake,
+                    status: 'Failed',
+                    message: error.message || 'Unknown Error',
+                    target_label: 'Real Account',
+                });
+            });
+        }
+    };;
 }

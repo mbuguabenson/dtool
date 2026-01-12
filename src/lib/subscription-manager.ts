@@ -1,0 +1,167 @@
+/**
+ * Centralized WebSocket Subscription Manager
+ * Prevents duplicate subscriptions and manages cleanup when switching tabs
+ */
+
+type SubscriptionCallback = (data: any) => void;
+
+interface ActiveSubscription {
+    symbol: string;
+    id: string | null;
+    callbacks: Set<SubscriptionCallback>;
+    unsubscribe: (() => void) | null;
+}
+
+class SubscriptionManager {
+    private activeSubscriptions: Map<string, ActiveSubscription> = new Map();
+    private api: any = null;
+
+    setApi(api: any) {
+        this.api = api;
+    }
+
+    /**
+     * Subscribe to ticks_history for a symbol
+     * Returns unsubscribe function
+     */
+    async subscribeToTicks(
+        symbol: string,
+        callback: SubscriptionCallback,
+        count: number = 1000
+    ): Promise<() => void> {
+        const key = `ticks_${symbol}`;
+
+        // If already subscribed, just add callback
+        if (this.activeSubscriptions.has(key)) {
+            const sub = this.activeSubscriptions.get(key)!;
+            sub.callbacks.add(callback);
+
+            // Return unsubscribe function for this specific callback
+            return () => {
+                sub.callbacks.delete(callback);
+                // If no more callbacks, unsubscribe completely
+                if (sub.callbacks.size === 0) {
+                    this.unsubscribe(key);
+                }
+            };
+        }
+
+        // Create new subscription
+        const subscription: ActiveSubscription = {
+            symbol,
+            id: null,
+            callbacks: new Set([callback]),
+            unsubscribe: null,
+        };
+
+        this.activeSubscriptions.set(key, subscription);
+
+        try {
+            if (!this.api) {
+                console.warn('[SubscriptionManager] API not initialized');
+                return () => this.unsubscribe(key);
+            }
+
+            // Subscribe to ticks_history
+            const response = await this.api.send({
+                ticks_history: symbol,
+                count,
+                end: 'latest',
+                style: 'ticks',
+                subscribe: 1,
+            });
+
+            if (response.error) {
+                // If already subscribed error, we can safely ignore and use existing subscription
+                if (response.error.code === 'AlreadySubscribed') {
+                    console.log(`[SubscriptionManager] Using existing subscription for ${symbol}`);
+                    // The subscription already exists on the server, so we just track it locally
+                } else {
+                    console.error('[SubscriptionManager] Subscription error:', response.error);
+                    this.activeSubscriptions.delete(key);
+                    throw new Error(response.error.message);
+                }
+            }
+
+            if (response.subscription) {
+                subscription.id = response.subscription.id;
+            }
+
+            // Set up message listener
+            const messageHandler = (data: any) => {
+                if (data.msg_type === 'tick' || data.msg_type === 'history') {
+                    const sub = this.activeSubscriptions.get(key);
+                    if (sub) {
+                        sub.callbacks.forEach(cb => cb(data));
+                    }
+                }
+            };
+
+            // Store unsubscribe function
+            subscription.unsubscribe = this.api.onMessage().subscribe(messageHandler).unsubscribe;
+        } catch (error) {
+            console.error('[SubscriptionManager] Failed to subscribe:', error);
+            this.activeSubscriptions.delete(key);
+            throw error;
+        }
+
+        // Return unsubscribe function
+        return () => {
+            const sub = this.activeSubscriptions.get(key);
+            if (sub) {
+                sub.callbacks.delete(callback);
+                if (sub.callbacks.size === 0) {
+                    this.unsubscribe(key);
+                }
+            }
+        };
+    }
+
+    /**
+     * Unsubscribe from a specific symbol
+     */
+    private unsubscribe(key: string) {
+        const subscription = this.activeSubscriptions.get(key);
+        if (!subscription) return;
+
+        // Call unsubscribe for message handler
+        if (subscription.unsubscribe) {
+            subscription.unsubscribe();
+        }
+
+        // Forget subscription on server if we have an ID
+        if (subscription.id && this.api) {
+            this.api.send({ forget: subscription.id }).catch((err: any) => {
+                console.warn('[SubscriptionManager] Failed to forget subscription:', err);
+            });
+        }
+
+        this.activeSubscriptions.delete(key);
+    }
+
+    /**
+     * Unsubscribe from all active subscriptions
+     */
+    unsubscribeAll() {
+        const keys = Array.from(this.activeSubscriptions.keys());
+        keys.forEach(key => this.unsubscribe(key));
+    }
+
+    /**
+     * Get active subscriptions count
+     */
+    getActiveCount(): number {
+        return this.activeSubscriptions.size;
+    }
+
+    /**
+     * Check if subscribed to a symbol
+     */
+    isSubscribed(symbol: string): boolean {
+        return this.activeSubscriptions.has(`ticks_${symbol}`);
+    }
+}
+
+// Export singleton instance
+export const subscriptionManager = new SubscriptionManager();
+export default subscriptionManager;

@@ -64,7 +64,11 @@
         &--bot-builder {
             .dc-tabs__list {
                 @include desktop-screen {
-                    padding-inline-end: 24rem; // increased space for Run button
+                    padding-inline-end: 45rem; // Maximum space to ensure all tabs are fully visible
+                }
+
+                @include mobile-or-tablet-screen {
+                    padding-inline-end: 28rem; // Maximum space for mobile
                 }
             }
         }
@@ -112,7 +116,7 @@
             }
 
             &__list {
-                background: #0b0e18; // Dark blue/black background
+                background: var(--general-section-1); // Use theme variable
                 justify-content: start !important;
                 flex-shrink: 0;
                 overflow-x: auto; // Enable horizontal scrolling
@@ -120,7 +124,12 @@
                 scrollbar-width: thin; // Thin scrollbar for Firefox
                 border: none;
                 padding-top: 0.8rem;
+                padding-inline-end: 40rem; // Extra large padding to ensure no tabs are hidden
                 flex-wrap: nowrap; // Prevent wrapping to allow scrolling
+
+                @include mobile-or-tablet-screen {
+                    padding-inline-end: 25rem; // Extra large padding on mobile
+                }
 
                 // Style the scrollbar
                 &::-webkit-scrollbar {
@@ -167,7 +176,7 @@
 
         &__content {
             flex: 1;
-            overflow-y: hidden; // Disable vertical scrolling
+            overflow-y: auto; // Enable vertical scrolling
             overflow-x: hidden;
             height: 100%;
             display: block;
@@ -239,16 +248,16 @@
             padding: 0 1.6rem;
             width: auto;
             @include flex-center;
-            color: #ffffff; // White text for inactive tabs
+            color: var(--text-prominent); // Use theme variable
             transition: background 0.2s ease;
 
             &:hover:not(.dc-tabs__active) {
-                background: rgba(255, 255, 255, 0.1);
+                background: var(--state-hover);
                 cursor: pointer;
             }
 
             svg {
-                fill: #ffffff; // White icon for inactive tabs
+                fill: var(--text-prominent); // Use theme variable
                 padding-inline-end: 0;
                 margin-inline-end: 0.8rem;
 
@@ -370,6 +379,8 @@
         height: var(--tab-content-height);
         width: 100%;
         transition: all 0.4s;
+        overflow-y: auto; // Enable vertical scrolling for tab content
+        overflow-x: hidden;
 
         @include mobile-or-tablet-screen {
             height: var(--tab-content-height-mobile);
@@ -864,4 +875,89 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+// Light Mode Tab Improvements
+[data-theme='light'] {
+    .main {
+        .dc-tabs {
+            &__list {
+                background: #f8f9fa; // Light gray background for light mode
+                border-bottom: 2px solid #e9ecef;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            }
+
+            &__item {
+                color: #495057; // Darker text for better contrast in light mode
+
+                &:hover:not(.dc-tabs__active) {
+                    background: rgba(0, 0, 0, 0.04);
+                }
+
+                svg {
+                    fill: #6c757d; // Gray icons for inactive tabs in light mode
+                }
+            }
+
+            &__active {
+                background: rgba(0, 198, 255, 0.12) !important;
+                color: #0099cc !important; // Slightly darker cyan for better contrast
+                box-shadow: 0 2px 8px rgba(0, 198, 255, 0.15);
+
+                svg {
+                    fill: #0099cc !important;
+                }
+            }
+
+            &__active-line {
+                background-color: #0099cc; // Darker cyan for active line in light mode
+            }
+        }
+
+        &__tabs-label {
+            color: inherit;
+        }
+    }
+
+    // Light mode scrollbar styling
+    .main__container {
+        .dc-tabs__list {
+            &::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.05);
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background: rgba(0, 0, 0, 0.15);
+
+                &:hover {
+                    background: rgba(0, 0, 0, 0.25);
+                }
+            }
+        }
+
+        &__content {
+            &::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.05);
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background: rgba(0, 0, 0, 0.15);
+
+                &:hover {
+                    background: rgba(0, 0, 0, 0.25);
+                }
+            }
+        }
+    }
+
+    // Improve tab shadows for light mode
+    .tabs-shadow {
+        &--left {
+            background: linear-gradient(-88.07deg, transparent 1.63%, #f8f9fa 50.02%);
+        }
+
+        &--right {
+            background: linear-gradient(88.07deg, transparent 1.63%, #f8f9fa 50.02%);
+        }
+    }
 }

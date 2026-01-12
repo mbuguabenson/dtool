@@ -15,6 +15,7 @@ import {
 import ApiHelpers from './api-helpers';
 import { generateDerivApiInstance, V2GetActiveClientId, V2GetActiveToken } from './appId';
 import chart_api from './chart-api';
+import { subscriptionManager } from '@/lib/subscription-manager';
 
 type CurrentSubscription = {
     id: string;
@@ -111,6 +112,20 @@ class APIBase {
             this.api?.connection.addEventListener('open', this.onsocketopen.bind(this));
             this.api?.connection.addEventListener('close', this.onsocketclose.bind(this));
 
+            // Initialize subscription manager with API instance
+            if (this.api) {
+                subscriptionManager.setApi(this.api);
+
+                // Add message listener to suppress AlreadySubscribed errors
+                // These are expected when switching tabs and are handled automatically
+                this.api.onMessage().subscribe((message: any) => {
+                    if (message.error && message.error.code === 'AlreadySubscribed') {
+                        // Suppress console error - this is handled by the application
+                        console.log(`[API] AlreadySubscribed to ${message.echo_req?.ticks_history} - using existing subscription`);
+                    }
+                });
+            }
+
             // DEBUG: Add direct event listeners to debug connection stability
             if (this.api?.connection) {
                 // connection listeners removed for performance
@@ -145,7 +160,10 @@ class APIBase {
 
     terminate() {
         // eslint-disable-next-line no-console
-        if (this.api) this.api.disconnect();
+        if (this.api) {
+            subscriptionManager.unsubscribeAll(); // Clean up all subscriptions
+            this.api.disconnect();
+        }
     }
 
     initEventListeners() {
