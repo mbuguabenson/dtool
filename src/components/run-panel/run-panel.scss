@@ -17,7 +17,7 @@
             top: 0;
             left: 0;
             width: 100vw;
-            z-index: var(--zindex-drawer);
+            z-index: 4; // Reduced from 6 to prevent collision with tabs (tabs are at z-index 10)
             height: calc(100% - env(safe-area-inset-bottom, 0));
             padding-bottom: env(safe-area-inset-bottom, 0);
 
@@ -167,6 +167,7 @@
                 bottom: 15.7rem;
                 width: 100vw;
                 padding: 0.4rem 0;
+                z-index: 3; // Add explicit z-index to keep below tabs
 
                 /* Fix for iOS devices to prevent tab content overlap with bottom controls */
                 @supports (-webkit-touch-callout: none) {
@@ -201,7 +202,7 @@
         width: 100%;
         background-color: var(--general-main-1);
         border-top: solid 2px var(--general-section-1);
-        z-index: 8;
+        z-index: 5; // Reduced from 8 to prevent collision with tabs (tabs should be at higher z-index)
 
         /* Fix for iOS devices to respect safe area */
         @supports (-webkit-touch-callout: none) {
