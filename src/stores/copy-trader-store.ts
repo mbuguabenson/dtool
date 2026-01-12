@@ -315,27 +315,40 @@ export default class CopyTraderStore {
         if (!this.selected_real_account_loginid) {
             this.demo_to_real_error = 'Please select a real account';
             this.demo_to_real_status = 'error';
+            console.error('[Demo to Real] No real account selected');
             return;
         }
 
         if (!client.is_virtual) {
             this.demo_to_real_error = 'You must be on a demo account to use this feature';
             this.demo_to_real_status = 'error';
+            console.error('[Demo to Real] Not on a demo account');
             return;
         }
 
         this.demo_to_real_status = 'connecting';
         this.demo_to_real_error = '';
 
+        console.log('[Demo to Real] Attempting to get token for account:', this.selected_real_account_loginid);
+        console.log('[Demo to Real] Available accounts:', Object.keys(client.accounts));
+
         // Get token for the selected real account
         const real_token = client.getTokenForAccount(this.selected_real_account_loginid);
 
         if (!real_token) {
-            this.demo_to_real_error = 'Token not found for selected account';
+            // Try to get from accounts list
+            const accountsList = JSON.parse(localStorage.getItem('accountsList') ?? '{}');
+            console.error('[Demo to Real] Token not found for selected account');
+            console.error('[Demo to Real] Selected loginid:', this.selected_real_account_loginid);
+            console.error('[Demo to Real] Available tokens:', Object.keys(accountsList));
+            console.error('[Demo to Real] AccountsList:', accountsList);
+
+            this.demo_to_real_error = 'Token not found for selected account. Please make sure you have API tokens enabled for this account.';
             this.demo_to_real_status = 'error';
             return;
         }
 
+        console.log('[Demo to Real] Token retrieved successfully, connecting...');
         // Connect to real account with extracted token
         this.connectRealAccount(real_token);
     };
