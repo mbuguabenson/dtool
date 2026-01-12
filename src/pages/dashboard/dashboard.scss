@@ -51,13 +51,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8rem 6.4rem;
-    min-height: 52rem;
+    padding: 4rem 6.4rem; // Reduced from 8rem
+    min-height: 36rem; // Reduced from 52rem
     background: #020617;
     border-radius: 0;
     border: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    gap: 4.8rem;
+    gap: 3.2rem; // Reduced from 4.8rem
     overflow: hidden;
 
     &::before {
@@ -453,14 +453,14 @@
 // Quick Access Grid
 .quick-access-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 2.4rem;
-    padding: 0 6.4rem 4.8rem;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); // Reduced from 280px
+    gap: 1.6rem; // Reduced from 2.4rem
+    padding: 0 6.4rem 3.2rem; // Reduced bottom padding from 4.8rem
 
     @media (max-width: 480px) {
-        padding: 0 1.5rem 3rem; // Consistent reduced padding
+        padding: 0 1.5rem 2.4rem; // Reduced padding
         grid-template-columns: 1fr;
-        gap: 1.5rem;
+        gap: 1.2rem; // Reduced gap
     }
 }
 
@@ -468,14 +468,18 @@
     position: relative;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 2.4rem;
-    padding: 3.2rem;
+    border-radius: 1.6rem; // Reduced from 2.4rem
+    padding: 2rem; // Reduced from 3.2rem
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     overflow: hidden;
     height: 100%;
     display: flex;
     flex-direction: column;
+
+    @media (max-width: 480px) {
+        padding: 1.6rem; // Even smaller on mobile
+    }
 
     .card-glow {
         position: absolute;
@@ -534,16 +538,16 @@
     }
 
     .card-icon-wrapper {
-        width: 6.4rem;
-        height: 6.4rem;
+        width: 4.8rem; // Reduced from 6.4rem
+        height: 4.8rem; // Reduced from 6.4rem
         display: flex;
         align-items: center;
         justify-content: center;
         background: rgba(255, 255, 255, 0.05);
-        border-radius: 1.6rem;
+        border-radius: 1.2rem; // Reduced from 1.6rem
         color: var(--brand-red-coral);
         transition: all 0.4s ease;
-        margin-bottom: 2.4rem;
+        margin-bottom: 1.6rem; // Reduced from 2.4rem
     }
 
     .card-content {
@@ -552,24 +556,24 @@
         z-index: 2;
 
         h3 {
-            font-size: 2rem;
+            font-size: 1.6rem; // Reduced from 2rem
             font-weight: 700;
-            margin-bottom: 0.8rem;
+            margin-bottom: 0.6rem; // Reduced from 0.8rem
             color: var(--text-prominent);
             transition: color 0.3s ease;
         }
 
         p {
-            font-size: 1.4rem;
-            line-height: 1.6;
+            font-size: 1.2rem; // Reduced from 1.4rem
+            line-height: 1.5; // Reduced from 1.6
             color: var(--text-less-prominent);
             opacity: 0.7;
         }
     }
 
     .card-arrow {
-        margin-top: 2.4rem;
-        font-size: 2rem;
+        margin-top: 1.6rem; // Reduced from 2.4rem
+        font-size: 1.6rem; // Reduced from 2rem
         opacity: 0.3;
         transform: translateX(0);
         transition: all 0.3s ease;
