@@ -1,4 +1,4 @@
-import { action, computed, makeObservable, observable, reaction } from 'mobx';
+import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx';
 import {
     getIndicativePrice,
     isAccumulatorContract,
@@ -12,8 +12,14 @@ import { contract_stages } from '@/constants/contract-stage';
 import { api_base } from '@/external/bot-skeleton';
 import { getContractUpdateConfig } from '@/utils/multiplier';
 import { ProposalOpenContract, UpdateContractResponse } from '@deriv/api-types';
-import { TStores } from '@deriv/stores/types';
+// import { TStores } from '@deriv/stores/types';
 import RootStore from './root-store';
+
+type TStores = {
+    client: any;
+    common: any;
+    ui: any;
+};
 
 type TLimitOrder = {
     take_profit?: number;
@@ -35,7 +41,7 @@ export default class SummaryCardStore {
     indicative_movement = '';
     profit_movement = '';
 
-    validation_errors = {};
+    validation_errors: Record<string, string[]> = {};
     validation_rules: TValidationRules = getValidationRules();
 
     // Multiplier contract update config
@@ -183,12 +189,12 @@ export default class SummaryCardStore {
         });
 
         // TODO only add props that is being used
-        this.contract_info = contract;
+        this.contract_info = contract as unknown as ProposalOpenContract;
     }
 
     onChange({ name, value }: { name: TValidationRuleIndex; value: string | boolean }) {
-        this[name] = value;
-        this.validateProperty(name, value);
+        (this as any)[name] = value;
+        this.validateProperty(name, value as string);
     }
 
     populateContractUpdateConfig(response: UpdateContractResponse) {
@@ -227,8 +233,10 @@ export default class SummaryCardStore {
 
         const onTimeout = () => {
             if (this.is_contract_loading) {
-                this.is_bot_running = true;
-                this.root_store.run_panel.setContractStage(contract_stages.RUNNING);
+                runInAction(() => {
+                    this.is_bot_running = true;
+                    this.root_store.run_panel.setContractStage(contract_stages.RUNNING);
+                });
             }
         };
 
@@ -247,7 +255,7 @@ export default class SummaryCardStore {
                         contract_id: this.contract_info?.contract_id,
                         limit_order,
                     })
-                    .then(response => {
+                    .then((response: UpdateContractResponse) => {
                         // Update contract store
                         this.populateContractUpdateConfig(response);
                     })
@@ -265,7 +273,7 @@ export default class SummaryCardStore {
      * @param [{String}] messages - An array of strings that contains validation error messages for the particular property.
      *
      */
-    setValidationErrorMessages(propertyName: TValidationRuleIndex, messages: string) {
+    setValidationErrorMessages(propertyName: TValidationRuleIndex, messages: string[]) {
         const is_different = () =>
             !!this.validation_errors[propertyName]
                 .filter(x => !messages.includes(x))
@@ -297,7 +305,7 @@ export default class SummaryCardStore {
         validator.isPassed();
 
         Object.keys(inputs).forEach(key => {
-            this.setValidationErrorMessages(key, validator.errors.get(key));
+            this.setValidationErrorMessages(key as TValidationRuleIndex, validator.errors.get(key));
         });
     }
 

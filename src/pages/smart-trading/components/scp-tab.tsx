@@ -135,41 +135,52 @@ const SCPTab = observer(() => {
 
                 {/* 2. Analysis & Status Panel */}
                 <div className='analysis-panel'>
-                    <div className='glass-card stats-summary'>
-                        <div className='stat-item'>
-                            <span className='lbl'>BALANCE</span>
-                            <span className='val'>${client.balance || '0.00'}</span>
+                    <div className='glass-card balance-section'>
+                        <span className='balance-label'>TOTAL BALANCE</span>
+                        <div className='balance-value'>
+                            <span className='currency'>$</span>
+                            {client.balance || '0.00'}
                         </div>
+                    </div>
+
+                    <div className='stats-summary'>
                         <div className='stat-item'>
-                            <span className='lbl'>SESSION PROFIT</span>
+                            <span className='lbl'>SESSION P/L</span>
                             <span className={classNames('val', { pos: smart_trading.session_pl > 0, neg: smart_trading.session_pl < 0 })}>
-                                ${smart_trading.session_pl.toFixed(2)}
+                                {smart_trading.session_pl >= 0 ? '+' : ''}{smart_trading.session_pl.toFixed(2)}
                             </span>
                         </div>
                         <div className='stat-item'>
-                            <span className='lbl'>STATUS</span>
+                            <span className='lbl'>BOT STATUS</span>
                             <span className={classNames('status-badge', smart_trading.scp_status)}>
                                 {smart_trading.scp_status.toUpperCase()}
                             </span>
                         </div>
+                        <div className='stat-item'>
+                            <span className='lbl'>MARKET</span>
+                            <span className='val' style={{ fontSize: '0.9rem' }}>{selected_market}</span>
+                        </div>
                     </div>
 
-                    <div className='glass-card progress-card'>
+                    <div className='progress-card'>
                         <div className='progress-info'>
-                            <span>Analysis Completion</span>
-                            <span>{smart_trading.scp_analysis_progress}%</span>
+                            <span>Analysis Phase</span>
+                            <span className='percentage'>{smart_trading.scp_analysis_progress}%</span>
                         </div>
                         <div className='progress-bar-container'>
                             <div className='progress-bar-fill' style={{ width: `${smart_trading.scp_analysis_progress}%` }} />
                         </div>
                     </div>
 
-                    <div className='glass-card log-card'>
-                        <div className='log-header'>LIVE ANALYSIS LOG</div>
+                    <div className='log-card'>
+                        <div className='log-header'>
+                            <StandaloneChartAreaRegularIcon style={{ width: '16px', height: '16px' }} />
+                            <span>ANALYSIS ACTIVITY</span>
+                        </div>
                         <div className='log-content'>
                             {smart_trading.scp_analysis_log.map((log, i) => (
                                 <div key={i} className={classNames('log-entry', log.type)}>
-                                    <span className='time'>[{new Date(log.timestamp).toLocaleTimeString()}]</span>
+                                    <span className='time'>{new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
                                     <span className='msg'>{log.message}</span>
                                 </div>
                             ))}
