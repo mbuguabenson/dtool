@@ -1,11 +1,11 @@
 import { observer } from 'mobx-react-lite';
-import SmartAuto24Tab from '../smart-trading/components/smart-auto24-tab';
+import SCPTab from '../smart-trading/components/scp-tab';
 import './auto-trader.scss';
 
 const AutoTrader = observer(() => {
     return (
         <div className='auto-trader-wrapper'>
-            <SmartAuto24Tab />
+            <SCPTab />
         </div>
     );
 });

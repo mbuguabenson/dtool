@@ -11,7 +11,6 @@ import EvenOddTab from './components/even-odd-tab';
 import MarketOverview from './components/market-overview';
 import MatchesTab from './components/matches-tab';
 import OverUnderTab from './components/over-under-tab';
-import OverUnderTab from './components/over-under-tab';
 import SCPTab from './components/scp-tab';
 import VSenseTurboTab from './components/vsense-turbo-tab';
 import MoneyMakerUltraTab from './money-maker-ultra-tab';
