@@ -11,7 +11,8 @@ import EvenOddTab from './components/even-odd-tab';
 import MarketOverview from './components/market-overview';
 import MatchesTab from './components/matches-tab';
 import OverUnderTab from './components/over-under-tab';
-import SmartAuto24Tab from './components/smart-auto24-tab';
+import OverUnderTab from './components/over-under-tab';
+import SCPTab from './components/scp-tab';
 import VSenseTurboTab from './components/vsense-turbo-tab';
 import MoneyMakerUltraTab from './money-maker-ultra-tab';
 import './smart-trading.scss';
@@ -110,10 +111,10 @@ const SmartTrading = observer(() => {
                     📦 Bulk Trading
                 </button>
                 <button
-                    className={`sub-tab ${active_subtab === 'automated' ? 'active' : ''}`}
-                    onClick={() => smart_trading.setActiveSubtab('automated')}
+                    className={`sub-tab ${active_subtab === 'scp' ? 'active' : ''}`}
+                    onClick={() => smart_trading.setActiveSubtab('scp')}
                 >
-                    🤖 Smart Auto 24
+                    🛡️ SCP
                 </button>
                 <button
                     className={`sub-tab ${active_subtab === 'charts' ? 'active' : ''}`}
@@ -130,7 +131,7 @@ const SmartTrading = observer(() => {
             </div>
 
             {active_subtab === 'bulk' && <BulkTradingView />}
-            {active_subtab === 'automated' && <SmartAuto24Tab />}
+            {active_subtab === 'scp' && <SCPTab />}
 
             {active_subtab === 'even_odd' && <EvenOddTab />}
             {active_subtab === 'over_under' && <OverUnderTab />}
@@ -300,17 +301,17 @@ const SmartTrading = observer(() => {
                             {['DIGITOVER', 'DIGITUNDER', 'DIGITMATCH', 'DIGITDIFF'].includes(
                                 speedbot_contract_type
                             ) && (
-                                <div className='setting-item'>
-                                    <label>Prediction (0-9)</label>
-                                    <input
-                                        type='number'
-                                        min='0'
-                                        max='9'
-                                        value={speedbot_prediction}
-                                        onChange={e => (smart_trading.speedbot_prediction = parseInt(e.target.value))}
-                                    />
-                                </div>
-                            )}
+                                    <div className='setting-item'>
+                                        <label>Prediction (0-9)</label>
+                                        <input
+                                            type='number'
+                                            min='0'
+                                            max='9'
+                                            value={speedbot_prediction}
+                                            onChange={e => (smart_trading.speedbot_prediction = parseInt(e.target.value))}
+                                        />
+                                    </div>
+                                )}
 
                             <div className='setting-item'>
                                 <label>Stake</label>

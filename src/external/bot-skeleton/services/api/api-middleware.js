@@ -42,6 +42,12 @@ class APIMiddleware {
 
     sendIsCalled = ({ response_promise, args: [request] }) => {
         const req_type = this.getRequestType(request);
+
+        // Ensure req_id is present and is an integer for reliability
+        if (request && !request.req_id) {
+            request.req_id = Math.floor(Math.random() * 1000000);
+        }
+
         if (req_type) performance.mark(`${req_type}_start`);
         response_promise
             .then(res => {
@@ -50,7 +56,7 @@ class APIMiddleware {
                     this.defineMeasure(res_type);
                 }
             })
-            .catch(() => {});
+            .catch(() => { });
         return response_promise;
     };
 }

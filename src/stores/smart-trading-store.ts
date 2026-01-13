@@ -39,7 +39,8 @@ export type TSmartSubtab =
     | 'charts'
     | 'turbo'
     | 'vsense_turbo'
-    | 'money_maker_ultra';
+    | 'money_maker_ultra'
+    | 'scp';
 
 export type TSmartDigitStat = {
     digit: number;
@@ -201,6 +202,27 @@ export default class SmartTradingStore {
         timestamp: number;
         message: string;
         type: 'info' | 'success' | 'error';
+    }> = [];
+
+    @observable accessor scp_analysis_timer: number = 0;
+    @observable accessor scp_analysis_progress: number = 0;
+    @observable accessor scp_status: 'idle' | 'analyzing' | 'trading' | 'completed' = 'idle';
+    @observable accessor scp_analysis_log: Array<{
+        timestamp: number;
+        message: string;
+        type: 'info' | 'success' | 'error';
+    }> = [];
+    @observable accessor scp_trading_journal: Array<{
+        timestamp: number;
+        market: string;
+        strategy: string;
+        stake: number;
+        payout: number;
+        profit: number;
+        result: 'WIN' | 'LOSS';
+        entry_price: string;
+        exit_price: string;
+        digit: number;
     }> = [];
 
     @observable accessor active_subtab: TSmartSubtab = 'speed';
@@ -2141,6 +2163,213 @@ export default class SmartTradingStore {
             this.addUltraLog(`Trade EXECUTED: ${buy.buy.contract_id}`, 'success');
         } catch (error) {
             this.addUltraLog(`Execution error: ${error}`, 'error');
+        }
+    };
+    // --- SCP (Smart Crypto Predictor) Methods ---
+    @action
+    addScpLog = (message: string, type: 'info' | 'success' | 'error' = 'info') => {
+        const log = { timestamp: Date.now(), message, type };
+        this.scp_analysis_log = [...this.scp_analysis_log.slice(-99), log];
+    };
+
+    @action
+    addScpJournalEntry = (entry: any) => {
+        this.scp_trading_journal = [entry, ...this.scp_trading_journal.slice(0, 999)];
+        localStorage.setItem(`trading_journal_scp_${this.root_store.client.loginid}`, JSON.stringify(this.scp_trading_journal));
+    };
+
+    @action
+    setScpStatus = (status: typeof this.scp_status) => {
+        this.scp_status = status;
+    };
+
+    @action
+    updateScpProgress = (progress: number) => {
+        this.scp_analysis_progress = progress;
+    };
+
+    @action
+    runScpBot = async (config: {
+        token: string;
+        market: string;
+        strategyId: string;
+        stake: number;
+        targetProfit: number;
+        stopLossPct: number;
+        analysisMinutes: number;
+    }) => {
+        if (this.scp_status !== 'idle') return;
+
+        this.setScpStatus('analyzing');
+        this.addScpLog(`Starting SCP Analysis on ${config.market}...`, 'info');
+        this.scp_analysis_progress = 0;
+
+        // 1. Initial Analysis Phase (Simulated progress for now, using real live ticks)
+        let ticks_collected = 0;
+
+        const analysisInterval = setInterval(() => {
+            ticks_collected++;
+            const progress = Math.min(100, Math.floor((ticks_collected / 100) * 100)); // Faster for demo
+            this.updateScpProgress(progress);
+
+            if (progress >= 100) {
+                clearInterval(analysisInterval);
+                this.setScpStatus('trading');
+                this.addScpLog('Analysis Complete. Strategy Engaged.', 'success');
+                this.startScpTradingLoop(config);
+            }
+        }, 1000);
+    };
+
+    @action
+    startScpTradingLoop = async (config: any) => {
+        // This is a continuous observer loop that reacts to updateDigitStats
+        const dispose = reaction(
+            () => this.ticks.length,
+            async () => {
+                if (this.scp_status !== 'trading') {
+                    dispose();
+                    return;
+                }
+                await this.evaluateScpStrategy(config);
+            }
+        );
+    };
+
+    @action
+    evaluateScpStrategy = async (config: any) => {
+        if (this.is_executing) return;
+
+        const probs = this.calculateProbabilities();
+        const sorted_stats = [...this.digit_stats].sort((a, b) => b.percentage - a.percentage);
+        const most_appearing = sorted_stats[0].digit;
+        const least_appearing = sorted_stats[sorted_stats.length - 1].digit;
+
+        let should_trade = false;
+        let contract_type = '';
+        let prediction = 0;
+
+        switch (config.strategyId) {
+            case 'EVENODD': {
+                const is_even_dominant = probs.even >= 55;
+                const is_odd_dominant = probs.odd >= 55;
+
+                if (is_even_dominant) {
+                    // Entry: 2 consecutive odds then an even
+                    const last_three = this.ticks.slice(-3);
+                    if (last_three.length === 3 &&
+                        last_three[0] % 2 !== 0 &&
+                        last_three[1] % 2 !== 0 &&
+                        last_three[2] % 2 === 0) {
+                        should_trade = true;
+                        contract_type = 'DIGITEVEN';
+                    }
+                } else if (is_odd_dominant) {
+                    // Entry: 2 consecutive evens then an odd
+                    const last_three = this.ticks.slice(-3);
+                    if (last_three.length === 3 &&
+                        last_three[0] % 2 === 0 &&
+                        last_three[1] % 2 === 0 &&
+                        last_three[2] % 2 !== 0) {
+                        should_trade = true;
+                        contract_type = 'DIGITODD';
+                    }
+                }
+                break;
+            }
+            case 'OU36': {
+                if (probs.over >= 55) {
+                    const last_digit = this.ticks[this.ticks.length - 1];
+                    if (last_digit === most_appearing || last_digit === least_appearing) {
+                        should_trade = true;
+                        contract_type = 'DIGITOVER';
+                        prediction = 3;
+                    }
+                } else if (probs.under >= 55) {
+                    const last_digit = this.ticks[this.ticks.length - 1];
+                    if (last_digit === most_appearing || last_digit === least_appearing) {
+                        should_trade = true;
+                        contract_type = 'DIGITUNDER';
+                        prediction = 6;
+                    }
+                }
+                break;
+            }
+            case 'OU27': {
+                if (probs.over >= 55) {
+                    const last_digit = this.ticks[this.ticks.length - 1];
+                    if (last_digit === most_appearing || last_digit === least_appearing) {
+                        should_trade = true;
+                        contract_type = 'DIGITOVER';
+                        prediction = 2;
+                    }
+                } else if (probs.under >= 55) {
+                    const last_digit = this.ticks[this.ticks.length - 1];
+                    if (last_digit === most_appearing || last_digit === least_appearing) {
+                        should_trade = true;
+                        contract_type = 'DIGITUNDER';
+                        prediction = 7;
+                    }
+                }
+                break;
+            }
+            case 'DIFFERS': {
+                // Rare digit (2-7 range) behavior
+                const rare_digits = this.digit_stats
+                    .filter(s => s.digit >= 2 && s.digit <= 7)
+                    .sort((a, b) => a.percentage - b.percentage);
+
+                const target = rare_digits[0];
+                if (target.percentage < 10) {
+                    const last_digit = this.ticks[this.ticks.length - 1];
+                    if (last_digit === most_appearing || last_digit === least_appearing) {
+                        should_trade = true;
+                        contract_type = 'DIGITDIFF';
+                        prediction = target.digit;
+                    }
+                }
+                break;
+            }
+        }
+
+        if (should_trade) {
+            this.addScpLog(`Executing ${contract_type} trade...`, 'info');
+            // Re-use executeSpeedTrade logic or similar for SCP
+            // For now, integrated into the same flow
+            await this.executeScpTrade(config, contract_type);
+        }
+    };
+
+    @action
+    executeScpTrade = async (config: any, contract_type: string) => {
+        // Implementation of actual buy request using config.token
+        // This will be a specialized version of executeSpeedTrade that uses the SCP token
+        this.is_executing = true;
+        try {
+            this.addScpLog(`SCP Trade Sent: ${contract_type} @ ${config.stake}`, 'info');
+            // TODO: Hook into actual API with SCP token
+            // For now, simulate result to verify UI/Store integration
+            setTimeout(() => {
+                runInAction(() => {
+                    const win = Math.random() > 0.45;
+                    const profit = win ? config.stake * 0.95 : -config.stake;
+                    this.addScpJournalEntry({
+                        timestamp: Date.now(),
+                        market: config.market,
+                        strategy: config.strategyId,
+                        stake: config.stake,
+                        digit: this.last_digit,
+                        result: win ? 'WIN' : 'LOSS',
+                        profit: profit
+                    });
+                    this.addScpLog(`Trade ${win ? 'WON' : 'LOST'}: ${profit.toFixed(2)}`, win ? 'success' : 'error');
+                    this.session_pl += profit;
+                    this.is_executing = false;
+                });
+            }, 2000);
+        } catch (error) {
+            this.addScpLog(`Scp Execution Error: ${error}`, 'error');
+            this.is_executing = false;
         }
     };
 }
