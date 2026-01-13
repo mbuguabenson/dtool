@@ -60,8 +60,11 @@ const CoreStoreProvider: React.FC<{ children: React.ReactNode }> = observer(({ c
 
     useEffect(() => {
         const currentBalanceData = client?.all_accounts_balance?.accounts?.[activeAccount?.loginid ?? ''];
-        if (currentBalanceData) {
+        if (currentBalanceData && currentBalanceData.balance !== undefined) {
             client?.setBalance(currentBalanceData.balance.toFixed(getDecimalPlaces(currentBalanceData.currency)));
+            client?.setCurrency(currentBalanceData.currency);
+        } else if (currentBalanceData) {
+            client?.setBalance('0');
             client?.setCurrency(currentBalanceData.currency);
         }
 

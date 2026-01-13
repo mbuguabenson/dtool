@@ -19,20 +19,20 @@ const useActiveAccount = ({ allBalanceData }: { allBalanceData: Balance | null }
     const modifiedAccount = useMemo(() => {
         return activeAccount
             ? {
-                  ...activeAccount,
-                  balance:
-                      addComma(currentBalanceData?.balance?.toFixed(getDecimalPlaces(currentBalanceData.currency))) ??
-                      '0',
-                  currencyLabel: activeAccount?.is_virtual ? localize('Demo') : activeAccount?.currency,
-                  icon: (
-                      <CurrencyIcon
-                          currency={activeAccount?.currency?.toLowerCase()}
-                          isVirtual={Boolean(activeAccount?.is_virtual)}
-                      />
-                  ),
-                  isVirtual: Boolean(activeAccount?.is_virtual),
-                  isActive: activeAccount?.loginid === activeLoginid,
-              }
+                ...activeAccount,
+                balance: currentBalanceData?.balance
+                    ? addComma(currentBalanceData.balance.toFixed(getDecimalPlaces(currentBalanceData.currency)))
+                    : '0',
+                currencyLabel: activeAccount?.is_virtual ? localize('Demo') : activeAccount?.currency,
+                icon: (
+                    <CurrencyIcon
+                        currency={activeAccount?.currency?.toLowerCase()}
+                        isVirtual={Boolean(activeAccount?.is_virtual)}
+                    />
+                ),
+                isVirtual: Boolean(activeAccount?.is_virtual),
+                isActive: activeAccount?.loginid === activeLoginid,
+            }
             : undefined;
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeAccount, activeLoginid, allBalanceData]);

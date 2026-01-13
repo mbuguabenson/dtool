@@ -210,6 +210,7 @@ class APIBase {
         setIsAuthorized(false);
 
         try {
+            console.log('[API] Starting authorization process...');
             const authPromise = this.api.authorize(this.token);
             const timeoutPromise = new Promise((_, reject) =>
                 setTimeout(() => reject(new Error('Auth Timeout')), 15000)

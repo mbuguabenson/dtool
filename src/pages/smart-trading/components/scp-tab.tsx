@@ -24,9 +24,25 @@ const SCPTab = observer(() => {
     const [selected_strategy, setSelectedStrategy] = useState('EVENODD');
     const [stake, setStake] = useState(0.35);
     const [target_profit, setTargetProfit] = useState(1);
-    const [analysis_minutes, setAnalysisMinutes] = useState(30);
+    const [analysis_minutes, setAnalysisMinutes] = useState(1);
     const [stop_loss_pct, setStopLossPct] = useState(50);
     const log_end_ref = useRef<HTMLDivElement>(null);
+
+    const { api_helpers_store } = store;
+    const { ticks_service } = api_helpers_store;
+
+    useEffect(() => {
+        if (selected_market && ticks_service) {
+            ticks_service.getTicks(selected_market, (last_digits: number[]) => {
+                smart_trading.updateDigitStats(last_digits);
+            });
+        }
+        return () => {
+            if (selected_market && ticks_service) {
+                ticks_service.unsubscribeFromTicks(selected_market);
+            }
+        };
+    }, [selected_market, ticks_service]);
 
     useEffect(() => {
         if (log_end_ref.current) {

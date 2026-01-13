@@ -5,7 +5,6 @@ import PWAInstallButton from '@/components/pwa-install-button';
 import { generateOAuthURL, standalone_routes } from '@/components/shared';
 import Button from '@/components/shared_ui/button';
 import useActiveAccount from '@/hooks/api/account/useActiveAccount';
-import { useOauth2 } from '@/hooks/auth/useOauth2';
 import { useFirebaseCountriesConfig } from '@/hooks/firebase/useFirebaseCountriesConfig';
 import { useApiBase } from '@/hooks/useApiBase';
 import { useStore } from '@/hooks/useStore';
@@ -20,6 +19,19 @@ import AccountSwitcher from './account-switcher';
 import MenuItems from './menu-items';
 import MobileMenu from './mobile-menu';
 import './header.scss';
+
+const AccountBalanceDisplay = observer(({ account }: { account: any }) => {
+    if (!account || !account.balance) return null;
+    return (
+        <div className='header-balance'>
+            <div className='header-balance__info'>
+                <span className='header-balance__amount'>{account.balance}</span>
+                <span className='header-balance__currency'>{account.currencyLabel || account.currency || ''}</span>
+            </div>
+            <div className='header-balance__glow' />
+        </div>
+    );
+});
 
 type TAppHeaderProps = {
     isAuthenticating?: boolean;
@@ -37,11 +49,8 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
     const currency = getCurrency?.();
     const { localize } = useTranslations();
 
-    const { isSingleLoggingIn } = useOauth2();
-
     const { hubEnabledCountryList } = useFirebaseCountriesConfig();
     const { onRenderTMBCheck, isTmbEnabled } = useTMB();
-    const is_tmb_enabled = isTmbEnabled() || window.is_tmb_enabled === true;
     // No need for additional state management here since we're handling it in the layout component
 
     const renderAccountSection = useCallback(() => {
@@ -92,6 +101,8 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
                                 {localize('Deposit')}
                             </Button>
                         ))}
+
+                    {isDesktop && <AccountBalanceDisplay account={activeAccount} />}
 
                     <AccountSwitcher activeAccount={activeAccount} />
 

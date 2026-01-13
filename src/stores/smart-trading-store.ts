@@ -2385,35 +2385,46 @@ export default class SmartTradingStore {
 
             this.addScpLog(`Bought: ${buy.buy.contract_id}`, 'success');
 
-            // Wait for contract result (simplified for digits)
-            // In a real app, we should listen to proposal_open_contract
-            // We'll simulate a wait and then use the latest tick vs prediction for journal
+            const contract_id = buy.buy.contract_id;
+
+            const subscription = api_base.api.onMessage().subscribe((msg: any) => {
+                if (msg.msg_type === 'proposal_open_contract' && msg.proposal_open_contract.contract_id === contract_id) {
+                    const contract = msg.proposal_open_contract;
+                    if (contract.is_sold) {
+                        runInAction(() => {
+                            const status = contract.status; // 'won' or 'lost'
+                            const profit = parseFloat(contract.profit);
+                            const is_win = status === 'won';
+
+                            this.addScpLog(`Trade ${status.toUpperCase()}: ${profit}`, is_win ? 'success' : 'error');
+
+                            this.addScpJournalEntry({
+                                timestamp: Date.now(),
+                                market: config.market,
+                                strategy: config.strategyId,
+                                stake: config.stake,
+                                digit: parseInt(contract.current_spot_display_value.slice(-1)),
+                                result: is_win ? 'WIN' : 'LOSS',
+                                profit: profit
+                            });
+                            this.session_pl += profit;
+                            this.is_executing = false;
+                            subscription.unsubscribe();
+                        });
+                    }
+                }
+            });
+
+            // Safety timeout
             setTimeout(() => {
                 runInAction(() => {
-                    const result_contract = buy.buy;
-                    // We can't easily get the final result here without subscription handling
-                    // But for the sake of the task, we'll assume the next tick decides it or just log success
-                    // Real implementation would use the subscription response
-                    this.addScpLog(`Trade Complete: ${result_contract.contract_id}`, 'info');
-                    this.is_executing = false;
-
-                    // Mocking journal entry for now as subscription handling is complex
-                    // Ideally we'd map 'proposal_open_contract' to this
-                    const win = Math.random() > 0.45; // Placeholder
-                    const profit = win ? config.stake * 0.95 : -config.stake;
-
-                    this.addScpJournalEntry({
-                        timestamp: Date.now(),
-                        market: config.market,
-                        strategy: config.strategyId,
-                        stake: config.stake,
-                        digit: this.last_digit,
-                        result: win ? 'WIN' : 'LOSS',
-                        profit: profit
-                    });
-                    this.session_pl += profit;
+                    if (this.is_executing) {
+                        this.addScpLog('Trade tracking timeout', 'info');
+                        this.is_executing = false;
+                        subscription.unsubscribe();
+                    }
                 });
-            }, 5000);
+            }, 15000);
 
         } catch (error) {
             this.addScpLog(`Scp Execution Error: ${error}`, 'error');
