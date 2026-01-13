@@ -161,24 +161,7 @@ const CoreStoreProvider: React.FC<{ children: React.ReactNode }> = observer(({ c
             }
 
             if (msg_type === 'balance' && data && !error) {
-                const balance = data.balance;
-                if (balance?.accounts) {
-                    client.setAllAccountsBalance(balance);
-                } else if (balance?.loginid) {
-                    if (!client?.all_accounts_balance?.accounts || !balance?.loginid) return;
-                    const accounts = { ...client.all_accounts_balance.accounts };
-                    const currentLoggedInBalance = { ...accounts[balance.loginid] };
-                    currentLoggedInBalance.balance = balance.balance;
-
-                    const updatedAccounts = {
-                        ...client.all_accounts_balance,
-                        accounts: {
-                            ...client.all_accounts_balance.accounts,
-                            [balance.loginid]: currentLoggedInBalance,
-                        },
-                    };
-                    client.setAllAccountsBalance(updatedAccounts);
-                }
+                // Balance handling moved to ClientStore to ensure immediate and consistent updates
             }
         },
         [client, oAuthLogout]

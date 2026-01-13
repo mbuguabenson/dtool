@@ -28,7 +28,7 @@ export type TTradeResult = {
 
 export default class CopyTraderStore {
     root_store: RootStore;
-    private _last_mirrored_id: string | number | null = null;
+    private processed_contracts = new Set<string | number>();
 
     @observable accessor trade_history: TTradeResult[] = [];
 
@@ -199,8 +199,14 @@ export default class CopyTraderStore {
 
         // Prevent mirroring the same contract ID multiple times
         const contract_id = (contract.contract_id || contract.id) as string | number;
-        if (this._last_mirrored_id === contract_id) return;
-        this._last_mirrored_id = contract_id;
+        if (this.processed_contracts.has(contract_id)) return;
+        this.processed_contracts.add(contract_id);
+
+        // Keep the set size manageable
+        if (this.processed_contracts.size > 100) {
+            const first_id = this.processed_contracts.values().next().value;
+            if (first_id) this.processed_contracts.delete(first_id);
+        }
 
         console.log('Detected source trade. Mirroring to target accounts...', contract);
 
@@ -426,6 +432,11 @@ export default class CopyTraderStore {
     mirrorTradeToRealAccount = async (contract: ProposalOpenContract) => {
         if (!this.is_demo_to_real_active || !this.real_account_ws) return;
 
+        // Prevent mirroring the same contract ID multiple times to real account
+        const contract_id = (contract.contract_id || contract.id) as string | number;
+        if (this.processed_contracts.has(`real_${contract_id}`)) return;
+        this.processed_contracts.add(`real_${contract_id}`);
+
         const { client } = this.root_store;
         const original_stake =
             parseFloat(String(contract.buy_price || (contract as any).stake || (contract as any).amount)) || 1;
@@ -518,5 +529,5 @@ export default class CopyTraderStore {
                 });
             });
         }
-    };;
+    };
 }

@@ -47,23 +47,31 @@ const EasyTool = observer(() => {
         let is_mounted = true;
         let listenerKey: string | null = null;
         const monitorTicks = async () => {
-            const callback = (ticks_data: { quote: string | number }[]) => {
-                if (is_mounted && ticks_data && ticks_data.length > 0) {
-                    const latest = ticks_data[ticks_data.length - 1];
-                    const symbol_info = active_symbols_data[symbol];
-                    const last_digits = ticks_data.slice(-1000).map(t => {
-                        let quote_str = String(t.quote || '0');
-                        if (symbol_info && typeof t.quote === 'number') {
-                            const decimals = Math.abs(Math.log10(symbol_info.pip));
-                            quote_str = t.quote.toFixed(decimals);
-                        }
-                        const digit = parseInt(quote_str[quote_str.length - 1]);
-                        return isNaN(digit) ? 0 : digit;
-                    });
-                    updateDigitStats(last_digits, latest.quote);
+            try {
+                const callback = (ticks_data: { quote: string | number }[]) => {
+                    if (is_mounted && ticks_data && ticks_data.length > 0) {
+                        const latest = ticks_data[ticks_data.length - 1];
+                        const symbol_info = active_symbols_data[symbol];
+                        const last_digits = ticks_data.slice(-1000).map(t => {
+                            let quote_str = String(t.quote || '0');
+                            if (symbol_info && typeof t.quote === 'number') {
+                                const decimals = Math.abs(Math.log10(symbol_info.pip));
+                                quote_str = t.quote.toFixed(decimals);
+                            }
+                            const digit = parseInt(quote_str[quote_str.length - 1]);
+                            return isNaN(digit) ? 0 : digit;
+                        });
+                        updateDigitStats(last_digits, latest.quote);
+                    }
+                };
+                listenerKey = await ticks_service.monitor({ symbol, callback });
+            } catch (error) {
+                console.error('EasyTool: Failed to monitor ticks', error);
+                if (is_mounted) {
+                    // Update UI with empty stats if history fails
+                    updateDigitStats([], 0);
                 }
-            };
-            listenerKey = await ticks_service.monitor({ symbol, callback });
+            }
         };
         monitorTicks();
         return () => {

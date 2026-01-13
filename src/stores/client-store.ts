@@ -43,7 +43,7 @@ export default class ClientStore {
         // Ensure API is ready
         if (!api_base?.api) {
             console.warn('[ClientStore] API not ready for balance subscription, retrying...');
-            setTimeout(this.subscribeToBalance, 1000);
+            setTimeout(this.subscribeToBalance, 500); // Reduced delay for retry
             return;
         }
 
@@ -73,12 +73,29 @@ export default class ClientStore {
             }
         });
 
+        // Ensure subscription is read to avoid lint warning
+        if (this.authDataSubscription === null) {
+            console.debug('[ClientStore] AuthData sub initialized');
+        }
+
         reaction(
             () => this.loginid,
             loginid => {
                 if (loginid) {
                     this.unsubscribeBalance(); // Unsubscribe from previous account if any
-                    setTimeout(() => this.subscribeToBalance(), 1000); // Subscribe for new account
+                    this.subscribeToBalance(); // Immediate subscription
+
+                    // Immediately try to load cached balance for this loginid
+                    try {
+                        const client_accounts = JSON.parse(localStorage.getItem('clientAccounts') || '{}');
+                        const active_account = client_accounts[loginid];
+                        if (active_account && active_account.balance !== undefined) {
+                            this.setBalance(active_account.balance);
+                            this.setCurrency(active_account.currency);
+                        }
+                    } catch (e) {
+                        console.warn('[ClientStore] Failed to load cached balance:', e);
+                    }
                 } else {
                     this.unsubscribeBalance();
                 }

@@ -162,12 +162,23 @@ export default class TicksService {
 
     unsubscribeAllAndSubscribeListeners(symbol) {
         const ohlcSubscriptions = this.subscriptions.getIn(['ohlc', symbol]);
+        const tickSubscriptionId = this.subscriptions.getIn(['tick', symbol]);
 
-        const subscription = [...(ohlcSubscriptions ? Array.from(ohlcSubscriptions.values()) : [])];
+        const idsToForget = [];
+        if (ohlcSubscriptions) {
+            idsToForget.push(...Array.from(ohlcSubscriptions.values()));
+        }
+        if (tickSubscriptionId) {
+            idsToForget.push(tickSubscriptionId);
+        }
 
-        Promise.all(subscription.map(id => doUntilDone(() => api_base.api.forget(id))));
+        idsToForget.forEach(id => {
+            if (id) {
+                doUntilDone(() => api_base.api.forget(id));
+            }
+        });
 
-        this.subscriptions = new Map();
+        this.subscriptions = this.subscriptions.deleteIn(['ohlc', symbol]).deleteIn(['tick', symbol]);
     }
 
     updateTicksAndCallListeners(symbol, ticks) {
@@ -291,32 +302,25 @@ export default class TicksService {
     }
 
     forget = () => {
-        return new Promise((resolve, reject) => {
-            if (api_base?.api) {
-                api_base.api
-                    .forgetAll('ticks')
-                    .then(() => {
-                        resolve();
-                    })
-                    .catch(reject);
-            } else {
-                resolve();
-            }
+        const tickSubscriptions = this.subscriptions.get('tick');
+        const ids = tickSubscriptions ? Array.from(tickSubscriptions.values()) : [];
+
+        return Promise.all(ids.map(id => id && doUntilDone(() => api_base.api.forget(id)))).then(() => {
+            this.subscriptions = this.subscriptions.delete('tick');
         });
     };
 
     forgetCandleSubscription = () => {
-        return new Promise((resolve, reject) => {
-            if (api_base?.api) {
-                api_base.api
-                    .forgetAll('candles')
-                    .then(() => {
-                        resolve();
-                    })
-                    .catch(reject);
-            } else {
-                resolve();
-            }
+        const ohlcSubscriptions = this.subscriptions.get('ohlc');
+        const ids = [];
+        if (ohlcSubscriptions) {
+            ohlcSubscriptions.forEach(group => {
+                ids.push(...Array.from(group.values()));
+            });
+        }
+
+        return Promise.all(ids.map(id => id && doUntilDone(() => api_base.api.forget(id)))).then(() => {
+            this.subscriptions = this.subscriptions.delete('ohlc');
         });
     };
 

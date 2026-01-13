@@ -72,7 +72,9 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
         setIsSafari(isSafariBrowser());
 
         return () => {
-            chart_api.api.forgetAll('ticks');
+            if (chartSubscriptionIdRef.current) {
+                chart_api.api.forget(chartSubscriptionIdRef.current).catch(() => { });
+            }
         };
     }, []);
 
@@ -142,8 +144,8 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
                 enabledNavigationWidget={isDesktop}
                 granularity={granularity}
                 requestAPI={requestAPI}
-                requestForget={() => {}}
-                requestForgetStream={() => {}}
+                requestForget={() => { }}
+                requestForgetStream={() => { }}
                 requestSubscribe={requestSubscribe}
                 settings={settings}
                 symbol={symbol}

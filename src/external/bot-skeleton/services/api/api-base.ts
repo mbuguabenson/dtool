@@ -244,6 +244,20 @@ class APIBase {
             localStorage.setItem('client_account_details', JSON.stringify(authorize?.account_list));
             localStorage.setItem('client.country', authorize?.country);
 
+            // Cache balance immediately for faster subsequent loads
+            if (authorize.balance !== undefined) {
+                try {
+                    const clientAccounts = JSON.parse(localStorage.getItem('clientAccounts') || '{}');
+                    if (clientAccounts[this.account_id]) {
+                        clientAccounts[this.account_id].balance = authorize.balance;
+                        clientAccounts[this.account_id].currency = authorize.currency;
+                        localStorage.setItem('clientAccounts', JSON.stringify(clientAccounts));
+                    }
+                } catch (e) {
+                    console.error('[API] Failed to cache balance:', e);
+                }
+            }
+
             if (this.has_active_symbols) {
                 this.toggleRunButton(false);
             } else {

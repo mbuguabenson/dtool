@@ -544,6 +544,7 @@ export default class SmartTradingStore {
             if (price !== undefined) {
                 this.analysis_engine.addTick(Number(price));
                 this.root_store.analysis.updateDigitStats(last_digits, price);
+                this.root_store.auto_trader.updateDigitStats(last_digits, price);
             }
 
             this.smart_analysis_data = {
@@ -714,6 +715,7 @@ export default class SmartTradingStore {
         this.symbol = symbol;
         this.resetStats();
         this.root_store.analysis.setSymbol(symbol);
+        this.root_store.auto_trader.setSymbol(symbol);
     };
 
     @action
@@ -1400,7 +1402,7 @@ export default class SmartTradingStore {
                     duration_unit: 't',
                     symbol: this.symbol,
                     ...(['DIGITOVER', 'DIGITUNDER', 'DIGITMATCH', 'DIGITDIFF'].includes(trade_type || '') &&
-                    prediction !== undefined
+                        prediction !== undefined
                         ? { barrier: String(prediction) }
                         : {}),
                 }),
