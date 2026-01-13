@@ -123,13 +123,12 @@
                 -ms-overflow-style: auto; // Show scrollbar on IE/Edge
                 scrollbar-width: thin; // Thin scrollbar for Firefox
                 border: none;
-                padding-top: 0rem; // Reduced from 0.8rem to show full tab content
+                padding-top: 0.8rem;
                 padding-inline-end: 40rem; // Extra large padding to ensure no tabs are hidden
                 flex-wrap: nowrap; // Prevent wrapping to allow scrolling
 
                 @include mobile-or-tablet-screen {
                     padding-inline-end: 25rem; // Extra large padding on mobile
-                    padding-top: 0rem; // Remove top padding on mobile to show full tabs
                 }
 
                 // Style the scrollbar

@@ -60,11 +60,8 @@ const CoreStoreProvider: React.FC<{ children: React.ReactNode }> = observer(({ c
 
     useEffect(() => {
         const currentBalanceData = client?.all_accounts_balance?.accounts?.[activeAccount?.loginid ?? ''];
-        if (currentBalanceData && currentBalanceData.balance !== undefined) {
+        if (currentBalanceData) {
             client?.setBalance(currentBalanceData.balance.toFixed(getDecimalPlaces(currentBalanceData.currency)));
-            client?.setCurrency(currentBalanceData.currency);
-        } else if (currentBalanceData) {
-            client?.setBalance('0');
             client?.setCurrency(currentBalanceData.currency);
         }
 
@@ -73,20 +70,9 @@ const CoreStoreProvider: React.FC<{ children: React.ReactNode }> = observer(({ c
 
     useEffect(() => {
         if (client && activeAccount) {
-            console.log('[CoreStoreProvider] Client and ActiveAccount found. Logging in.', {
-                activeAccount,
-                activeLoginid,
-            });
             client?.setLoginId(activeLoginid);
             client?.setAccountList(accountList);
             client?.setIsLoggedIn(true);
-        } else {
-            console.log('[CoreStoreProvider] Waiting for login conditions:', {
-                client: !!client,
-                activeAccount,
-                activeLoginid,
-                accountListLength: accountList?.length,
-            });
         }
     }, [accountList, activeAccount, activeLoginid, client]);
 
@@ -164,7 +150,24 @@ const CoreStoreProvider: React.FC<{ children: React.ReactNode }> = observer(({ c
             }
 
             if (msg_type === 'balance' && data && !error) {
-                // Balance handling moved to ClientStore to ensure immediate and consistent updates
+                const balance = data.balance;
+                if (balance?.accounts) {
+                    client.setAllAccountsBalance(balance);
+                } else if (balance?.loginid) {
+                    if (!client?.all_accounts_balance?.accounts || !balance?.loginid) return;
+                    const accounts = { ...client.all_accounts_balance.accounts };
+                    const currentLoggedInBalance = { ...accounts[balance.loginid] };
+                    currentLoggedInBalance.balance = balance.balance;
+
+                    const updatedAccounts = {
+                        ...client.all_accounts_balance,
+                        accounts: {
+                            ...client.all_accounts_balance.accounts,
+                            [balance.loginid]: currentLoggedInBalance,
+                        },
+                    };
+                    client.setAllAccountsBalance(updatedAccounts);
+                }
             }
         },
         [client, oAuthLogout]

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { lazy, Suspense, useMemo } from 'react';
 import { observer } from 'mobx-react-lite';
 import { CurrencyIcon } from '@/components/currency/currency-icon';
@@ -96,34 +96,31 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
     const has_wallet = Object.keys(accounts).some(id => accounts[id].account_category === 'wallet');
 
     const modifiedAccountList = useMemo(() => {
-        if (!accountList) return [];
-        return accountList.map(account => {
-            if (!account) return null;
-            const balance = client?.all_accounts_balance?.accounts?.[account?.loginid]?.balance;
-            const currency = account?.currency || '';
-
+        return accountList?.map(account => {
             return {
                 ...account,
                 balance: addComma(
-                    balance?.toFixed(getDecimalPlaces(currency)) ?? '0'
+                    client.all_accounts_balance?.accounts?.[account?.loginid]?.balance?.toFixed(
+                        getDecimalPlaces(account.currency)
+                    ) ?? '0'
                 ),
                 currencyLabel: account?.is_virtual
                     ? tabs_labels.demo
-                    : (client?.website_status?.currencies_config?.[currency]?.name ?? currency),
+                    : (client.website_status?.currencies_config?.[account?.currency]?.name ?? account?.currency),
                 icon: (
                     <CurrencyIcon
-                        currency={currency?.toLowerCase()}
+                        currency={account?.currency?.toLowerCase()}
                         isVirtual={Boolean(account?.is_virtual)}
                     />
                 ),
                 isVirtual: Boolean(account?.is_virtual),
                 isActive: account?.loginid === activeAccount?.loginid,
             };
-        }).filter(Boolean);
+        });
     }, [
         accountList,
-        client?.all_accounts_balance?.accounts,
-        client?.website_status?.currencies_config,
+        client.all_accounts_balance?.accounts,
+        client.website_status?.currencies_config,
         activeAccount?.loginid,
     ]);
     const modifiedCRAccountList = useMemo(() => {
@@ -138,36 +135,26 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
         return modifiedAccountList?.filter(account => account?.loginid?.includes('VRT')) ?? [];
     }, [modifiedAccountList]);
 
-    const switchAccount = async (loginId: string | number) => {
-        if (!loginId) return;
-        const loginIdStr = loginId.toString();
-        if (loginIdStr === activeAccount?.loginid) return;
-
+    const switchAccount = async (loginId: number) => {
+        if (loginId.toString() === activeAccount?.loginid) return;
         const account_list = JSON.parse(localStorage.getItem('accountsList') ?? '{}');
-        const token = account_list[loginIdStr];
-        if (!token) {
-            // eslint-disable-next-line no-console
-            console.error(`Token not found for loginid: ${loginIdStr}`);
-            return;
-        }
-
+        const token = account_list[loginId];
+        if (!token) return;
         localStorage.setItem('authToken', token);
-        localStorage.setItem('active_loginid', loginIdStr);
-
+        localStorage.setItem('active_loginid', loginId.toString());
         const account_type =
-            loginIdStr
+            loginId
+                .toString()
                 .match(/[a-zA-Z]+/g)
                 ?.join('') || '';
 
         Analytics.setAttributes({
             account_type,
         });
-
         await api_base?.init(true);
         const search_params = new URLSearchParams(window.location.search);
-        const selected_account = modifiedAccountList.find(acc => acc?.loginid === loginIdStr);
+        const selected_account = modifiedAccountList.find(acc => acc.loginid === loginId.toString());
         if (!selected_account) return;
-
         const account_param = selected_account.is_virtual ? 'demo' : selected_account.currency;
         search_params.set('account', account_param);
         sessionStorage.setItem('query_param_currency', account_param);
