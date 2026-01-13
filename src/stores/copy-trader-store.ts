@@ -222,6 +222,7 @@ export default class CopyTraderStore {
                         duration: 1,
                         duration_unit: 't',
                         symbol: contract.underlying,
+                        barrier: contract.barrier,
                     };
 
                     target.ws!.send(JSON.stringify(proposal_request));
@@ -444,6 +445,7 @@ export default class CopyTraderStore {
                 duration: 1,
                 duration_unit: 't',
                 symbol: contract.underlying,
+                barrier: contract.barrier,
             };
 
             this.real_account_ws.send(JSON.stringify(proposal_request));
