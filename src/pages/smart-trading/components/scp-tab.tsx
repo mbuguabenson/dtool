@@ -27,7 +27,7 @@ const SCPTab = observer(() => {
 
     useEffect(() => {
         if (selected_market) {
-            smart_trading.symbol = selected_market;
+            smart_trading.setSymbol(selected_market);
         }
     }, [selected_market, smart_trading]);
 
@@ -62,10 +62,10 @@ const SCPTab = observer(() => {
         <div className='scp-tab'>
             {/* 1. Configuration Panel */}
             <div className='scp-grid'>
-                <div className='glass-card config-panel'>
-                    <div className='card-header'>
+                <div className='glass-card config-panel command-center-border'>
+                    <div className='card-header cyan-glow'>
                         <StandaloneGearRegularIcon className='header-icon' />
-                        <h3>BOT CONFIGURATION</h3>
+                        <h3>BOT COMMAND CENTER</h3>
                     </div>
 
                     <div className='field-row'>
@@ -143,8 +143,8 @@ const SCPTab = observer(() => {
                             </span>
                         </div>
                         <div className='stat-item'>
-                            <span className='lbl'>MARKET</span>
-                            <span className='val' style={{ fontSize: '0.9rem' }}>{selected_market}</span>
+                            <span className='lbl'>CONNECTED</span>
+                            <span className='val status-pulse'>ONLINE</span>
                         </div>
                     </div>
 
@@ -187,8 +187,8 @@ const SCPTab = observer(() => {
 
             {/* 4. Trading Journal */}
             <div className='glass-card journal-card'>
-                <div className='card-header'>
-                    <h3>TRADING JOURNAL</h3>
+                <div className='card-header red-glow'>
+                    <h3>MISSION JOURNAL</h3>
                 </div>
                 <div className='journal-table-container'>
                     <table>

@@ -109,12 +109,7 @@ const SmartTrading = observer(() => {
                 >
                     📦 Bulk Trading
                 </button>
-                <button
-                    className={`sub-tab ${active_subtab === 'scp' ? 'active' : ''}`}
-                    onClick={() => smart_trading.setActiveSubtab('scp')}
-                >
-                    🛡️ SCP
-                </button>
+
                 <button
                     className={`sub-tab ${active_subtab === 'charts' ? 'active' : ''}`}
                     onClick={() => smart_trading.setActiveSubtab('charts')}
@@ -130,7 +125,7 @@ const SmartTrading = observer(() => {
             </div>
 
             {active_subtab === 'bulk' && <BulkTradingView />}
-            {active_subtab === 'scp' && <SCPTab />}
+
 
             {active_subtab === 'even_odd' && <EvenOddTab />}
             {active_subtab === 'over_under' && <OverUnderTab />}

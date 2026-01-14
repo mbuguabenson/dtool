@@ -95,7 +95,6 @@ const AppWrapper = observer(() => {
         'even_odd',
         'over_under',
         'adv_over_under',
-        'smart_auto24',
         'easy_tool',
         'strategies',
         'toolhub',
@@ -503,25 +502,7 @@ const AppWrapper = observer(() => {
                                     </Suspense>
                                 </PageContentWrapper>
                             </div>
-                            <div
-                                label={
-                                    <div className='main__tabs-label'>
-                                        <LabelPairedSlidersCaptionRegularIcon
-                                            height='20px'
-                                            width='20px'
-                                            fill='var(--text-general)'
-                                        />
-                                        <Localize i18n_default_text='Smart Auto 24' />
-                                    </div>
-                                }
-                                id='id-smart-auto24'
-                            >
-                                <PageContentWrapper>
-                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                        <SCPTab />
-                                    </Suspense>
-                                </PageContentWrapper>
-                            </div>
+
                             <div
                                 label={
                                     <div className='main__tabs-label'>

@@ -53,8 +53,10 @@ const DigitStats = observer(() => {
                 } else {
                     ticks_service.stopMonitor({ symbol, key });
                 }
-            } catch (error) {
-                console.error(`Error monitoring ticks for ${symbol}:`, error);
+            } catch (error: any) {
+                if (error?.code !== 'AlreadySubscribed' && error?.message !== 'AlreadySubscribed') {
+                    console.error(`Error monitoring ticks for ${symbol}:`, error);
+                }
             }
         };
 
@@ -88,13 +90,14 @@ const DigitStats = observer(() => {
                         onChange={e => setStatsSampleSize(Number(e.target.value))}
                         className='premium-select'
                         style={{
-                            background: 'var(--general-main-1)',
+                            background: 'rgba(255,255,255,0.05)', // Transparent look
                             color: 'var(--text-prominent)',
-                            border: '1px solid var(--text-less-prominent)',
-                            padding: '0.5rem 1rem',
-                            borderRadius: '8px',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            padding: '0.3rem 0.8rem', // Reduced padding
+                            borderRadius: '6px',
                             cursor: 'pointer',
                             outline: 'none',
+                            fontSize: '1.1rem' // Reduced font
                         }}
                     >
                         <option value={25}>25 Ticks</option>

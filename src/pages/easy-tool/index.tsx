@@ -52,24 +52,32 @@ const EasyTool = observer(() => {
                     if (is_mounted && ticks_data && ticks_data.length > 0) {
                         const latest = ticks_data[ticks_data.length - 1];
                         const symbol_info = active_symbols_data[symbol];
+
+                        // Use safe decimal calculation similar to DigitStats
+                        const decimals = symbol_info?.pip
+                            ? String(symbol_info.pip).split('.')[1]?.length || 2
+                            : 2;
+
                         const last_digits = ticks_data.slice(-1000).map(t => {
                             let quote_str = String(t.quote || '0');
-                            if (symbol_info && typeof t.quote === 'number') {
-                                const decimals = Math.abs(Math.log10(symbol_info.pip));
+                            if (typeof t.quote === 'number') {
                                 quote_str = t.quote.toFixed(decimals);
                             }
                             const digit = parseInt(quote_str[quote_str.length - 1]);
                             return isNaN(digit) ? 0 : digit;
                         });
+
                         updateDigitStats(last_digits, latest.quote);
                     }
                 };
                 listenerKey = await ticks_service.monitor({ symbol, callback });
-            } catch (error) {
-                console.error('EasyTool: Failed to monitor ticks', error);
-                if (is_mounted) {
-                    // Update UI with empty stats if history fails
-                    updateDigitStats([], 0);
+            } catch (error: any) {
+                // Don't log or clear if it's just AlreadySubscribed (often happens during rapid switching)
+                if (error?.code !== 'AlreadySubscribed' && error?.message !== 'AlreadySubscribed') {
+                    console.error('EasyTool: Failed to monitor ticks', error);
+                    if (is_mounted) {
+                        updateDigitStats([], 0);
+                    }
                 }
             }
         };

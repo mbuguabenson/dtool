@@ -111,10 +111,14 @@ export default class TicksService {
                     resolve(key);
                 })
                 .catch(e => {
-                    globalObserver.emit('Error', e);
-                    this.ticks_history_promise = null;
-                    api_base.toggleRunButton(false);
-                    reject(e);
+                    if (e?.code !== 'AlreadySubscribed') {
+                        globalObserver.emit('Error', e);
+                        this.ticks_history_promise = null;
+                        api_base.toggleRunButton(false);
+                        reject(e);
+                    } else {
+                        resolve(key);
+                    }
                 });
         });
     }
@@ -296,7 +300,11 @@ export default class TicksService {
                     if (error?.code === 'InvalidSymbol') {
                         clearAuthData();
                     }
-                    reject(error);
+                    if (error?.code === 'AlreadySubscribed') {
+                        resolve(this.ticks.get(symbol) || []);
+                    } else {
+                        reject(error);
+                    }
                 });
         });
     }

@@ -204,6 +204,7 @@ export default class SmartTradingStore {
         type: 'info' | 'success' | 'error';
     }> = [];
 
+    @observable accessor scp_start_balance: number = 0;
     @observable accessor scp_analysis_timer: number = 0;
     @observable accessor scp_analysis_progress: number = 0;
     @observable accessor scp_status: 'idle' | 'analyzing' | 'trading' | 'completed' = 'idle';
@@ -741,9 +742,35 @@ export default class SmartTradingStore {
     };
 
     @action
-    setActiveSubtab = (subtab: TSmartSubtab) => {
-        this.active_subtab = subtab;
+    setSpeedbotContractType = action((type: string) => {
+        this.speedbot_contract_type = type;
+    });
+
+    setSpeedbotPrediction = action((prediction: number) => {
+        this.speedbot_prediction = prediction;
+    });
+
+    setSpeedbotStake = action((stake: number) => {
+        this.speedbot_stake = stake;
+    });
+
+    setAlternateEvenOdd = action((value: boolean) => {
+        this.alternate_even_odd = value;
+    });
+
+    setAlternateOnLoss = action((value: boolean) => {
+        this.alternate_on_loss = value;
+    });
+
+    setRecoveryMode = action((value: boolean) => {
+        this.recovery_mode = value;
+    });
+
+    @action
+    setActiveSubtab = (tab: TSmartSubtab) => { // Modified existing method
+        this.active_subtab = tab;
     };
+
 
     @action
     resetStats = () => {
@@ -2202,6 +2229,7 @@ export default class SmartTradingStore {
         this.setScpStatus('analyzing');
         this.addScpLog(`Starting SCP Analysis on ${config.market}...`, 'info');
         this.scp_analysis_progress = 0;
+        this.scp_start_balance = parseFloat(this.root_store.client.balance as string) || 0;
 
         // Total ticks to collect for analysis (e.g., 2 ticks per second)
         const total_ticks_needed = config.analysisMinutes * 60;
@@ -2237,6 +2265,23 @@ export default class SmartTradingStore {
                     dispose();
                     return;
                 }
+
+                // Stop Logic Checks
+                if (this.session_pl >= config.targetProfit) {
+                    this.addScpLog(`Target Profit of $${config.targetProfit} Reached! Stopping.`, 'success');
+                    this.setScpStatus('completed');
+                    dispose();
+                    return;
+                }
+
+                const max_loss = this.scp_start_balance * (config.stopLossPct / 100);
+                if (this.session_pl <= -max_loss) {
+                    this.addScpLog(`Stop Loss Triggered (-$${max_loss.toFixed(2)}). Stopping.`, 'error');
+                    this.setScpStatus('completed');
+                    dispose();
+                    return;
+                }
+
                 await this.evaluateScpStrategy(config);
             }
         );

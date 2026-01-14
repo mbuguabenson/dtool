@@ -26,6 +26,9 @@ const BotBuilder = observer(() => {
     const { onMount, onUnmount } = app;
     const el_ref = React.useRef<HTMLInputElement | null>(null);
 
+    const [isMinimized, setIsMinimized] = React.useState(false);
+    const [isScaled, setIsScaled] = React.useState(false);
+
     // TODO: fix
     // const isMounted = useIsMounted();
     // const { data: remote_config_data } = useRemoteConfig(isMounted());
@@ -129,23 +132,51 @@ const BotBuilder = observer(() => {
             <SaveModal />
             {is_open && <QuickStrategy1 />}
             {is_profithub_tool_visible && (
-                <div className='profithub-tool-overlay glass-card'>
-                    <div className='profithub-tool-header'>
-                        <span className='tool-title'>
-                            <Localize i18n_default_text='Profithub Tool' />
-                        </span>
-                        <button className='close-btn' onClick={() => setIsProfithubToolVisible(false)}>
-                            ✕
-                        </button>
-                    </div>
-                    <iframe
-                        src='https://v0-profithubtool2026.vercel.app/'
-                        title='Profithub Tool'
-                        className='profithub-tool-iframe'
-                        allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
-                        allowFullScreen
-                    />
-                </div>
+                <>
+                    {isMinimized ? (
+                        <div
+                            className="profithub-minimized-icon"
+                            onClick={() => setIsMinimized(false)}
+                            title="Restore Profithub Tool"
+                        >
+                            <span className='tool-icon'>P</span>
+                        </div>
+                    ) : (
+                        <div className={classNames('profithub-tool-overlay glass-card', { 'scaled-down': isScaled })}>
+                            <div className='profithub-tool-header'>
+                                <span className='tool-title'>
+                                    <Localize i18n_default_text='Profithub Tool' />
+                                </span>
+                                <div className="tool-controls">
+                                    <button
+                                        className='control-btn'
+                                        onClick={() => setIsScaled(!isScaled)}
+                                        title={isScaled ? "Maximize" : "Scale Down"}
+                                    >
+                                        {isScaled ? '□' : '❐'}
+                                    </button>
+                                    <button
+                                        className='control-btn'
+                                        onClick={() => setIsMinimized(true)}
+                                        title="Minimize"
+                                    >
+                                        _
+                                    </button>
+                                    <button className='close-btn' onClick={() => setIsProfithubToolVisible(false)}>
+                                        ✕
+                                    </button>
+                                </div>
+                            </div>
+                            <iframe
+                                src='https://v0-profithubtool2026.vercel.app/'
+                                title='Profithub Tool'
+                                className='profithub-tool-iframe'
+                                allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+                                allowFullScreen
+                            />
+                        </div>
+                    )}
+                </>
             )}
         </>
     );

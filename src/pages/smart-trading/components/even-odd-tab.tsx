@@ -28,25 +28,35 @@ const EvenOddTab = observer(() => {
         let listenerKey: string | null = null;
 
         const monitorTicks = async () => {
-            const callback = (ticks_data: { quote: string | number }[]) => {
-                if (is_mounted && ticks_data && ticks_data.length > 0) {
-                    const latest = ticks_data[ticks_data.length - 1];
-                    const symbol_info = active_symbols_data[symbol];
+            try {
+                const callback = (ticks_data: { quote: string | number }[]) => {
+                    if (is_mounted && ticks_data && ticks_data.length > 0) {
+                        const latest = ticks_data[ticks_data.length - 1];
+                        const symbol_info = active_symbols_data[symbol];
 
-                    const last_digits = ticks_data.slice(-200).map(t => {
-                        let quote_str = String(t.quote || '0');
-                        if (symbol_info && typeof t.quote === 'number') {
-                            const decimals = Math.abs(Math.log10(symbol_info.pip));
-                            quote_str = t.quote.toFixed(decimals);
-                        }
-                        const digit = parseInt(quote_str[quote_str.length - 1]);
-                        return isNaN(digit) ? 0 : digit;
-                    });
-                    updateDigitStats(last_digits, latest.quote);
+                        // Use safe decimal calculation
+                        const decimals = symbol_info?.pip
+                            ? String(symbol_info.pip).split('.')[1]?.length || 2
+                            : 2;
+
+                        const last_digits = ticks_data.slice(-200).map(t => {
+                            let quote_str = String(t.quote || '0');
+                            if (typeof t.quote === 'number') {
+                                quote_str = t.quote.toFixed(decimals);
+                            }
+                            const digit = parseInt(quote_str[quote_str.length - 1]);
+                            return isNaN(digit) ? 0 : digit;
+                        });
+                        updateDigitStats(last_digits, latest.quote);
+                    }
+                };
+
+                listenerKey = await ticks_service.monitor({ symbol, callback });
+            } catch (error: any) {
+                if (error?.code !== 'AlreadySubscribed' && error?.message !== 'AlreadySubscribed') {
+                    console.error('EvenOdd: Failed to monitor ticks', error);
                 }
-            };
-
-            listenerKey = await ticks_service.monitor({ symbol, callback });
+            }
         };
 
         monitorTicks();

@@ -103,10 +103,10 @@ const calculateConfidence = (analysis: OverUnderAnalysis): Confidence => {
         maxPercent >= 65
             ? 'VERY HIGH'
             : maxPercent >= 60
-              ? 'HIGH'
-              : maxPercent >= 55 || difference >= 20
-                ? 'MEDIUM'
-                : 'LOW';
+                ? 'HIGH'
+                : maxPercent >= 55 || difference >= 20
+                    ? 'MEDIUM'
+                    : 'LOW';
 
     return {
         level,
@@ -121,8 +121,8 @@ const generatePrediction = (analysis: OverUnderAnalysis, power: DigitPower, conf
         analysis.underPercent > analysis.overPercent
             ? 'UNDER'
             : analysis.overPercent > analysis.underPercent
-              ? 'OVER'
-              : 'BALANCED';
+                ? 'OVER'
+                : 'BALANCED';
 
     // Check if current digit is hot
     const isCurrentHot = power.strength === 'VERY STRONG' || power.strength === 'STRONG';
@@ -166,25 +166,35 @@ const OverUnderTab = observer(() => {
         let listenerKey: string | null = null;
 
         const monitorTicks = async () => {
-            const callback = (ticks_data: { quote: string | number }[]) => {
-                if (is_mounted && ticks_data && ticks_data.length > 0) {
-                    const latest = ticks_data[ticks_data.length - 1];
-                    const symbol_info = active_symbols_data[symbol];
+            try {
+                const callback = (ticks_data: { quote: string | number }[]) => {
+                    if (is_mounted && ticks_data && ticks_data.length > 0) {
+                        const latest = ticks_data[ticks_data.length - 1];
+                        const symbol_info = active_symbols_data[symbol];
 
-                    const last_digits = ticks_data.slice(-200).map(t => {
-                        let quote_str = String(t.quote || '0');
-                        if (symbol_info && typeof t.quote === 'number') {
-                            const decimals = Math.abs(Math.log10(symbol_info.pip));
-                            quote_str = t.quote.toFixed(decimals);
-                        }
-                        const digit = parseInt(quote_str[quote_str.length - 1]);
-                        return isNaN(digit) ? 0 : digit;
-                    });
-                    updateDigitStats(last_digits, latest.quote);
+                        // Use safe decimal calculation
+                        const decimals = symbol_info?.pip
+                            ? String(symbol_info.pip).split('.')[1]?.length || 2
+                            : 2;
+
+                        const last_digits = ticks_data.slice(-200).map(t => {
+                            let quote_str = String(t.quote || '0');
+                            if (typeof t.quote === 'number') {
+                                quote_str = t.quote.toFixed(decimals);
+                            }
+                            const digit = parseInt(quote_str[quote_str.length - 1]);
+                            return isNaN(digit) ? 0 : digit;
+                        });
+                        updateDigitStats(last_digits, latest.quote);
+                    }
+                };
+
+                listenerKey = await ticks_service.monitor({ symbol, callback });
+            } catch (error: any) {
+                if (error?.code !== 'AlreadySubscribed' && error?.message !== 'AlreadySubscribed') {
+                    console.error('OverUnder: Failed to monitor ticks', error);
                 }
-            };
-
-            listenerKey = await ticks_service.monitor({ symbol, callback });
+            }
         };
 
         monitorTicks();
@@ -243,8 +253,8 @@ const OverUnderTab = observer(() => {
         selectedDigit === 0
             ? 'None'
             : `0, ${Array.from({ length: selectedDigit }, (_, i) => i)
-                  .slice(1)
-                  .join(', ')}`;
+                .slice(1)
+                .join(', ')}`;
     const overRange =
         selectedDigit === 9
             ? 'None'
