@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react-lite';
-import { runInAction } from 'mobx';
 import { useStore } from '@/hooks/useStore';
 import classNames from 'classnames';
 import {
@@ -8,8 +7,6 @@ import {
     StandaloneSquareFillIcon,
     StandaloneGearRegularIcon,
     StandaloneChartAreaRegularIcon,
-    StandaloneEyeRegularIcon,
-    StandaloneEyeSlashRegularIcon,
 } from '@deriv/quill-icons';
 import DigitStats from '../../auto-trader/digit-stats';
 import LastDigits from '../../auto-trader/last-digits';
@@ -17,9 +14,7 @@ import ComprehensiveStats from '../../auto-trader/comprehensive-stats';
 import './scp-tab.scss';
 
 const SCPTab = observer(() => {
-    const { smart_trading, client } = useStore();
-    const [api_token, setApiToken] = useState(localStorage.getItem('deriv_api_token_scp') || '');
-    const [show_token, setShowToken] = useState(false);
+    const { smart_trading, client, app: { api_helpers_store } } = useStore();
     const [selected_market, setSelectedMarket] = useState('R_100');
     const [selected_strategy, setSelectedStrategy] = useState('EVENODD');
     const [stake, setStake] = useState(0.35);
@@ -28,8 +23,7 @@ const SCPTab = observer(() => {
     const [stop_loss_pct, setStopLossPct] = useState(50);
     const log_end_ref = useRef<HTMLDivElement>(null);
 
-    const { api_helpers_store } = store;
-    const { ticks_service } = api_helpers_store;
+    const ticks_service = api_helpers_store?.ticks_service;
 
     useEffect(() => {
         if (selected_market && ticks_service) {
@@ -51,15 +45,13 @@ const SCPTab = observer(() => {
     }, [smart_trading.scp_analysis_log.length]);
 
     const handleStart = () => {
-        if (!api_token) {
-            smart_trading.addScpLog('Please enter a valid API token', 'error');
+        if (!client.is_logged_in) {
+            smart_trading.addScpLog('Please log in to start the bot', 'error');
             return;
         }
-        localStorage.setItem('deriv_api_token_scp', api_token);
 
         if (smart_trading.scp_status === 'idle') {
             smart_trading.runScpBot({
-                token: api_token,
                 market: selected_market,
                 strategyId: selected_strategy,
                 stake: stake,
@@ -83,24 +75,9 @@ const SCPTab = observer(() => {
                         <h3>BOT CONFIGURATION</h3>
                     </div>
 
-                    <div className='field-group'>
-                        <label>API TOKEN</label>
-                        <div className='input-with-icon'>
-                            <input
-                                type={show_token ? 'text' : 'password'}
-                                value={api_token}
-                                onChange={(e) => setApiToken(e.target.value)}
-                                placeholder='Enter Deriv API Token'
-                            />
-                            <button className='icon-btn' onClick={() => setShowToken(!show_token)}>
-                                {show_token ? <StandaloneEyeSlashRegularIcon /> : <StandaloneEyeRegularIcon />}
-                            </button>
-                        </div>
-                    </div>
-
                     <div className='field-row'>
                         <div className='field-group'>
-                            <label>MARKET</label>
+                            <label>TRADING MARKET</label>
                             <select value={selected_market} onChange={(e) => setSelectedMarket(e.target.value)}>
                                 {Object.values(smart_trading.active_symbols_data)
                                     .filter(s => s.symbol.startsWith('R_') || s.symbol.startsWith('1HZ') || s.symbol.startsWith('JD'))
@@ -108,7 +85,7 @@ const SCPTab = observer(() => {
                             </select>
                         </div>
                         <div className='field-group'>
-                            <label>STRATEGY</label>
+                            <label>MASTER STRATEGY</label>
                             <select value={selected_strategy} onChange={(e) => setSelectedStrategy(e.target.value)}>
                                 <option value='EVENODD'>Even/Odd (55%+)</option>
                                 <option value='OU36'>Over 3 / Under 6</option>

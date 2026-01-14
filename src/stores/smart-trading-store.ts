@@ -2190,7 +2190,6 @@ export default class SmartTradingStore {
 
     @action
     runScpBot = async (config: {
-        token: string;
         market: string;
         strategyId: string;
         stake: number;
@@ -2261,7 +2260,15 @@ export default class SmartTradingStore {
                 const is_even_dominant = probs.even >= 55;
                 const is_odd_dominant = probs.odd >= 55;
 
-                if (is_even_dominant) {
+                // Check trend (increasing power)
+                const history = this.strategies['EVENODD']?.power_history;
+                const prev_even = history && history.length > 0 ? history[history.length - 1].slice(0, 10).filter((_, i) => i % 2 === 0).reduce((a, b) => a + b, 0) : 0;
+                const prev_odd = history && history.length > 0 ? 100 - prev_even : 0;
+
+                const is_even_increasing = probs.even >= prev_even;
+                const is_odd_increasing = probs.odd >= prev_odd;
+
+                if (is_even_dominant && is_even_increasing) {
                     // Entry: 2 consecutive odds then an even
                     const last_three = this.ticks.slice(-3);
                     if (last_three.length === 3 &&
@@ -2271,7 +2278,7 @@ export default class SmartTradingStore {
                         should_trade = true;
                         contract_type = 'DIGITEVEN';
                     }
-                } else if (is_odd_dominant) {
+                } else if (is_odd_dominant && is_odd_increasing) {
                     // Entry: 2 consecutive evens then an odd
                     const last_three = this.ticks.slice(-3);
                     if (last_three.length === 3 &&
@@ -2284,55 +2291,69 @@ export default class SmartTradingStore {
                 }
                 break;
             }
-            case 'OU36': {
-                if (probs.over >= 55) {
-                    const last_digit = this.ticks[this.ticks.length - 1];
-                    if (last_digit === most_appearing || last_digit === least_appearing) {
-                        should_trade = true;
-                        contract_type = 'DIGITOVER';
-                        prediction = 3;
-                    }
-                } else if (probs.under >= 55) {
-                    const last_digit = this.ticks[this.ticks.length - 1];
-                    if (last_digit === most_appearing || last_digit === least_appearing) {
-                        should_trade = true;
-                        contract_type = 'DIGITUNDER';
-                        prediction = 6;
-                    }
-                }
-                break;
-            }
+            case 'OU36':
             case 'OU27': {
-                if (probs.over >= 55) {
+                const side = probs.over > probs.under ? 'over' : 'under';
+                const prob = side === 'over' ? probs.over : probs.under;
+
+                // Wait/Unstable logic
+                const history = this.strategies[config.strategyId]?.power_history;
+                let prev_prob = 0;
+                if (history && history.length > 0) {
+                    const prev_stats = history[history.length - 1];
+                    prev_prob = side === 'over' ? prev_stats.slice(5).reduce((a, b) => a + b, 0) : prev_stats.slice(0, 5).reduce((a, b) => a + b, 0);
+                }
+
+                if (prob > 52 && prob < 55) {
+                    this.addScpLog(`Waiting for strong ${side} trend (${prob.toFixed(1)}%)...`, 'info');
+                    return;
+                }
+
+                if (prob > 55 && prob < prev_prob) {
+                    this.addScpLog(`Market Unstable! ${side} strength decreasing.`, 'error');
+                    return;
+                }
+
+                if (prob >= 55 && prob >= prev_prob) {
                     const last_digit = this.ticks[this.ticks.length - 1];
                     if (last_digit === most_appearing || last_digit === least_appearing) {
                         should_trade = true;
-                        contract_type = 'DIGITOVER';
-                        prediction = 2;
-                    }
-                } else if (probs.under >= 55) {
-                    const last_digit = this.ticks[this.ticks.length - 1];
-                    if (last_digit === most_appearing || last_digit === least_appearing) {
-                        should_trade = true;
-                        contract_type = 'DIGITUNDER';
-                        prediction = 7;
+                        contract_type = side === 'over' ? 'DIGITOVER' : 'DIGITUNDER';
+                        prediction = config.strategyId === 'OU36' ? (side === 'over' ? 3 : 6) : (side === 'over' ? 2 : 7);
                     }
                 }
                 break;
             }
             case 'DIFFERS': {
-                // Rare digit (2-7 range) behavior
-                const rare_digits = this.digit_stats
-                    .filter(s => s.digit >= 2 && s.digit <= 7)
-                    .sort((a, b) => a.percentage - b.percentage);
+                // Logic per request: Digit 2-7, <10% power, decreasing power.
+                const stats = this.digit_stats;
+                const sorted = [...stats].sort((a, b) => b.count - a.count);
+                const most = sorted[0];
+                const least = sorted[sorted.length - 1];
 
-                const target = rare_digits[0];
-                if (target.percentage < 10) {
+                const candidates = stats.filter(
+                    s =>
+                        s.digit >= 2 &&
+                        s.digit <= 7 &&
+                        s.digit !== most.digit &&
+                        s.digit !== least.digit
+                );
+
+                const candidate = candidates.find(c => {
+                    if (c.percentage >= 10) return false;
+                    const history = this.strategies['DIFFERS']?.power_history;
+                    if (!history || history.length < 1) return true;
+                    const prev_power = history[history.length - 1][c.digit];
+                    return c.percentage < prev_power;
+                });
+
+                if (candidate) {
                     const last_digit = this.ticks[this.ticks.length - 1];
-                    if (last_digit === most_appearing || last_digit === least_appearing) {
+                    // Entry on extreme digits (most or least)
+                    if (last_digit === most.digit || last_digit === least.digit) {
                         should_trade = true;
                         contract_type = 'DIGITDIFF';
-                        prediction = target.digit;
+                        prediction = candidate.digit;
                     }
                 }
                 break;

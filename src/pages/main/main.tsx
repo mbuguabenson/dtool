@@ -39,7 +39,7 @@ import RunStrategy from '../dashboard/run-strategy';
 import './main.scss';
 
 const ChartWrapper = lazy(() => import('../chart/chart-wrapper'));
-const Tutorial = lazy(() => import('../tutorials'));
+
 // const Bots = lazy(() => import('../bots'));
 const AutoTrader = lazy(() => import('../auto-trader'));
 const CopyTrading = lazy(() => import('../copy-trader'));
@@ -48,11 +48,8 @@ const FreeBotsTab = lazy(() => import('../free-bots/free-bots-tab'));
 const SmartTrading = lazy(() => import('../smart-trading/index'));
 const AdvanceOverUnderTab = lazy(() => import('../smart-trading/components/advanced-over-under-tab'));
 const SCPTab = lazy(() => import('../smart-trading/components/scp-tab'));
-const SmartAnalysisTab = lazy(() => import('../smart-trading/components/smart-analysis-tab'));
 const EvenOddTab = lazy(() => import('../smart-trading/components/even-odd-tab'));
 const OverUnderTab = lazy(() => import('../smart-trading/components/over-under-tab'));
-const AIAnalysisTab = lazy(() => import('../smart-trading/components/ai-analysis-tab'));
-const CirclesAnalysis = lazy(() => import('../circles-analysis/index'));
 const EasyTool = lazy(() => import('../easy-tool/index'));
 const Strategies = lazy(() => import('../strategies/index'));
 // const DTrader = lazy(() => import('../dtrader/index')); // Removed as per request
@@ -100,14 +97,7 @@ const AppWrapper = observer(() => {
         'over_under',
         'adv_over_under',
         'smart_auto24',
-        'smart_analysis',
-        'ai_analysis',
         'easy_tool',
-        'tutorials',
-        'circles',
-        'easy_tool',
-        'tutorials',
-        'circles',
         'strategies',
     ];
     const { isDesktop } = useDevice();
@@ -535,46 +525,6 @@ const AppWrapper = observer(() => {
                             <div
                                 label={
                                     <div className='main__tabs-label'>
-                                        <LabelPairedChartCandlestickCaptionRegularIcon
-                                            height='20px'
-                                            width='20px'
-                                            fill='var(--text-general)'
-                                        />
-                                        <Localize i18n_default_text='Smart Analysis' />
-                                    </div>
-                                }
-                                id='id-smart-analysis'
-                            >
-                                <PageContentWrapper>
-                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                        <SmartAnalysisTab />
-                                    </Suspense>
-                                </PageContentWrapper>
-                            </div>
-                            {false && ( // AI Analysis Tab - Hidden
-                                <div
-                                    label={
-                                        <div className='main__tabs-label'>
-                                            <LabelPairedPuzzlePieceTwoCaptionBoldIcon
-                                                height='20px'
-                                                width='20px'
-                                                fill='var(--text-general)'
-                                            />
-                                            <Localize i18n_default_text='AI Analysis' />
-                                        </div>
-                                    }
-                                    id='id-ai-analysis'
-                                >
-                                    <PageContentWrapper>
-                                        <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                            <AIAnalysisTab />
-                                        </Suspense>
-                                    </PageContentWrapper>
-                                </div>
-                            )}
-                            <div
-                                label={
-                                    <div className='main__tabs-label'>
                                         <LabelPairedLightbulbCaptionRegularIcon
                                             height='20px'
                                             width='20px'
@@ -591,51 +541,7 @@ const AppWrapper = observer(() => {
                                     </Suspense>
                                 </PageContentWrapper>
                             </div>
-                            {false && ( // Tutorials Tab - Hidden
-                                <div
-                                    label={
-                                        <div className='main__tabs-label'>
-                                            <LegacyGuide1pxIcon
-                                                height='16px'
-                                                width='16px'
-                                                fill='var(--text-general)'
-                                                className='icon-general-fill-g-path'
-                                            />
-                                            <Localize i18n_default_text='Tutorials' />
-                                        </div>
-                                    }
-                                    id='id-tutorials'
-                                >
-                                    <div className='tutorials-wrapper'>
-                                        <Suspense
-                                            fallback={
-                                                <ChunkLoader message={localize('Please wait, loading tutorials...')} />
-                                            }
-                                        >
-                                            <Tutorial handleTabChange={handleTabChange} />
-                                        </Suspense>
-                                    </div>
-                                </div>
-                            )}
-                            <div
-                                label={
-                                    <div className='main__tabs-label'>
-                                        <LabelPairedCircleCaptionRegularIcon
-                                            height='20px'
-                                            width='20px'
-                                            fill='var(--text-general)'
-                                        />
-                                        <Localize i18n_default_text='Circles' />
-                                    </div>
-                                }
-                                id='id-circles'
-                            >
-                                <PageContentWrapper>
-                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                        <CirclesAnalysis />
-                                    </Suspense>
-                                </PageContentWrapper>
-                            </div>
+
                             <div
                                 label={
                                     <div className='main__tabs-label'>
@@ -658,8 +564,8 @@ const AppWrapper = observer(() => {
                         </Tabs>
                         {!isDesktop && right_tab_shadow && <span className='tabs-shadow tabs-shadow--right' />}{' '}
                     </div>
-                </div>
-            </div>
+                </div >
+            </div >
             <DesktopWrapper>
                 <div className='main__run-strategy-wrapper'>
                     <RunStrategy />
@@ -687,7 +593,7 @@ const AppWrapper = observer(() => {
             >
                 {message}
             </Dialog>
-        </React.Fragment>
+        </React.Fragment >
     );
 });
 
