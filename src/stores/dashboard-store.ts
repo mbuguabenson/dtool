@@ -122,6 +122,8 @@ export default class DashboardStore implements IDashboardStore {
             bot_builder_symbol: observable,
             toolhub_selected_tool: observable,
             setToolhubSelectedTool: action.bound,
+            is_profithub_tool_visible: observable,
+            setIsProfithubToolVisible: action.bound,
         });
         this.root_store = root_store;
         this.core = core;
@@ -208,6 +210,11 @@ export default class DashboardStore implements IDashboardStore {
     is_trading_view_modal_visible = false;
     faq_title = '';
     toolhub_selected_tool: 'dtool' | 'profithub' = 'dtool';
+    is_profithub_tool_visible = false;
+
+    setIsProfithubToolVisible = (is_profithub_tool_visible: boolean) => {
+        this.is_profithub_tool_visible = is_profithub_tool_visible;
+    };
 
     setToolhubSelectedTool = (tool: 'dtool' | 'profithub') => {
         this.toolhub_selected_tool = tool;

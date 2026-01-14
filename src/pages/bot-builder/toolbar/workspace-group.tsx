@@ -20,7 +20,7 @@ import ToolbarIcon from './toolbar-icon';
 
 const WorkspaceGroup = observer(() => {
     const { dashboard, toolbar, load_modal, save_modal } = useStore();
-    const { setPreviewOnPopup, setChartModalVisibility, setTradingViewModalVisibility, setActiveTab, setToolhubSelectedTool } = dashboard;
+    const { setPreviewOnPopup, setChartModalVisibility, setTradingViewModalVisibility, setActiveTab, setToolhubSelectedTool, setIsProfithubToolVisible, is_profithub_tool_visible } = dashboard;
     const { has_redo_stack, has_undo_stack, onResetClick, onSortClick, onUndoClick, onZoomInOutClick } = toolbar;
     const { toggleSaveModal } = save_modal;
     const { toggleLoadModal } = load_modal;
@@ -119,11 +119,12 @@ const WorkspaceGroup = observer(() => {
                     popover_message={localize('Profithub Tool')}
                     icon={
                         <span
-                            className='toolbar__icon'
+                            className={classNames('toolbar__icon', {
+                                'toolbar__icon--active': is_profithub_tool_visible,
+                            })}
                             id='db-toolbar__profithub-tool-button'
                             onClick={() => {
-                                setToolhubSelectedTool('profithub');
-                                setActiveTab(17); // TOOL_HUB is 17
+                                setIsProfithubToolVisible(!is_profithub_tool_visible);
                             }}
                         >
                             <LabelPairedLightbulbMdRegularIcon />

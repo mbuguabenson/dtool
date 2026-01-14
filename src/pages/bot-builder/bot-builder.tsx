@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite';
 import { botNotification } from '@/components/bot-notification/bot-notification';
 import { notification_message } from '@/components/bot-notification/bot-notification-utils';
 import { useStore } from '@/hooks/useStore';
-import { localize } from '@deriv-com/translations';
+import { Localize, localize } from '@deriv-com/translations';
 import { useDevice } from '@deriv-com/ui';
 import { TBlocklyEvents } from 'Types';
 import LoadModal from '../../components/load-modal';
@@ -12,10 +12,11 @@ import SaveModal from '../dashboard/bot-list/save-modal';
 import BotBuilderTourHandler from '../tutorials/dbot-tours/bot-builder-tour';
 import QuickStrategy1 from './quick-strategy';
 import WorkspaceWrapper from './workspace-wrapper';
+import './bot-builder.scss';
 
 const BotBuilder = observer(() => {
     const { dashboard, app, run_panel, toolbar, quick_strategy, blockly_store } = useStore();
-    const { active_tab, active_tour, is_preview_on_popup } = dashboard;
+    const { active_tab, active_tour, is_preview_on_popup, is_profithub_tool_visible, setIsProfithubToolVisible } = dashboard;
     const { is_open } = quick_strategy;
     const { is_running } = run_panel;
     const { is_loading } = blockly_store;
@@ -127,6 +128,25 @@ const BotBuilder = observer(() => {
             <LoadModal />
             <SaveModal />
             {is_open && <QuickStrategy1 />}
+            {is_profithub_tool_visible && (
+                <div className='profithub-tool-overlay glass-card'>
+                    <div className='profithub-tool-header'>
+                        <span className='tool-title'>
+                            <Localize i18n_default_text='Profithub Tool' />
+                        </span>
+                        <button className='close-btn' onClick={() => setIsProfithubToolVisible(false)}>
+                            ✕
+                        </button>
+                    </div>
+                    <iframe
+                        src='https://v0-profithubtool2026.vercel.app/'
+                        title='Profithub Tool'
+                        className='profithub-tool-iframe'
+                        allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+                        allowFullScreen
+                    />
+                </div>
+            )}
         </>
     );
 });
