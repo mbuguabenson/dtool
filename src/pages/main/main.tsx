@@ -52,6 +52,7 @@ const EvenOddTab = lazy(() => import('../smart-trading/components/even-odd-tab')
 const OverUnderTab = lazy(() => import('../smart-trading/components/over-under-tab'));
 const EasyTool = lazy(() => import('../easy-tool/index'));
 const Strategies = lazy(() => import('../strategies/index'));
+const Toolhub = lazy(() => import('../toolhub/toolhub'));
 // const DTrader = lazy(() => import('../dtrader/index')); // Removed as per request
 
 const AppWrapper = observer(() => {
@@ -99,6 +100,7 @@ const AppWrapper = observer(() => {
         'smart_auto24',
         'easy_tool',
         'strategies',
+        'toolhub',
     ];
     const { isDesktop } = useDevice();
     const location = useLocation();
@@ -558,6 +560,26 @@ const AppWrapper = observer(() => {
                                 <PageContentWrapper>
                                     <Suspense fallback={<ChunkLoader message={localize('Loading Strategies...')} />}>
                                         <Strategies />
+                                    </Suspense>
+                                </PageContentWrapper>
+                            </div>
+
+                            <div
+                                label={
+                                    <div className='main__tabs-label'>
+                                        <LabelPairedLightbulbCaptionRegularIcon
+                                            height='20px'
+                                            width='20px'
+                                            fill='var(--text-general)'
+                                        />
+                                        <Localize i18n_default_text='Toolhub' />
+                                    </div>
+                                }
+                                id='id-toolhub'
+                            >
+                                <PageContentWrapper>
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading Toolhub...')} />}>
+                                        <Toolhub />
                                     </Suspense>
                                 </PageContentWrapper>
                             </div>

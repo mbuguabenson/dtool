@@ -118,9 +118,10 @@ export default class DashboardStore implements IDashboardStore {
             video_tab_content: observable,
             setStrategySaveType: action.bound,
             setShowMobileTourDialog: action.bound,
-            is_chart_modal_visible: observable,
             is_trading_view_modal_visible: observable,
             bot_builder_symbol: observable,
+            toolhub_selected_tool: observable,
+            setToolhubSelectedTool: action.bound,
         });
         this.root_store = root_store;
         this.core = core;
@@ -206,6 +207,11 @@ export default class DashboardStore implements IDashboardStore {
     is_chart_modal_visible = false;
     is_trading_view_modal_visible = false;
     faq_title = '';
+    toolhub_selected_tool: 'dtool' | 'profithub' = 'dtool';
+
+    setToolhubSelectedTool = (tool: 'dtool' | 'profithub') => {
+        this.toolhub_selected_tool = tool;
+    };
 
     setFaqTitle = (faq_title: string) => {
         this.faq_title = faq_title;
