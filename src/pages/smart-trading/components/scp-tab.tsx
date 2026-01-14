@@ -14,7 +14,7 @@ import ComprehensiveStats from '../../auto-trader/comprehensive-stats';
 import './scp-tab.scss';
 
 const SCPTab = observer(() => {
-    const { smart_trading, client, app: { api_helpers_store } } = useStore();
+    const { smart_trading, client } = useStore();
     const [selected_market, setSelectedMarket] = useState('R_100');
     const [selected_strategy, setSelectedStrategy] = useState('EVENODD');
     const [stake, setStake] = useState(0.35);
@@ -23,20 +23,13 @@ const SCPTab = observer(() => {
     const [stop_loss_pct, setStopLossPct] = useState(50);
     const log_end_ref = useRef<HTMLDivElement>(null);
 
-    const ticks_service = api_helpers_store?.ticks_service;
+
 
     useEffect(() => {
-        if (selected_market && ticks_service) {
-            ticks_service.getTicks(selected_market, (last_digits: number[]) => {
-                smart_trading.updateDigitStats(last_digits);
-            });
+        if (selected_market) {
+            smart_trading.symbol = selected_market;
         }
-        return () => {
-            if (selected_market && ticks_service) {
-                ticks_service.unsubscribeFromTicks(selected_market);
-            }
-        };
-    }, [selected_market, ticks_service]);
+    }, [selected_market, smart_trading]);
 
     useEffect(() => {
         if (log_end_ref.current) {
