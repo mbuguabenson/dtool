@@ -15,7 +15,6 @@ import {
     LabelPairedLightbulbMdRegularIcon,
 } from '@deriv/quill-icons/LabelPaired';
 import { localize } from '@deriv-com/translations';
-import { useDevice } from '@deriv-com/ui';
 import { rudderStackSendOpenEvent } from '../../../analytics/rudderstack-common-events';
 import ToolbarIcon from './toolbar-icon';
 
@@ -25,7 +24,7 @@ const WorkspaceGroup = observer(() => {
     const { has_redo_stack, has_undo_stack, onResetClick, onSortClick, onUndoClick, onZoomInOutClick } = toolbar;
     const { toggleSaveModal } = save_modal;
     const { toggleLoadModal } = load_modal;
-    const { isDesktop } = useDevice();
+
 
     return (
         <div className='toolbar__wrapper'>
@@ -58,7 +57,7 @@ const WorkspaceGroup = observer(() => {
                                     subform_source: 'bot_builder',
                                     subform_name: 'load_strategy',
                                     load_strategy_tab: 'recent',
-                                });
+                                } as any);
                             }}
                         >
                             <LabelPairedFolderOpenMdRegularIcon />

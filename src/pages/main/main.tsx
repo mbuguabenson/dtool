@@ -18,7 +18,6 @@ import { useStore } from '@/hooks/useStore';
 import useTMB from '@/hooks/useTMB';
 import {
     LabelPairedArrowUpArrowDownCaptionRegularIcon,
-    LabelPairedChartCandlestickCaptionRegularIcon,
     LabelPairedChartLineCaptionRegularIcon,
     LabelPairedCircleCaptionRegularIcon,
     LabelPairedCopyCaptionRegularIcon,
@@ -28,7 +27,6 @@ import {
     LabelPairedSignalCaptionRegularIcon,
     LabelPairedSlidersCaptionRegularIcon,
 } from '@deriv/quill-icons/LabelPaired';
-import { LegacyGuide1pxIcon } from '@deriv/quill-icons/Legacy';
 import { Localize, localize } from '@deriv-com/translations';
 import { useDevice } from '@deriv-com/ui';
 import PageContentWrapper from '@/components/page-content-wrapper';
