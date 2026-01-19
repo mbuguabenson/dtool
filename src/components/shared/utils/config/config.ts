@@ -1,7 +1,7 @@
 import { isStaging } from '../url/helpers';
 
 export const APP_IDS = {
-    LOCALHOST: 121856,
+    LOCALHOST: 16929,
     TMP_STAGING: 113831,
     STAGING: 113831,
     STAGING_BE: 113831,
@@ -66,7 +66,7 @@ export const getDefaultAppIdAndUrl = () => {
 
 export const getAppId = () => {
     // 1. Priority: Environment Variable (Deployment)
-    const env_app_id = process.env.VITE_APP_ID || (import.meta as any).env?.VITE_APP_ID || process.env.REACT_APP_Deriv_APP_ID;
+    const env_app_id = process.env.VITE_APP_ID || ((import.meta as unknown) as { env: { VITE_APP_ID: string } }).env?.VITE_APP_ID || process.env.REACT_APP_Deriv_APP_ID;
 
     if (env_app_id) {
         console.log('[Config] Using App ID from environment variable:', env_app_id);

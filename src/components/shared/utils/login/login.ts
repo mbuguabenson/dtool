@@ -39,7 +39,12 @@ export const loginUrl = ({ language }: TLoginUrl) => {
         if (current_domain) {
             // Extract domain suffix (e.g., 'deriv.me' from 'dbot.deriv.me')
             const domain_suffix = current_domain.replace(/^[^.]+\./, '');
-            oauth_domain = domain_suffix;
+            
+            // Only use custom oauth domain for known derivations, otherwise default to deriv.com
+            // This prevents issues on vercel.app or other custom domains
+            if (['deriv.me', 'deriv.be', 'deriv.com'].includes(domain_suffix)) {
+                oauth_domain = domain_suffix;
+            }
         }
 
         // Force redirect to current origin to avoid localhost default
