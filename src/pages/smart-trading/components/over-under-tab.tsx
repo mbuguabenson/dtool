@@ -103,10 +103,10 @@ const calculateConfidence = (analysis: OverUnderAnalysis): Confidence => {
         maxPercent >= 65
             ? 'VERY HIGH'
             : maxPercent >= 60
-                ? 'HIGH'
-                : maxPercent >= 55 || difference >= 20
-                    ? 'MEDIUM'
-                    : 'LOW';
+              ? 'HIGH'
+              : maxPercent >= 55 || difference >= 20
+                ? 'MEDIUM'
+                : 'LOW';
 
     return {
         level,
@@ -121,8 +121,8 @@ const generatePrediction = (analysis: OverUnderAnalysis, power: DigitPower, conf
         analysis.underPercent > analysis.overPercent
             ? 'UNDER'
             : analysis.overPercent > analysis.underPercent
-                ? 'OVER'
-                : 'BALANCED';
+              ? 'OVER'
+              : 'BALANCED';
 
     // Check if current digit is hot
     const isCurrentHot = power.strength === 'VERY STRONG' || power.strength === 'STRONG';
@@ -173,9 +173,7 @@ const OverUnderTab = observer(() => {
                         const symbol_info = active_symbols_data[symbol];
 
                         // Use safe decimal calculation
-                        const decimals = symbol_info?.pip
-                            ? String(symbol_info.pip).split('.')[1]?.length || 2
-                            : 2;
+                        const decimals = symbol_info?.pip ? String(symbol_info.pip).split('.')[1]?.length || 2 : 2;
 
                         const last_digits = ticks_data.slice(-200).map(t => {
                             let quote_str = String(t.quote || '0');
@@ -253,8 +251,8 @@ const OverUnderTab = observer(() => {
         selectedDigit === 0
             ? 'None'
             : `0, ${Array.from({ length: selectedDigit }, (_, i) => i)
-                .slice(1)
-                .join(', ')}`;
+                  .slice(1)
+                  .join(', ')}`;
     const overRange =
         selectedDigit === 9
             ? 'None'

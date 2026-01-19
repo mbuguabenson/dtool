@@ -43,7 +43,8 @@ export const isTestLink = () => {
     );
 };
 
-export const isLocal = () => /localhost(:\d+)?$/i.test(window.location.hostname);
+export const isLocal = () =>
+    /localhost(:\d+)?$|127\.0\.0\.1(:\d+)?$|0\.0\.0\.0(:\d+)?$/i.test(window.location.hostname);
 
 const getDefaultServerURL = () => {
     return 'ws.derivws.com';
@@ -115,8 +116,9 @@ export const checkAndSetEndpointFromUrl = () => {
             const params = url_params.toString();
             const hash = location.hash;
 
-            location.href = `${location.protocol}//${location.hostname}${location.pathname}${params ? `?${params}` : ''
-                }${hash || ''}`;
+            location.href = `${location.protocol}//${location.hostname}${location.pathname}${
+                params ? `?${params}` : ''
+            }${hash || ''}`;
 
             return true;
         }

@@ -1,8 +1,7 @@
 import { useEffect, useRef } from 'react';
 import Cookies from 'js-cookie';
 import { generateDerivApiInstance } from '@/external/bot-skeleton/services/api/appId';
-import { observer as globalObserver } from '@/external/bot-skeleton/utils/observer';
-import useTMB from '@/hooks/useTMB';
+
 import { clearAuthData } from '@/utils/auth-utils';
 import { useStore } from '@/hooks/useStore';
 import { observer } from 'mobx-react-lite';
@@ -95,8 +94,9 @@ const CallbackPage = observer(() => {
                         console.error('Authorization error in callback:', error);
                         if (error.code === 'InvalidToken') {
                             clearAuthData();
+                            console.error('Login failed with error:', error);
                             common.setError(true, {
-                                message: 'Login failed: Invalid token.',
+                                message: `Login failed: ${error.message || error.code || 'Invalid token'}`,
                                 header: 'Login Error',
                             });
                             return;

@@ -114,13 +114,16 @@ const DemoToRealSection = observer(() => {
                         <button
                             className={`toggle-button ${is_demo_to_real_active ? 'active' : ''}`}
                             onClick={handleToggle}
-                            disabled={demo_to_real_status === 'connecting' || (!selected_real_account_loginid && !is_demo_to_real_active)}
+                            disabled={
+                                demo_to_real_status === 'connecting' ||
+                                (!selected_real_account_loginid && !is_demo_to_real_active)
+                            }
                         >
                             {demo_to_real_status === 'connecting'
                                 ? 'Connecting...'
                                 : is_demo_to_real_active
-                                    ? 'Stop Copying'
-                                    : 'Start Copying'}
+                                  ? 'Stop Copying'
+                                  : 'Start Copying'}
                         </button>
 
                         {is_demo_to_real_active && (
@@ -128,7 +131,10 @@ const DemoToRealSection = observer(() => {
                                 <div className='stat-card'>
                                     <span className='stat-label'>Trades Copied</span>
                                     <span className='stat-value'>
-                                        {copy_trader.trade_history.filter(t => t.target_label === 'Real Account').length}
+                                        {
+                                            copy_trader.trade_history.filter(t => t.target_label === 'Real Account')
+                                                .length
+                                        }
                                     </span>
                                 </div>
                                 <div className='stat-card'>
@@ -138,8 +144,13 @@ const DemoToRealSection = observer(() => {
                                             const realAccTrades = copy_trader.trade_history.filter(
                                                 t => t.target_label === 'Real Account'
                                             );
-                                            const successCount = realAccTrades.filter(t => t.status === 'Success').length;
-                                            const rate = realAccTrades.length > 0 ? (successCount / realAccTrades.length) * 100 : 0;
+                                            const successCount = realAccTrades.filter(
+                                                t => t.status === 'Success'
+                                            ).length;
+                                            const rate =
+                                                realAccTrades.length > 0
+                                                    ? (successCount / realAccTrades.length) * 100
+                                                    : 0;
                                             return `${rate.toFixed(0)}%`;
                                         })()}
                                     </span>

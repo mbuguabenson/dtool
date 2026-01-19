@@ -767,10 +767,10 @@ export default class SmartTradingStore {
     });
 
     @action
-    setActiveSubtab = (tab: TSmartSubtab) => { // Modified existing method
+    setActiveSubtab = (tab: TSmartSubtab) => {
+        // Modified existing method
         this.active_subtab = tab;
     };
-
 
     @action
     resetStats = () => {
@@ -1451,7 +1451,7 @@ export default class SmartTradingStore {
                     duration_unit: 't',
                     symbol: this.symbol,
                     ...(['DIGITOVER', 'DIGITUNDER', 'DIGITMATCH', 'DIGITDIFF'].includes(trade_type || '') &&
-                        prediction !== undefined
+                    prediction !== undefined
                         ? { barrier: String(prediction) }
                         : {}),
                 }),
@@ -2202,7 +2202,10 @@ export default class SmartTradingStore {
     @action
     addScpJournalEntry = (entry: any) => {
         this.scp_trading_journal = [entry, ...this.scp_trading_journal.slice(0, 999)];
-        localStorage.setItem(`trading_journal_scp_${this.root_store.client.loginid}`, JSON.stringify(this.scp_trading_journal));
+        localStorage.setItem(
+            `trading_journal_scp_${this.root_store.client.loginid}`,
+            JSON.stringify(this.scp_trading_journal)
+        );
     };
 
     @action
@@ -2307,7 +2310,13 @@ export default class SmartTradingStore {
 
                 // Check trend (increasing power)
                 const history = this.strategies['EVENODD']?.power_history;
-                const prev_even = history && history.length > 0 ? history[history.length - 1].slice(0, 10).filter((_, i) => i % 2 === 0).reduce((a, b) => a + b, 0) : 0;
+                const prev_even =
+                    history && history.length > 0
+                        ? history[history.length - 1]
+                              .slice(0, 10)
+                              .filter((_, i) => i % 2 === 0)
+                              .reduce((a, b) => a + b, 0)
+                        : 0;
                 const prev_odd = history && history.length > 0 ? 100 - prev_even : 0;
 
                 const is_even_increasing = probs.even >= prev_even;
@@ -2316,20 +2325,24 @@ export default class SmartTradingStore {
                 if (is_even_dominant && is_even_increasing) {
                     // Entry: 2 consecutive odds then an even
                     const last_three = this.ticks.slice(-3);
-                    if (last_three.length === 3 &&
+                    if (
+                        last_three.length === 3 &&
                         last_three[0] % 2 !== 0 &&
                         last_three[1] % 2 !== 0 &&
-                        last_three[2] % 2 === 0) {
+                        last_three[2] % 2 === 0
+                    ) {
                         should_trade = true;
                         contract_type = 'DIGITEVEN';
                     }
                 } else if (is_odd_dominant && is_odd_increasing) {
                     // Entry: 2 consecutive evens then an odd
                     const last_three = this.ticks.slice(-3);
-                    if (last_three.length === 3 &&
+                    if (
+                        last_three.length === 3 &&
                         last_three[0] % 2 === 0 &&
                         last_three[1] % 2 === 0 &&
-                        last_three[2] % 2 !== 0) {
+                        last_three[2] % 2 !== 0
+                    ) {
                         should_trade = true;
                         contract_type = 'DIGITODD';
                     }
@@ -2346,7 +2359,10 @@ export default class SmartTradingStore {
                 let prev_prob = 0;
                 if (history && history.length > 0) {
                     const prev_stats = history[history.length - 1];
-                    prev_prob = side === 'over' ? prev_stats.slice(5).reduce((a, b) => a + b, 0) : prev_stats.slice(0, 5).reduce((a, b) => a + b, 0);
+                    prev_prob =
+                        side === 'over'
+                            ? prev_stats.slice(5).reduce((a, b) => a + b, 0)
+                            : prev_stats.slice(0, 5).reduce((a, b) => a + b, 0);
                 }
 
                 if (prob > 52 && prob < 55) {
@@ -2364,7 +2380,7 @@ export default class SmartTradingStore {
                     if (last_digit === most_appearing || last_digit === least_appearing) {
                         should_trade = true;
                         contract_type = side === 'over' ? 'DIGITOVER' : 'DIGITUNDER';
-                        prediction = config.strategyId === 'OU36' ? (side === 'over' ? 3 : 6) : (side === 'over' ? 2 : 7);
+                        prediction = config.strategyId === 'OU36' ? (side === 'over' ? 3 : 6) : side === 'over' ? 2 : 7;
                     }
                 }
                 break;
@@ -2377,11 +2393,7 @@ export default class SmartTradingStore {
                 const least = sorted[sorted.length - 1];
 
                 const candidates = stats.filter(
-                    s =>
-                        s.digit >= 2 &&
-                        s.digit <= 7 &&
-                        s.digit !== most.digit &&
-                        s.digit !== least.digit
+                    s => s.digit >= 2 && s.digit <= 7 && s.digit !== most.digit && s.digit !== least.digit
                 );
 
                 const candidate = candidates.find(c => {
@@ -2454,7 +2466,10 @@ export default class SmartTradingStore {
             const contract_id = buy.buy.contract_id;
 
             const subscription = api_base.api.onMessage().subscribe((msg: any) => {
-                if (msg.msg_type === 'proposal_open_contract' && msg.proposal_open_contract.contract_id === contract_id) {
+                if (
+                    msg.msg_type === 'proposal_open_contract' &&
+                    msg.proposal_open_contract.contract_id === contract_id
+                ) {
                     const contract = msg.proposal_open_contract;
                     if (contract.is_sold) {
                         runInAction(() => {
@@ -2471,7 +2486,7 @@ export default class SmartTradingStore {
                                 stake: config.stake,
                                 digit: parseInt(contract.current_spot_display_value.slice(-1)),
                                 result: is_win ? 'WIN' : 'LOSS',
-                                profit: profit
+                                profit: profit,
                             });
                             this.session_pl += profit;
                             this.is_executing = false;
@@ -2491,7 +2506,6 @@ export default class SmartTradingStore {
                     }
                 });
             }, 15000);
-
         } catch (error) {
             this.addScpLog(`Scp Execution Error: ${error}`, 'error');
             this.is_executing = false;

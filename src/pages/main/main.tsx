@@ -565,8 +565,8 @@ const AppWrapper = observer(() => {
                         </Tabs>
                         {!isDesktop && right_tab_shadow && <span className='tabs-shadow tabs-shadow--right' />}{' '}
                     </div>
-                </div >
-            </div >
+                </div>
+            </div>
             <DesktopWrapper>
                 <div className='main__run-strategy-wrapper'>
                     <RunStrategy />
@@ -585,7 +585,7 @@ const AppWrapper = observer(() => {
                 is_visible={is_dialog_open}
                 onCancel={onCancelButtonClick || undefined}
                 onClose={onCloseDialog || undefined}
-                onConfirm={onOkButtonClick || onCloseDialog || (() => { })}
+                onConfirm={onOkButtonClick || onCloseDialog || (() => {})}
                 portal_element_id='modal_root'
                 title={title}
                 login={handleLoginGeneration}
@@ -594,7 +594,7 @@ const AppWrapper = observer(() => {
             >
                 {message}
             </Dialog>
-        </React.Fragment >
+        </React.Fragment>
     );
 });
 

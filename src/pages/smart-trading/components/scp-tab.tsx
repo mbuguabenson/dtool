@@ -23,8 +23,6 @@ const SCPTab = observer(() => {
     const [stop_loss_pct, setStopLossPct] = useState(50);
     const log_end_ref = useRef<HTMLDivElement>(null);
 
-
-
     useEffect(() => {
         if (selected_market) {
             smart_trading.setSymbol(selected_market);
@@ -50,7 +48,7 @@ const SCPTab = observer(() => {
                 stake: stake,
                 targetProfit: target_profit,
                 stopLossPct: stop_loss_pct,
-                analysisMinutes: analysis_minutes
+                analysisMinutes: analysis_minutes,
             });
         } else {
             smart_trading.setScpStatus('idle');
@@ -71,15 +69,24 @@ const SCPTab = observer(() => {
                     <div className='field-row'>
                         <div className='field-group'>
                             <label>TRADING MARKET</label>
-                            <select value={selected_market} onChange={(e) => setSelectedMarket(e.target.value)}>
+                            <select value={selected_market} onChange={e => setSelectedMarket(e.target.value)}>
                                 {Object.values(smart_trading.active_symbols_data)
-                                    .filter(s => s.symbol.startsWith('R_') || s.symbol.startsWith('1HZ') || s.symbol.startsWith('JD'))
-                                    .map(s => <option key={s.symbol} value={s.symbol}>{s.display_name}</option>)}
+                                    .filter(
+                                        s =>
+                                            s.symbol.startsWith('R_') ||
+                                            s.symbol.startsWith('1HZ') ||
+                                            s.symbol.startsWith('JD')
+                                    )
+                                    .map(s => (
+                                        <option key={s.symbol} value={s.symbol}>
+                                            {s.display_name}
+                                        </option>
+                                    ))}
                             </select>
                         </div>
                         <div className='field-group'>
                             <label>MASTER STRATEGY</label>
-                            <select value={selected_strategy} onChange={(e) => setSelectedStrategy(e.target.value)}>
+                            <select value={selected_strategy} onChange={e => setSelectedStrategy(e.target.value)}>
                                 <option value='EVENODD'>Even/Odd (55%+)</option>
                                 <option value='OU36'>Over 3 / Under 6</option>
                                 <option value='OU27'>Over 2 / Under 7</option>
@@ -91,22 +98,39 @@ const SCPTab = observer(() => {
                     <div className='field-row'>
                         <div className='field-group'>
                             <label>STAKE ($)</label>
-                            <input type='number' value={stake} onChange={(e) => setStake(parseFloat(e.target.value))} step='0.1' />
+                            <input
+                                type='number'
+                                value={stake}
+                                onChange={e => setStake(parseFloat(e.target.value))}
+                                step='0.1'
+                            />
                         </div>
                         <div className='field-group'>
                             <label>TARGET PROFIT ($)</label>
-                            <input type='number' value={target_profit} onChange={(e) => setTargetProfit(parseFloat(e.target.value))} />
+                            <input
+                                type='number'
+                                value={target_profit}
+                                onChange={e => setTargetProfit(parseFloat(e.target.value))}
+                            />
                         </div>
                     </div>
 
                     <div className='field-row'>
                         <div className='field-group'>
                             <label>ANALYSIS TIME (MIN)</label>
-                            <input type='number' value={analysis_minutes} onChange={(e) => setAnalysisMinutes(parseInt(e.target.value))} />
+                            <input
+                                type='number'
+                                value={analysis_minutes}
+                                onChange={e => setAnalysisMinutes(parseInt(e.target.value))}
+                            />
                         </div>
                         <div className='field-group'>
                             <label>STOP LOSS (%)</label>
-                            <input type='number' value={stop_loss_pct} onChange={(e) => setStopLossPct(parseFloat(e.target.value))} />
+                            <input
+                                type='number'
+                                value={stop_loss_pct}
+                                onChange={e => setStopLossPct(parseFloat(e.target.value))}
+                            />
                         </div>
                     </div>
 
@@ -114,7 +138,11 @@ const SCPTab = observer(() => {
                         className={classNames('action-btn', { running: smart_trading.scp_status !== 'idle' })}
                         onClick={handleStart}
                     >
-                        {smart_trading.scp_status === 'idle' ? <StandalonePlayFillIcon /> : <StandaloneSquareFillIcon />}
+                        {smart_trading.scp_status === 'idle' ? (
+                            <StandalonePlayFillIcon />
+                        ) : (
+                            <StandaloneSquareFillIcon />
+                        )}
                         <span>{smart_trading.scp_status === 'idle' ? 'START ANALYSIS' : 'STOP BOT'}</span>
                     </button>
                 </div>
@@ -132,8 +160,14 @@ const SCPTab = observer(() => {
                     <div className='stats-summary'>
                         <div className='stat-item'>
                             <span className='lbl'>SESSION P/L</span>
-                            <span className={classNames('val', { pos: smart_trading.session_pl > 0, neg: smart_trading.session_pl < 0 })}>
-                                {smart_trading.session_pl >= 0 ? '+' : ''}{smart_trading.session_pl.toFixed(2)}
+                            <span
+                                className={classNames('val', {
+                                    pos: smart_trading.session_pl > 0,
+                                    neg: smart_trading.session_pl < 0,
+                                })}
+                            >
+                                {smart_trading.session_pl >= 0 ? '+' : ''}
+                                {smart_trading.session_pl.toFixed(2)}
                             </span>
                         </div>
                         <div className='stat-item'>
@@ -154,7 +188,10 @@ const SCPTab = observer(() => {
                             <span className='percentage'>{smart_trading.scp_analysis_progress}%</span>
                         </div>
                         <div className='progress-bar-container'>
-                            <div className='progress-bar-fill' style={{ width: `${smart_trading.scp_analysis_progress}%` }} />
+                            <div
+                                className='progress-bar-fill'
+                                style={{ width: `${smart_trading.scp_analysis_progress}%` }}
+                            />
                         </div>
                     </div>
 
@@ -166,7 +203,13 @@ const SCPTab = observer(() => {
                         <div className='log-content'>
                             {smart_trading.scp_analysis_log.map((log, i) => (
                                 <div key={i} className={classNames('log-entry', log.type)}>
-                                    <span className='time'>{new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+                                    <span className='time'>
+                                        {new Date(log.timestamp).toLocaleTimeString([], {
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            second: '2-digit',
+                                        })}
+                                    </span>
                                     <span className='msg'>{log.message}</span>
                                 </div>
                             ))}
@@ -211,13 +254,17 @@ const SCPTab = observer(() => {
                                     <td>{entry.strategy}</td>
                                     <td>${entry.stake}</td>
                                     <td>{entry.digit}</td>
-                                    <td><span className='result-pill'>{entry.result}</span></td>
+                                    <td>
+                                        <span className='result-pill'>{entry.result}</span>
+                                    </td>
                                     <td>${entry.profit.toFixed(2)}</td>
                                 </tr>
                             ))}
                             {smart_trading.scp_trading_journal.length === 0 && (
                                 <tr>
-                                    <td colSpan={7} className='empty'>No trades recorded for this session.</td>
+                                    <td colSpan={7} className='empty'>
+                                        No trades recorded for this session.
+                                    </td>
                                 </tr>
                             )}
                         </tbody>

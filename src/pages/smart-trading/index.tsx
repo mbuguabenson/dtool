@@ -126,7 +126,6 @@ const SmartTrading = observer(() => {
 
             {active_subtab === 'bulk' && <BulkTradingView />}
 
-
             {active_subtab === 'even_odd' && <EvenOddTab />}
             {active_subtab === 'over_under' && <OverUnderTab />}
             {active_subtab === 'advanced_ou' && <AdvancedOverUnderTab />}
@@ -295,17 +294,17 @@ const SmartTrading = observer(() => {
                             {['DIGITOVER', 'DIGITUNDER', 'DIGITMATCH', 'DIGITDIFF'].includes(
                                 speedbot_contract_type
                             ) && (
-                                    <div className='setting-item'>
-                                        <label>Prediction (0-9)</label>
-                                        <input
-                                            type='number'
-                                            min='0'
-                                            max='9'
-                                            value={speedbot_prediction}
-                                            onChange={e => (smart_trading.speedbot_prediction = parseInt(e.target.value))}
-                                        />
-                                    </div>
-                                )}
+                                <div className='setting-item'>
+                                    <label>Prediction (0-9)</label>
+                                    <input
+                                        type='number'
+                                        min='0'
+                                        max='9'
+                                        value={speedbot_prediction}
+                                        onChange={e => (smart_trading.speedbot_prediction = parseInt(e.target.value))}
+                                    />
+                                </div>
+                            )}
 
                             <div className='setting-item'>
                                 <label>Stake</label>

@@ -43,7 +43,7 @@ const EasyTool = observer(() => {
     const [history_count, setHistoryCount] = useState<15 | 50>(15);
 
     useEffect(() => {
-        if (!ticks_service || !symbol) return;
+        if (!ticks_service || !symbol || !is_socket_opened) return;
         let is_mounted = true;
         let listenerKey: string | null = null;
         const monitorTicks = async () => {
@@ -54,9 +54,7 @@ const EasyTool = observer(() => {
                         const symbol_info = active_symbols_data[symbol];
 
                         // Use safe decimal calculation similar to DigitStats
-                        const decimals = symbol_info?.pip
-                            ? String(symbol_info.pip).split('.')[1]?.length || 2
-                            : 2;
+                        const decimals = symbol_info?.pip ? String(symbol_info.pip).split('.')[1]?.length || 2 : 2;
 
                         const last_digits = ticks_data.slice(-1000).map(t => {
                             let quote_str = String(t.quote || '0');
@@ -86,7 +84,7 @@ const EasyTool = observer(() => {
             is_mounted = false;
             if (listenerKey) ticks_service.stopMonitor({ symbol, key: listenerKey });
         };
-    }, [symbol, ticks_service, updateDigitStats, active_symbols_data]);
+    }, [symbol, ticks_service, updateDigitStats, active_symbols_data, is_socket_opened]);
 
     // Update selected digit when last_digit changes if none selected
     useEffect(() => {

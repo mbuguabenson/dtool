@@ -93,7 +93,8 @@ const Tabs = ({
             const hash = location.hash.slice(1);
             const childrenArray = React.Children.toArray(children);
             const hash_index = childrenArray.findIndex(
-                child => child && typeof child === 'object' && 'props' in child && child.props && child.props.hash === hash
+                child =>
+                    child && typeof child === 'object' && 'props' in child && child.props && child.props.hash === hash
             );
             const has_hash = hash_index > -1;
 

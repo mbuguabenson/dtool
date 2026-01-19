@@ -50,11 +50,11 @@ const ClientTokensSection = observer(() => {
                 clients.map(c =>
                     c.id === id
                         ? {
-                            ...c,
-                            status: 'connected' as const,
-                            accountType: 'Real',
-                            balance: 1000.0,
-                        }
+                              ...c,
+                              status: 'connected' as const,
+                              accountType: 'Real',
+                              balance: 1000.0,
+                          }
                         : c
                 )
             );
@@ -66,7 +66,9 @@ const ClientTokensSection = observer(() => {
             <div className='section-header'>
                 <h2>Copytrade to Client Accounts</h2>
                 <p>Copy trades to OTHER PEOPLE's accounts by adding their API tokens</p>
-                <p className='sub-hint'>💡 For copying to your own Real accounts, use "Demo to Real Account" section above</p>
+                <p className='sub-hint'>
+                    💡 For copying to your own Real accounts, use "Demo to Real Account" section above
+                </p>
             </div>
 
             <div className='add-client-group'>

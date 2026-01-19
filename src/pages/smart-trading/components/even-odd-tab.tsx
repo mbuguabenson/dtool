@@ -35,9 +35,7 @@ const EvenOddTab = observer(() => {
                         const symbol_info = active_symbols_data[symbol];
 
                         // Use safe decimal calculation
-                        const decimals = symbol_info?.pip
-                            ? String(symbol_info.pip).split('.')[1]?.length || 2
-                            : 2;
+                        const decimals = symbol_info?.pip ? String(symbol_info.pip).split('.')[1]?.length || 2 : 2;
 
                         const last_digits = ticks_data.slice(-200).map(t => {
                             let quote_str = String(t.quote || '0');

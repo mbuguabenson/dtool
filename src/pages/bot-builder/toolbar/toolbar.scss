@@ -48,7 +48,7 @@
                 padding-right: 0.4rem;
             }
 
-            >* {
+            > * {
                 align-self: center;
             }
 
@@ -71,7 +71,7 @@
             padding-inline-end: 0.8rem;
         }
 
-        >* {
+        > * {
             @include desktop-screen {
                 align-self: center;
             }
@@ -115,7 +115,7 @@
                 }
             }
 
-            >* {
+            > * {
                 align-self: center;
             }
         }

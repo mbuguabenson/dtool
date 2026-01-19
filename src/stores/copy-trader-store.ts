@@ -308,7 +308,7 @@ export default class CopyTraderStore {
                 }
             }
         });
-    }
+    };
 
     @action
     setSelectedRealAccount = (loginid: string) => {
@@ -350,7 +350,8 @@ export default class CopyTraderStore {
             console.error('[Demo to Real] Available tokens:', Object.keys(accountsList));
             console.error('[Demo to Real] AccountsList:', accountsList);
 
-            this.demo_to_real_error = 'Token not found for selected account. Please make sure you have API tokens enabled for this account.';
+            this.demo_to_real_error =
+                'Token not found for selected account. Please make sure you have API tokens enabled for this account.';
             this.demo_to_real_status = 'error';
             return;
         }
