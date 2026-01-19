@@ -191,15 +191,12 @@ const TradeAnimation = observer(({ className, should_show_overlay }: TTradeAnima
                         icon='info'
                         className='qs__tooltip'
                     />
-                    <div style={{ opacity: 0.5, marginLeft: '8px' }}>
+                    <div className='run__button_container'>
                         <Button
                             is_disabled={true}
                             className={button_props.class}
                             id={button_props.id}
                             icon={button_props.icon}
-                            onClick={() => {
-                                // Disabled button, no action
-                            }}
                             has_effect
                             {...(is_stop_button_visible || !is_unavailable_for_payment_agent
                                 ? { primary: true }
@@ -235,7 +232,7 @@ const TradeAnimation = observer(({ className, should_show_overlay }: TTradeAnima
             )}
             <div
                 className={classNames('animation__container', className, {
-                    'animation--running': contract_stage > 0,
+                    'animation--running': (contract_stage as unknown as number) > 0,
                     'animation--completed': show_overlay,
                     'animation--disabled': is_disabled,
                 })}

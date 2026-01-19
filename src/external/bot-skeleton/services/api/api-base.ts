@@ -278,6 +278,7 @@ class APIBase {
             globalObserver.emit('Error', e);
         } finally {
             setIsAuthorizing(false);
+            this.toggleRunButton(false);
         }
     }
 

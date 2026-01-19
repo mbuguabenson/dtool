@@ -1,10 +1,6 @@
 import React from 'react';
-import Cookies from 'js-cookie';
 import ChunkLoader from '@/components/loader/chunk-loader';
-import { generateDerivApiInstance } from '@/external/bot-skeleton/services/api/appId';
-import { observer as globalObserver } from '@/external/bot-skeleton/utils/observer';
 import { useOfflineDetection } from '@/hooks/useOfflineDetection';
-import { clearAuthData } from '@/utils/auth-utils';
 import { localize } from '@deriv-com/translations';
 import { URLUtils } from '@deriv-com/utils';
 import App from './App';
@@ -18,9 +14,7 @@ declare global {
 
 const setLocalStorageToken = async (
     loginInfo: URLUtils.LoginInfo[],
-    paramsToDelete: string[],
-    setIsAuthComplete: React.Dispatch<React.SetStateAction<boolean>>,
-    isOnline: boolean
+    paramsToDelete: string[]
 ) => {
     if (loginInfo.length) {
         try {
@@ -39,64 +33,6 @@ const setLocalStorageToken = async (
             localStorage.setItem('clientAccounts', JSON.stringify(clientAccounts));
 
             URLUtils.filterSearchParams(paramsToDelete);
-
-            if (!isOnline) {
-                localStorage.setItem('authToken', loginInfo[0].token);
-                localStorage.setItem('active_loginid', loginInfo[0].loginid);
-                return;
-            }
-
-            try {
-                const api = await generateDerivApiInstance();
-
-                if (api) {
-                    const authPromise = api.authorize(loginInfo[0].token);
-                    const timeoutPromise = new Promise((_, reject) =>
-                        setTimeout(() => reject(new Error('Auth Timeout')), 15000)
-                    );
-
-                    const { authorize, error } = (await Promise.race([authPromise, timeoutPromise])) as {
-                        authorize: any;
-                        error: any;
-                    };
-
-                    api.disconnect();
-                    if (error) {
-                        // Check if the error is due to an invalid token
-                        if (error.code === 'InvalidToken') {
-                            // Set isAuthComplete to true to prevent the app from getting stuck in loading state
-                            setIsAuthComplete(true);
-
-                            const is_tmb_enabled = window.is_tmb_enabled === true;
-                            // Only emit the InvalidToken event if logged_state is true
-                            if (Cookies.get('logged_state') === 'true' && !is_tmb_enabled) {
-                                // Emit an event that can be caught by the application to retrigger OIDC authentication
-                                globalObserver.emit('InvalidToken', { error });
-                            }
-
-                            if (Cookies.get('logged_state') === 'false') {
-                                // If the user is not logged out, we need to clear the local storage
-                                clearAuthData();
-                            }
-                        }
-                    } else {
-                        localStorage.setItem('client.country', authorize.country);
-                        const firstId = authorize?.account_list[0]?.loginid;
-                        const filteredTokens = loginInfo.filter(token => token.loginid === firstId);
-                        if (filteredTokens.length) {
-                            localStorage.setItem('authToken', filteredTokens[0].token);
-                            localStorage.setItem('active_loginid', filteredTokens[0].loginid);
-                            return;
-                        }
-                    }
-                }
-            } catch (apiError) {
-                console.error('[Auth] API connection error or timeout:', apiError);
-                // Still set token in offline mode
-                localStorage.setItem('authToken', loginInfo[0].token);
-                localStorage.setItem('active_loginid', loginInfo[0].loginid);
-            }
-
             localStorage.setItem('authToken', loginInfo[0].token);
             localStorage.setItem('active_loginid', loginInfo[0].loginid);
         } catch (error) {
@@ -113,8 +49,8 @@ export const AuthWrapper = () => {
     React.useEffect(() => {
         const initializeAuth = async () => {
             try {
-                // Pass isOnline to setLocalStorageToken to handle offline mode properly
-                await setLocalStorageToken(loginInfo, paramsToDelete, setIsAuthComplete, isOnline);
+                // Tokens are parsed from URL and stored in localStorage
+                await setLocalStorageToken(loginInfo, paramsToDelete);
                 URLUtils.filterSearchParams(['lang']);
                 setIsAuthComplete(true);
             } catch (error) {
