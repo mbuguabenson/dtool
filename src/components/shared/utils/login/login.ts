@@ -30,9 +30,8 @@ export const loginUrl = ({ language }: TLoginUrl) => {
     const signup_device = signup_device_cookie.get('signup_device');
     const date_first_contact_cookie = new CookieStorage('date_first_contact');
     const date_first_contact = date_first_contact_cookie.get('date_first_contact');
-    const marketing_queries = `${signup_device ? `&signup_device=${signup_device}` : ''}${
-        date_first_contact ? `&date_first_contact=${date_first_contact}` : ''
-    }`;
+    const marketing_queries = `${signup_device ? `&signup_device=${signup_device}` : ''}${date_first_contact ? `&date_first_contact=${date_first_contact}` : ''
+        }`;
     const getOAuthUrl = () => {
         const current_domain = getCurrentProductionDomain();
         let oauth_domain = deriv_urls.DERIV_HOST_NAME;
@@ -44,9 +43,17 @@ export const loginUrl = ({ language }: TLoginUrl) => {
         }
 
         // Force redirect to current origin to avoid localhost default
-        const redirect_param = `&redirect_uri=${window.location.protocol}//${window.location.host}${window.location.pathname}`;
+        // Normalize: remove trailing slash from pathname if it's just '/' 
+        // Example: 'https://site.com/' -> 'https://site.com'
+        const pathname = window.location.pathname === '/' ? '' : window.location.pathname;
+        const redirect_uri = `${window.location.protocol}//${window.location.host}${pathname}`;
+        const redirect_param = `&redirect_uri=${redirect_uri}`;
 
         const url = `https://oauth.${oauth_domain}/oauth2/authorize?app_id=${getAppId()}&l=${language}${marketing_queries}&brand=${website_name.toLowerCase()}${redirect_param}`;
+
+        console.log('[Login] Redirect URI:', redirect_uri);
+        console.log('[Login] App ID:', getAppId());
+
         return url;
     };
 
