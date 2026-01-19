@@ -65,8 +65,12 @@ export const getDefaultAppIdAndUrl = () => {
 
 export const getAppId = () => {
     // 1. Priority: Environment Variable (Deployment)
-    const env_app_id = process.env.VITE_APP_ID || process.env.REACT_APP_Deriv_APP_ID;
-    if (env_app_id) return String(env_app_id);
+    const env_app_id = process.env.VITE_APP_ID || (import.meta as any).env?.VITE_APP_ID || process.env.REACT_APP_Deriv_APP_ID;
+
+    if (env_app_id) {
+        console.log('[Config] Using App ID from environment variable:', env_app_id);
+        return String(env_app_id);
+    }
 
     let app_id = null;
     const config_app_id = window.localStorage.getItem('config.app_id');
