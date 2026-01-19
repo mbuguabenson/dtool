@@ -11,6 +11,7 @@ import {
     TradingSignal,
 } from '@/lib/analysis/smart-predictions';
 import { VSenseEngine, VSenseSignal } from '@/lib/analysis/v-sense-engine';
+import subscriptionManager from '@/lib/subscription-manager';
 import RootStore from './root-store';
 
 type TDerivResponse = {
@@ -31,12 +32,6 @@ export type TSmartSubtab =
     | 'bulk'
     | 'automated'
     | 'analysis'
-    | 'even_odd'
-    | 'over_under'
-    | 'advanced_ou'
-    | 'differs'
-    | 'matches'
-    | 'charts'
     | 'turbo'
     | 'vsense_turbo'
     | 'money_maker_ultra'
@@ -172,16 +167,26 @@ export default class SmartTradingStore {
         {};
 
     // V-SENSE™ TurboExec Bot State
-    @observable accessor is_turbo_bot_running: boolean = false;
+   @observable accessor is_turbo_bot_running: boolean = false;
     @observable accessor turbo_bot_state: 'STOPPED' | 'LISTENING' | 'SETUP' | 'CONFIRMING' | 'EXECUTING' | 'COOLDOWN' =
         'STOPPED';
     @observable accessor turbo_settings = {
         max_risk: 0.05,
         is_bulk_enabled: false,
         min_confidence: 60,
+        selected_strategy: 'DIFFERS' as 'DIFFERS' | 'EVEN_ODD' | 'OVER_UNDER',
     };
     @observable accessor turbo_cooldown_ticks: number = 0;
     @observable accessor turbo_last_signal: string = '';
+
+    // Bulk Trading Enhancement
+    @observable accessor bulk_market: string = 'R_100';
+    @observable accessor bulk_contract_type: string = 'DIGITEVEN';
+    @observable accessor bulk_prediction: number = 0;
+    @observable accessor bulk_stake: number = 0.5;
+    @observable accessor bulk_count_per_run: number = 1;
+    @observable accessor bulk_mode: 'once' | 'auto' = 'once';
+    @observable accessor is_bulk_auto_running: boolean = false;
 
     // Money Maker Ultra States
     @observable accessor is_money_maker_ultra_running = false;
@@ -490,6 +495,7 @@ export default class SmartTradingStore {
                 this.is_connected = !!is_socket_opened;
                 if (is_socket_opened) {
                     this.fetchMarkets();
+                    this.subscribeToActiveSymbol();
                 }
             },
             { fireImmediately: true }
@@ -735,10 +741,64 @@ export default class SmartTradingStore {
 
     @action
     setSymbol = (symbol: string) => {
-        this.symbol = symbol;
-        this.resetStats();
-        this.root_store.analysis.setSymbol(symbol);
-        this.root_store.auto_trader.setSymbol(symbol);
+        if (this.symbol !== symbol) {
+            this.symbol = symbol;
+            this.resetStats();
+            this.root_store.analysis.setSymbol(symbol);
+            this.root_store.auto_trader.setSymbol(symbol);
+            // Re-subscribe to new symbol
+            this.subscribeToActiveSymbol();
+        }
+    };
+
+    private unsubscribeTicks: (() => void) | null = null;
+
+    @action
+    subscribeToActiveSymbol = async () => {
+        // Clear existing subscription
+        if (this.unsubscribeTicks) {
+            this.unsubscribeTicks();
+            this.unsubscribeTicks = null;
+        }
+
+        if (!this.symbol || !this.is_connected) return;
+
+        try {
+            this.unsubscribeTicks = await subscriptionManager.subscribeToTicks(
+                this.symbol,
+                (data) => {
+                    if (data.msg_type === 'tick') {
+                        const quote = data.tick.quote;
+                        // Construct single-item array or just pass quote if updateDigitStats handles parsing
+                        // updateDigitStats expects last_digits array.
+                        // We need to maintain a local history if we are the primary source,
+                        // or just pass what we have.
+                        // Ideally, we should fetch history first, but for now let's push the new tick.
+                        
+                        // Extract digit
+                         const price_str = String(quote);
+                         const last_char = price_str[price_str.length - 1];
+                         const digit = parseInt(last_char);
+                         
+                         // Append to current ticks if valid
+                         if (!isNaN(digit)) {
+                             // We need to pass the *full* updated array to updateDigitStats because it replaces `this.ticks`
+                             const new_ticks = [...this.ticks, digit].slice(-1000); // Keep last 1000
+                             this.updateDigitStats(new_ticks, quote);
+                         }
+                    } else if (data.msg_type === 'history') {
+                        const prices = data.history.prices;
+                        const digits = prices.map((p: any) => {
+                            const s = String(p);
+                            return parseInt(s[s.length - 1]);
+                        });
+                        this.updateDigitStats(digits, prices[prices.length-1]);
+                    }
+                }
+            );
+        } catch (error) {
+            console.error('[SmartTrading] Tick subscription failed:', error);
+        }
     };
 
     @action
@@ -2509,6 +2569,137 @@ export default class SmartTradingStore {
         } catch (error) {
             this.addScpLog(`Scp Execution Error: ${error}`, 'error');
             this.is_executing = false;
+        }
+    };
+
+    // ============ BULK TRADING METHODS ============
+    @action
+    executeBulkTradesOnce = async () => {
+        if (!this.root_store.client.is_logged_in) {
+            this.root_store.run_panel.showLoginDialog();
+            return;
+        }
+
+        this.root_store.run_panel.setIsRunning(true);
+        this.root_store.run_panel.setContractStage(contract_stages.STARTING);
+
+        const trades = [];
+        for (let i = 0; i < this.bulk_count_per_run; i++) {
+            trades.push(this.executeSingleBulkTrade());
+        }
+
+        await Promise.all(trades);
+
+        this.root_store.run_panel.setIsRunning(false);
+        this.root_store.run_panel.setContractStage(contract_stages.NOT_RUNNING);
+    };
+
+    @action
+    toggleBulkAutoRun = () => {
+        this.is_bulk_auto_running = !this.is_bulk_auto_running;
+
+        if (this.is_bulk_auto_running) {
+            this.root_store.run_panel.setIsRunning(true);
+            this.root_store.run_panel.setContractStage(contract_stages.STARTING);
+            this.runBulkAutoLoop();
+        } else {
+            this.root_store.run_panel.setIsRunning(false);
+            this.root_store.run_panel.setContractStage(contract_stages.NOT_RUNNING);
+        }
+    };
+
+    @action
+    runBulkAutoLoop = async () => {
+        while (this.is_bulk_auto_running) {
+            if (!this.root_store.client.is_logged_in) {
+                this.is_bulk_auto_running = false;
+                break;
+            }
+
+            if (this.enable_tp_sl) {
+                if (this.session_pl >= this.take_profit || this.session_pl <= -this.stop_loss) {
+                    this.is_bulk_auto_running = false;
+                    break;
+                }
+            }
+
+            const trades = [];
+            for (let i = 0; i < this.bulk_count_per_run; i++) {
+                trades.push(this.executeSingleBulkTrade());
+            }
+
+            await Promise.all(trades);
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+
+        this.root_store.run_panel.setIsRunning(false);
+        this.root_store.run_panel.setContractStage(contract_stages.NOT_RUNNING);
+    };
+
+    @action
+    executeSingleBulkTrade = async () => {
+        try {
+            this.root_store.run_panel.setContractStage(contract_stages.PURCHASE_SENT);
+
+            const barrier = ['DIGITMATCH', 'DIGITDIFF', 'DIGITOVER', 'DIGITUNDER'].includes(this.bulk_contract_type)
+                ? this.bulk_prediction
+                : undefined;
+
+            const proposal = await api_base.api.send({
+                proposal: 1,
+                amount: this.bulk_stake,
+                basis: 'stake',
+                contract_type: this.bulk_contract_type,
+                currency: this.root_store.client.currency || 'USD',
+                duration: 1,
+                duration_unit: 't',
+                symbol: this.bulk_market,
+                ...(barrier !== undefined ? { barrier } : {}),
+            });
+
+            if (proposal.error) {
+                console.error('Bulk Trade Error:', proposal.error);
+                return;
+            }
+
+            const buy = await api_base.api.send({
+                buy: proposal.proposal.id,
+                price: this.bulk_stake,
+            });
+
+            if (buy.error) {
+                console.error('Bulk Buy Error:', buy.error);
+                return;
+            }
+
+            this.root_store.run_panel.setContractStage(contract_stages.PURCHASE_RECEIVED);
+            globalObserver.emit('contract.status', { id: 'contract.purchase_received', buy: buy.buy });
+
+            const contract_id = buy.buy?.contract_id;
+            if (contract_id) {
+                const unsubscribe = api_base.api.subscribe(
+                    { proposal_open_contract: 1, contract_id },
+                    (response: TDerivResponse) => {
+                        if (response.proposal_open_contract?.is_sold) {
+                            const profit = parseFloat(response.proposal_open_contract?.profit || '0');
+                            const is_win = response.proposal_open_contract.status === 'won';
+
+                            globalObserver.emit('bot.contract', response.proposal_open_contract);
+                            globalObserver.emit('contract.sold', { contract: response.proposal_open_contract });
+
+                            runInAction(() => {
+                                if (is_win) this.wins++;
+                                else this.losses++;
+                                this.session_pl += profit;
+                            });
+
+                            if (unsubscribe && typeof unsubscribe === 'function') unsubscribe();
+                        }
+                    }
+                );
+            }
+        } catch (error) {
+            console.error('Bulk trade error:', error);
         }
     };
 }

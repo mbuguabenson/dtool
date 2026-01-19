@@ -67,7 +67,7 @@
                 }
 
                 @include mobile-or-tablet-screen {
-                    padding-inline-end: 28rem; // Maximum space for mobile
+                    padding-inline-end: 10rem; // Reduced from 28rem to allow more space for tabs
                 }
             }
         }
@@ -126,7 +126,7 @@
                 flex-wrap: nowrap; // Prevent wrapping to allow scrolling
 
                 @include mobile-or-tablet-screen {
-                    padding-inline-end: 25rem; // Extra large padding on mobile
+                    padding-inline-end: 10rem; // Reduced from 25rem to allow more space for tabs
                 }
 
                 // Style the scrollbar
@@ -276,7 +276,7 @@
 .main__run-strategy-wrapper {
     inset-inline-end: 1.6rem;
     top: 5.6rem;
-    z-index: 10;
+    z-index: 9999;
 
     @include desktop-screen {
         position: absolute;

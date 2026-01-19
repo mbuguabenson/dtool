@@ -52,7 +52,7 @@ const EvenOddTab = observer(() => {
                 listenerKey = await ticks_service.monitor({ symbol, callback });
             } catch (error: any) {
                 if (error?.code !== 'AlreadySubscribed' && error?.message !== 'AlreadySubscribed') {
-                    console.error('EvenOdd: Failed to monitor ticks', error);
+                    console.error('EvenOdd: Failed to monitor ticks', JSON.stringify(error, null, 2));
                 }
             }
         };

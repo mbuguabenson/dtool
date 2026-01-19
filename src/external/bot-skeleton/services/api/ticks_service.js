@@ -51,6 +51,7 @@ export default class TicksService {
         this.ticks_history_promise = null;
         this.active_symbols_promise = null;
         this.candles_promise = null;
+        this.messageSubscription = null;
 
         this.observe();
     }
@@ -111,7 +112,8 @@ export default class TicksService {
                     resolve(key);
                 })
                 .catch(e => {
-                    if (e?.code !== 'AlreadySubscribed') {
+                    const errorCode = e?.code || e?.error?.code;
+                    if (errorCode !== 'AlreadySubscribed') {
                         globalObserver.emit('Error', e);
                         this.ticks_history_promise = null;
                         api_base.toggleRunButton(false);
@@ -212,8 +214,8 @@ export default class TicksService {
     }
 
     observe() {
-        if (api_base.api) {
-            const subscription = api_base.api.onMessage().subscribe(({ data }) => {
+        if (api_base.api && !this.messageSubscription) {
+            this.messageSubscription = api_base.api.onMessage().subscribe(({ data }) => {
                 if (data.msg_type === 'tick') {
                     const { tick } = data;
                     const { symbol, id } = tick;
@@ -236,7 +238,7 @@ export default class TicksService {
                     }
                 }
             });
-            api_base.pushSubscription(subscription);
+            api_base.pushSubscription(this.messageSubscription);
         }
     }
 
@@ -271,6 +273,9 @@ export default class TicksService {
 
     requestTicks(options) {
         const { symbol, granularity, style } = options;
+        if (!this.messageSubscription) {
+            this.observe();
+        }
         const request_object = {
             ticks_history: symbol === 'na' ? 'R_100' : symbol,
             subscribe: 1,
@@ -297,10 +302,14 @@ export default class TicksService {
                     }
                 })
                 .catch(error => {
-                    if (error?.code === 'InvalidSymbol') {
+                    const errorCode = error?.code || error?.error?.code;
+                    if (errorCode === 'InvalidSymbol') {
                         clearAuthData();
                     }
-                    if (error?.code === 'AlreadySubscribed') {
+                    if (errorCode === 'AlreadySubscribed') {
+                        if (!this.ticks.has(symbol)) {
+                            this.updateTicksAndCallListeners(symbol, []);
+                        }
                         resolve(this.ticks.get(symbol) || []);
                     } else {
                         reject(error);

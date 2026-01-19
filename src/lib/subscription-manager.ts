@@ -63,15 +63,25 @@ class SubscriptionManager {
             }
 
             // Subscribe to ticks_history
-            const response = await this.api.send({
-                ticks_history: symbol,
-                count,
-                end: 'latest',
-                style: 'ticks',
-                subscribe: 1,
-            });
+            let response;
+            try {
+                response = await this.api.send({
+                    ticks_history: symbol,
+                    count,
+                    end: 'latest',
+                    style: 'ticks',
+                    subscribe: 1,
+                });
+            } catch (error: any) {
+                // If already subscribed error, we can safely ignore and proceed to listen
+                if (error?.error?.code === 'AlreadySubscribed' || error?.code === 'AlreadySubscribed') {
+                    console.log(`[SubscriptionManager] Already subscribed to ${symbol} (ignoring error)`);
+                } else {
+                    throw error;
+                }
+            }
 
-            if (response.error) {
+            if (response && response.error) {
                 // If already subscribed error, we can safely ignore and use existing subscription
                 if (response.error.code === 'AlreadySubscribed') {
                     console.log(`[SubscriptionManager] Using existing subscription for ${symbol}`);
@@ -89,6 +99,10 @@ class SubscriptionManager {
 
             // Set up message listener
             const messageHandler = (data: any) => {
+                // Basic filtering to ensure we only process messages for this symbol
+                const msgSymbol = data.tick?.symbol || data.echo_req?.ticks_history;
+                if (msgSymbol && msgSymbol !== symbol) return;
+
                 if (data.msg_type === 'tick' || data.msg_type === 'history') {
                     const sub = this.activeSubscriptions.get(key);
                     if (sub) {

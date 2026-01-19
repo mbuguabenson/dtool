@@ -55,7 +55,7 @@ const DigitStats = observer(() => {
                 }
             } catch (error: any) {
                 if (error?.code !== 'AlreadySubscribed' && error?.message !== 'AlreadySubscribed') {
-                    console.error(`Error monitoring ticks for ${symbol}:`, error);
+                    console.error(`Error monitoring ticks for ${symbol}:`, JSON.stringify(error, null, 2));
                 }
             }
         };

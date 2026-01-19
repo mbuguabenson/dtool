@@ -43,7 +43,7 @@ export default class ClientStore {
         // Ensure API is ready
         if (!api_base?.api) {
             console.warn('[ClientStore] API not ready for balance subscription, retrying...');
-            setTimeout(this.subscribeToBalance, 500); // Reduced delay for retry
+            setTimeout(this.subscribeToBalance, 50); // Fast retry
             return;
         }
 

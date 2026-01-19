@@ -1,16 +1,7 @@
-import { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import ToggleSwitch from '@/components/shared_ui/toggle-switch';
 import { useStore } from '@/hooks/useStore';
-import Chart from '../chart/chart';
-import AdvancedOverUnderTab from './components/advanced-over-under-tab';
-import BotSettingsDialog from './components/bot-settings-dialog';
 import BulkTradingView from './components/bulk-trading-view';
-import DiffersTab from './components/differs-tab';
-import EvenOddTab from './components/even-odd-tab';
-import MarketOverview from './components/market-overview';
-import MatchesTab from './components/matches-tab';
-import OverUnderTab from './components/over-under-tab';
 import SCPTab from './components/scp-tab';
 import VSenseTurboTab from './components/vsense-turbo-tab';
 import MoneyMakerUltraTab from './money-maker-ultra-tab';
@@ -43,8 +34,6 @@ const SmartTrading = observer(() => {
         active_subtab,
     } = smart_trading;
 
-    const [is_settings_visible, setIsSettingsVisible] = useState(false);
-
     const probs = calculateProbabilities();
 
     const contract_types = [
@@ -58,8 +47,6 @@ const SmartTrading = observer(() => {
 
     return (
         <div className='smart-trading'>
-            <MarketOverview />
-
             <div className='smart-trading__sub-tabs'>
                 <button
                     className={`sub-tab ${active_subtab === 'speed' ? 'active' : ''}`}
@@ -68,53 +55,22 @@ const SmartTrading = observer(() => {
                     🚀 Speed Bot
                 </button>
                 <button
+                    className={`sub-tab ${active_subtab === 'scp' ? 'active' : ''}`}
+                    onClick={() => smart_trading.setActiveSubtab('scp')}
+                >
+                    🤖 AutoTrader
+                </button>
+                <button
                     className={`sub-tab ${active_subtab === 'vsense_turbo' ? 'active' : ''}`}
                     onClick={() => smart_trading.setActiveSubtab('vsense_turbo')}
                 >
                     💎 V-SENSE™ Turbo
                 </button>
                 <button
-                    className={`sub-tab ${active_subtab === 'even_odd' ? 'active' : ''}`}
-                    onClick={() => smart_trading.setActiveSubtab('even_odd')}
-                >
-                    ⚖️ Even/Odd
-                </button>
-                <button
-                    className={`sub-tab ${active_subtab === 'over_under' ? 'active' : ''}`}
-                    onClick={() => smart_trading.setActiveSubtab('over_under')}
-                >
-                    📈 Over/Under
-                </button>
-                <button
-                    className={`sub-tab ${active_subtab === 'advanced_ou' ? 'active' : ''}`}
-                    onClick={() => smart_trading.setActiveSubtab('advanced_ou')}
-                >
-                    ⚡ Adv. O/U
-                </button>
-                <button
-                    className={`sub-tab ${active_subtab === 'differs' ? 'active' : ''}`}
-                    onClick={() => smart_trading.setActiveSubtab('differs')}
-                >
-                    ❌ Differs
-                </button>
-                <button
-                    className={`sub-tab ${active_subtab === 'matches' ? 'active' : ''}`}
-                    onClick={() => smart_trading.setActiveSubtab('matches')}
-                >
-                    🎯 Matches
-                </button>
-                <button
                     className={`sub-tab ${active_subtab === 'bulk' ? 'active' : ''}`}
                     onClick={() => smart_trading.setActiveSubtab('bulk')}
                 >
                     📦 Bulk Trading
-                </button>
-
-                <button
-                    className={`sub-tab ${active_subtab === 'charts' ? 'active' : ''}`}
-                    onClick={() => smart_trading.setActiveSubtab('charts')}
-                >
-                    📈 Charts
                 </button>
                 <button
                     className={`sub-tab ${active_subtab === 'money_maker_ultra' ? 'active' : ''}`}
@@ -126,20 +82,11 @@ const SmartTrading = observer(() => {
 
             {active_subtab === 'bulk' && <BulkTradingView />}
 
-            {active_subtab === 'even_odd' && <EvenOddTab />}
-            {active_subtab === 'over_under' && <OverUnderTab />}
-            {active_subtab === 'advanced_ou' && <AdvancedOverUnderTab />}
-            {active_subtab === 'differs' && <DiffersTab />}
-            {active_subtab === 'matches' && <MatchesTab />}
+            {active_subtab === 'scp' && <SCPTab />}
             {active_subtab === 'vsense_turbo' && <VSenseTurboTab />}
             {active_subtab === 'money_maker_ultra' && <MoneyMakerUltraTab />}
-            {active_subtab === 'charts' && (
-                <div style={{ height: '70vh' }}>
-                    <Chart show_digits_stats={false} />
-                </div>
-            )}
 
-            {/^(speed|vsense_turbo|even_odd|over_under|advanced_ou|differs|matches)$/.test(active_subtab) && (
+            {/^(speed|scp|vsense_turbo)$/.test(active_subtab) && (
                 <>
                     <div className='smart-trading__analytics'>
                         <div className='analytics-card dominance-card'>
@@ -285,12 +232,6 @@ const SmartTrading = observer(() => {
                                 </select>
                             </div>
 
-                            <div className='setting-item'>
-                                <button className='btn-bot-settings' onClick={() => setIsSettingsVisible(true)}>
-                                    ⚙️ Bot Settings
-                                </button>
-                            </div>
-
                             {['DIGITOVER', 'DIGITUNDER', 'DIGITMATCH', 'DIGITDIFF'].includes(
                                 speedbot_contract_type
                             ) && (
@@ -329,8 +270,6 @@ const SmartTrading = observer(() => {
                     </div>
                 </>
             )}
-
-            <BotSettingsDialog is_visible={is_settings_visible} onClose={() => setIsSettingsVisible(false)} />
         </div>
     );
 });

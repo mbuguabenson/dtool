@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ChunkLoader from '@/components/loader/chunk-loader';
+import PageContentWrapper from '@/components/page-content-wrapper';
 import { generateOAuthURL } from '@/components/shared';
 import DesktopWrapper from '@/components/shared_ui/desktop-wrapper';
 import Dialog from '@/components/shared_ui/dialog';
@@ -17,9 +18,7 @@ import { useApiBase } from '@/hooks/useApiBase';
 import { useStore } from '@/hooks/useStore';
 import useTMB from '@/hooks/useTMB';
 import {
-    LabelPairedArrowUpArrowDownCaptionRegularIcon,
     LabelPairedChartLineCaptionRegularIcon,
-    LabelPairedCircleCaptionRegularIcon,
     LabelPairedCopyCaptionRegularIcon,
     LabelPairedLightbulbCaptionRegularIcon,
     LabelPairedObjectsColumnCaptionRegularIcon,
@@ -29,7 +28,6 @@ import {
 } from '@deriv/quill-icons/LabelPaired';
 import { Localize, localize } from '@deriv-com/translations';
 import { useDevice } from '@deriv-com/ui';
-import PageContentWrapper from '@/components/page-content-wrapper';
 import RunPanel from '../../components/run-panel';
 import ChartModal from '../chart/chart-modal';
 import Dashboard from '../dashboard';
@@ -39,18 +37,15 @@ import './main.scss';
 const ChartWrapper = lazy(() => import('../chart/chart-wrapper'));
 
 // const Bots = lazy(() => import('../bots'));
-const AutoTrader = lazy(() => import('../auto-trader'));
 const CopyTrading = lazy(() => import('../copy-trader'));
 const SignalsTab = lazy(() => import('../signals/signals-tab'));
 const FreeBotsTab = lazy(() => import('../free-bots/free-bots-tab'));
 const SmartTrading = lazy(() => import('../smart-trading/index'));
-const AdvanceOverUnderTab = lazy(() => import('../smart-trading/components/advanced-over-under-tab'));
-const SCPTab = lazy(() => import('../smart-trading/components/scp-tab'));
-const EvenOddTab = lazy(() => import('../smart-trading/components/even-odd-tab'));
-const OverUnderTab = lazy(() => import('../smart-trading/components/over-under-tab'));
 const EasyTool = lazy(() => import('../easy-tool/index'));
 const Strategies = lazy(() => import('../strategies/index'));
 const Toolhub = lazy(() => import('../toolhub/toolhub'));
+const AnalysisTool = lazy(() => import('../analysis-tool/index'));
+const Settings = lazy(() => import('../settings/index'));
 // const DTrader = lazy(() => import('../dtrader/index')); // Removed as per request
 
 const AppWrapper = observer(() => {
@@ -87,17 +82,18 @@ const AppWrapper = observer(() => {
         'dashboard',
         'bot_builder',
         'chart',
-        'auto_trader',
-        'copy_trading',
-        'signals',
-        'free_bots',
-        'smart_trading',
-        'even_odd',
-        'over_under',
-        'adv_over_under',
         'easy_tool',
+        'free_bots',
+        'signals',
+        'smart_trading',
+        'analysis_tool',
+        'copy_trading',
         'strategies',
         'toolhub',
+        'auto_trader',
+        'tutorials',
+        'smart_auto24',
+        'settings',
     ];
     const { isDesktop } = useDevice();
     const location = useLocation();
@@ -355,36 +351,37 @@ const AppWrapper = observer(() => {
                             <div
                                 label={
                                     <div className='main__tabs-label'>
-                                        <LabelPairedSlidersCaptionRegularIcon
+                                        <LabelPairedLightbulbCaptionRegularIcon
                                             height='20px'
                                             width='20px'
                                             fill='var(--text-general)'
                                         />
-                                        <Localize i18n_default_text='Auto Trader' />
+                                        <Localize i18n_default_text='Easy Tool' />
                                     </div>
                                 }
-                            >
+                                id='id-easy-tool'>
                                 <PageContentWrapper>
-                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                        <AutoTrader />
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading Easy Tool...')} />}>
+                                        <EasyTool />
                                     </Suspense>
                                 </PageContentWrapper>
                             </div>
                             <div
                                 label={
                                     <div className='main__tabs-label'>
-                                        <LabelPairedCopyCaptionRegularIcon
+                                        <LabelPairedLightbulbCaptionRegularIcon
                                             height='20px'
                                             width='20px'
                                             fill='var(--text-general)'
                                         />
-                                        <Localize i18n_default_text='Copy Trading' />
+                                        <Localize i18n_default_text='Free Bots' />
                                     </div>
                                 }
+                                id='id-free-bots'
                             >
                                 <PageContentWrapper>
                                     <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                        <CopyTrading />
+                                        <FreeBotsTab />
                                     </Suspense>
                                 </PageContentWrapper>
                             </div>
@@ -415,25 +412,6 @@ const AppWrapper = observer(() => {
                                             width='20px'
                                             fill='var(--text-general)'
                                         />
-                                        <Localize i18n_default_text='Free Bots' />
-                                    </div>
-                                }
-                                id='id-free-bots'
-                            >
-                                <PageContentWrapper>
-                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                        <FreeBotsTab />
-                                    </Suspense>
-                                </PageContentWrapper>
-                            </div>
-                            <div
-                                label={
-                                    <div className='main__tabs-label'>
-                                        <LabelPairedLightbulbCaptionRegularIcon
-                                            height='20px'
-                                            width='20px'
-                                            fill='var(--text-general)'
-                                        />
                                         <Localize i18n_default_text='Smart Trading' />
                                     </div>
                                 }
@@ -448,81 +426,41 @@ const AppWrapper = observer(() => {
                             <div
                                 label={
                                     <div className='main__tabs-label'>
-                                        <LabelPairedCircleCaptionRegularIcon
+                                        <LabelPairedSlidersCaptionRegularIcon
                                             height='20px'
                                             width='20px'
                                             fill='var(--text-general)'
                                         />
-                                        <Localize i18n_default_text='Even/Odd' />
+                                        <Localize i18n_default_text='Analysis Tool' />
                                     </div>
                                 }
-                                id='id-even-odd'
+                                id='id-analysis-tool'
                             >
                                 <PageContentWrapper>
                                     <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                        <EvenOddTab />
+                                        <AnalysisTool />
                                     </Suspense>
                                 </PageContentWrapper>
                             </div>
                             <div
                                 label={
                                     <div className='main__tabs-label'>
-                                        <LabelPairedArrowUpArrowDownCaptionRegularIcon
+                                        <LabelPairedCopyCaptionRegularIcon
                                             height='20px'
                                             width='20px'
                                             fill='var(--text-general)'
                                         />
-                                        <Localize i18n_default_text='Over/Under' />
+                                        <Localize i18n_default_text='Copy Trading' />
                                     </div>
                                 }
-                                id='id-over-under'
+                                id='id-copy-trading'
                             >
                                 <PageContentWrapper>
                                     <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                        <OverUnderTab />
+                                        <CopyTrading />
                                     </Suspense>
                                 </PageContentWrapper>
                             </div>
-                            <div
-                                label={
-                                    <div className='main__tabs-label'>
-                                        <LabelPairedArrowUpArrowDownCaptionRegularIcon
-                                            height='20px'
-                                            width='20px'
-                                            fill='var(--text-general)'
-                                        />
-                                        <Localize i18n_default_text='Adv Over/Under' />
-                                    </div>
-                                }
-                                id='id-adv-over-under'
-                            >
-                                <PageContentWrapper>
-                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                        <AdvanceOverUnderTab />
-                                    </Suspense>
-                                </PageContentWrapper>
-                            </div>
-
-                            <div
-                                label={
-                                    <div className='main__tabs-label'>
-                                        <LabelPairedLightbulbCaptionRegularIcon
-                                            height='20px'
-                                            width='20px'
-                                            fill='var(--text-general)'
-                                        />
-                                        <Localize i18n_default_text='Easy Tool' />
-                                    </div>
-                                }
-                                id='id-easy-tool'
-                            >
-                                <PageContentWrapper>
-                                    <Suspense fallback={<ChunkLoader message={localize('Loading Easy Tool...')} />}>
-                                        <EasyTool />
-                                    </Suspense>
-                                </PageContentWrapper>
-                            </div>
-
                             <div
                                 label={
                                     <div className='main__tabs-label'>
@@ -542,7 +480,6 @@ const AppWrapper = observer(() => {
                                     </Suspense>
                                 </PageContentWrapper>
                             </div>
-
                             <div
                                 label={
                                     <div className='main__tabs-label'>
@@ -559,6 +496,25 @@ const AppWrapper = observer(() => {
                                 <PageContentWrapper>
                                     <Suspense fallback={<ChunkLoader message={localize('Loading Toolhub...')} />}>
                                         <Toolhub />
+                                    </Suspense>
+                                </PageContentWrapper>
+                            </div>
+                            <div
+                                label={
+                                    <div className='main__tabs-label'>
+                                        <LabelPairedSlidersCaptionRegularIcon
+                                            height='20px'
+                                            width='20px'
+                                            fill='var(--text-general)'
+                                        />
+                                        <Localize i18n_default_text='Settings' />
+                                    </div>
+                                }
+                                id='id-settings'
+                            >
+                                <PageContentWrapper>
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading Settings...')} />}>
+                                        <Settings />
                                     </Suspense>
                                 </PageContentWrapper>
                             </div>

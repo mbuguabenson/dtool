@@ -57,7 +57,11 @@ const VSenseTurboTab = observer(() => {
                 }
             };
 
-            listenerKey = await ticks_service.monitor({ symbol, callback });
+            try {
+                listenerKey = await ticks_service.monitor({ symbol, callback });
+            } catch (error) {
+                console.error('VSenseTurbo: Failed to monitor tick history', error);
+            }
         };
 
         monitorTicks();
