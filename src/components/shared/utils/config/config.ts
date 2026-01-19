@@ -64,24 +64,26 @@ export const getDefaultAppIdAndUrl = () => {
 };
 
 export const getAppId = () => {
+    // 1. Priority: Environment Variable (Deployment)
+    const env_app_id = process.env.VITE_APP_ID || process.env.REACT_APP_Deriv_APP_ID;
+    if (env_app_id) return String(env_app_id);
+
     let app_id = null;
     const config_app_id = window.localStorage.getItem('config.app_id');
     const current_domain = getCurrentProductionDomain() ?? '';
 
-    if (window.location.hostname.endsWith('.vercel.app')) {
-        // Enforce Vercel App ID and clear any conflicting local config
-        if (config_app_id && config_app_id !== String(APP_IDS.VERCEL)) {
-            console.warn('[Config] Clearing custom App ID override for Vercel deployment');
-            window.localStorage.removeItem('config.app_id');
-        }
-        app_id = APP_IDS.VERCEL;
-    } else if (config_app_id) {
+    // 2. Priority: LocalStorage Override (Endpoint Page)
+    if (config_app_id) {
         app_id = config_app_id;
-    } else if (isStaging()) {
+    }
+    // 3. Priority: Staging/Test Environments
+    else if (isStaging()) {
         app_id = APP_IDS.STAGING;
     } else if (isTestLink()) {
         app_id = APP_IDS.LOCALHOST;
-    } else {
+    }
+    // 4. Priority: Production / Default
+    else {
         app_id = domain_app_ids[current_domain as keyof typeof domain_app_ids] ?? APP_IDS.PRODUCTION;
     }
 
@@ -116,9 +118,8 @@ export const checkAndSetEndpointFromUrl = () => {
             const params = url_params.toString();
             const hash = location.hash;
 
-            location.href = `${location.protocol}//${location.hostname}${location.pathname}${
-                params ? `?${params}` : ''
-            }${hash || ''}`;
+            location.href = `${location.protocol}//${location.hostname}${location.pathname}${params ? `?${params}` : ''
+                }${hash || ''}`;
 
             return true;
         }
