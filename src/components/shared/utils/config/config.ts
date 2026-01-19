@@ -24,7 +24,6 @@ export const domain_app_ids = {
     'dbot.deriv.be': APP_IDS.PRODUCTION_BE,
     'dbot.deriv.me': APP_IDS.PRODUCTION_ME,
     '22-dec.vercel.app': APP_IDS.VERCEL,
-    'profithubtool.vercel.app': '121856',
 };
 
 export const getCurrentProductionDomain = () =>
@@ -40,6 +39,7 @@ export const isTestLink = () => {
     return (
         window.location.origin?.includes('.binary.sx') ||
         window.location.origin?.includes('bot-65f.pages.dev') ||
+        window.location.origin?.includes('vercel.app') ||
         isLocal()
     );
 };
