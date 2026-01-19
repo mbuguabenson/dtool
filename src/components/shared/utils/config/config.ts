@@ -6,10 +6,10 @@ export const APP_IDS = {
     STAGING: 113831,
     STAGING_BE: 113831,
     STAGING_ME: 113831,
-    PRODUCTION: 114784,
+    PRODUCTION: 121856,
     PRODUCTION_BE: 114784,
     PRODUCTION_ME: 114784,
-    VERCEL: 117122,
+    VERCEL: 121856,
 };
 
 export const livechat_license_id = 12049137;
@@ -24,6 +24,7 @@ export const domain_app_ids = {
     'dbot.deriv.be': APP_IDS.PRODUCTION_BE,
     'dbot.deriv.me': APP_IDS.PRODUCTION_ME,
     '22-dec.vercel.app': APP_IDS.VERCEL,
+    'profithubtool.vercel.app': '121856',
 };
 
 export const getCurrentProductionDomain = () =>
