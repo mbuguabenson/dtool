@@ -206,10 +206,13 @@ async function handleStaticAsset(request) {
         const networkResponse = await fetch(request);
 
         if (networkResponse.ok) {
-            // Cache successful responses
-            const cache = await caches.open(CACHE_NAME);
-            await cache.put(request, networkResponse.clone());
-            console.log('[SW] Cached static asset');
+            // Cache successful responses - ONLY cache full 200 OK responses
+            // Partial content (206) cannot be cached and causes SW crashes
+            if (networkResponse.status === 200) {
+                const cache = await caches.open(CACHE_NAME);
+                await cache.put(request, networkResponse.clone());
+                console.log('[SW] Cached static asset');
+            }
         }
 
         return networkResponse;
@@ -267,9 +270,11 @@ async function handleGenericRequest(request) {
         const networkResponse = await fetch(request);
 
         if (networkResponse.ok) {
-            // Cache successful responses
-            const cache = await caches.open(CACHE_NAME);
-            await cache.put(request, networkResponse.clone());
+            // Cache successful responses - ONLY cache full 200 OK responses
+            if (networkResponse.status === 200) {
+                const cache = await caches.open(CACHE_NAME);
+                await cache.put(request, networkResponse.clone());
+            }
         }
 
         return networkResponse;
