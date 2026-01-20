@@ -294,7 +294,7 @@ const AppWrapper = observer(() => {
                             className='main__tabs'
                             onTabItemClick={handleTabChange}
                             top
-                            history={historyShim as { replace: (path: string) => void; location: typeof location }}
+                            history={historyShim as React.ComponentProps<typeof Tabs>['history']}
                             is_scrollable
                         >
                             <div
