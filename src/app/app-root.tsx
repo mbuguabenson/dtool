@@ -10,6 +10,7 @@ import { localize } from '@deriv-com/translations';
 import './app-root.scss';
 
 const AppContent = lazy(() => import('./app-content'));
+const RiskDisclaimerModal = lazy(() => import('@/components/shared/risk-disclaimer-modal'));
 
 const AppRootLoader = () => {
     return <ChunkLoader message={localize('Loading...')} />;
@@ -121,6 +122,7 @@ const AppRoot = observer(() => {
         <Suspense fallback={<AppRootLoader />}>
             <ErrorBoundary root_store={store}>
                 <ErrorComponentWrapper />
+                <RiskDisclaimerModal force_show={!localStorage.getItem('profithub_risk_accepted')} />
                 <AppContent />
             </ErrorBoundary>
         </Suspense>

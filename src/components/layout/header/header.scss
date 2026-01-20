@@ -19,12 +19,34 @@
     position: sticky;
     top: 0;
     z-index: 999;
-    background: rgba(var(--general-main-1-rgb), 0.7) !important;
+    background: rgb(var(--general-main-1-rgb) / 70%) !important;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgb(255 255 255 / 5%);
     height: 6rem;
     padding: 0 1.6rem;
+
+    &__whatsapp {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1.2rem;
+        padding: 0.4rem;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background-color: var(--general-section-1);
+            transform: scale(1.1);
+        }
+
+        &-icon {
+            fill: #25d366;
+            width: 2rem;
+            height: 2rem;
+            filter: drop-shadow(0 0 2px rgb(37 211 102 / 30%));
+        }
+    }
 
     .header-branding {
         display: flex;
@@ -48,41 +70,43 @@
 
         .brand-logo {
             position: relative;
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
-            color: #ffffff;
-            border-radius: 10px;
+            width: 48px; // Wider for better horizontal balance
+            height: 38px;
+            background: linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 12px rgba(255, 68, 79, 0.25);
-            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(124, 58, 237, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
             overflow: hidden;
 
             .logo-letter {
-                color: #fff;
-                font-weight: 900;
-                font-size: 1.6rem;
+                color: #ffffff;
+                font-weight: 800;
+                font-size: 1.8rem;
                 font-family: 'Outfit', sans-serif;
                 z-index: 2;
-                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+                letter-spacing: -1px;
             }
 
             .logo-glow {
                 position: absolute;
-                inset: 0;
-                background: radial-gradient(circle at center, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+                inset: -20%;
+                background: radial-gradient(circle at center, rgba(255, 255, 255, 0.6) 0%, transparent 60%);
                 opacity: 0.5;
-                transition: opacity 0.3s ease;
+                filter: blur(8px);
+                animation: logo-glow-pulse 3s infinite alternate;
             }
 
-            @include mobile-or-tablet-screen {
-                width: 24px;
-                height: 24px;
+            @media (max-width: 768px) {
+                width: 36px;
+                height: 30px;
 
                 .logo-letter {
-                    font-size: 1.2rem;
+                    font-size: 1.4rem;
                 }
             }
         }
@@ -91,28 +115,16 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            line-height: 1.2;
+            line-height: 1;
+            margin-left: 12px;
 
             .brand-title {
                 font-family: 'Outfit', sans-serif;
-                font-weight: 800;
-                font-size: 1.6rem;
-                color: var(--text-prominent);
-                letter-spacing: -0.02em;
-                // Remove gradient that may cause visibility issues
-                // Use solid color for better visibility
-                display: block;
-                opacity: 1;
-                z-index: 1;
-            }
-
-            .brand-subtitle {
-                font-size: 0.9rem;
-                font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 0.08em;
-                color: var(--brand-red-coral);
-                opacity: 0.9;
+                font-weight: 700;
+                font-size: 1.4rem;
+                color: #ffffff;
+                letter-spacing: 0.8px;
+                text-shadow: 0 0 15px rgba(124, 58, 237, 0.4);
             }
         }
     }
@@ -463,26 +475,27 @@
     }
 }
 
-.app-header {
-    &__whatsapp {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 1.2rem;
-        padding: 0.4rem;
-        border-radius: 50%;
-        transition: all 0.2s ease;
+@keyframes logo-glow-pulse {
+    from {
+        transform: scale(0.95);
+        opacity: 0.4;
+    }
+    to {
+        transform: scale(1.1);
+        opacity: 0.7;
+    }
+}
 
-        &:hover {
-            background-color: var(--general-section-1);
-            transform: scale(1.1);
-        }
+// Ensure mobile drawer and its overlay are always on top of all header content
+.deriv-drawer {
+    outline: none;
+    z-index: 10001 !important;
 
-        &-icon {
-            fill: #25d366;
-            width: 2.8rem;
-            height: 2.8rem;
-            filter: drop-shadow(0 0 2px rgba(37, 211, 102, 0.3));
-        }
+    &__overlay {
+        z-index: 10000 !important;
+    }
+
+    &__container {
+        z-index: 10001 !important;
     }
 }

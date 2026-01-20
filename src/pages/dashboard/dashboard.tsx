@@ -1,15 +1,17 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import Text from '@/components/shared_ui/text';
-import { useStore } from '@/hooks/useStore';
 import { localize } from '@deriv-com/translations';
 import { useDevice } from '@deriv-com/ui';
+import Button from '@/components/shared_ui/button';
+import Text from '@/components/shared_ui/text';
+import { useStore } from '@/hooks/useStore';
 import OnboardTourHandler from '../tutorials/dbot-tours/onboarding-tour';
 import Announcements from './announcements';
+import DashboardBotList from './bot-list/dashboard-bot-list';
 import Cards from './cards';
 import InfoPanel from './info-panel';
-import DashboardBotList from './bot-list/dashboard-bot-list';
-import Button from '@/components/shared_ui/button';
+
+const RiskDisclaimerModal = React.lazy(() => import('@/components/shared/risk-disclaimer-modal'));
 
 type TMobileIconGuide = {
     handleTabChange: (active_number: number) => void;
@@ -19,6 +21,7 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
     const { load_modal, dashboard, client } = useStore();
     const { isDesktop, isTablet } = useDevice();
     const [search_query, setSearchQuery] = React.useState('');
+    const [is_risk_modal_open, setIsRiskModalOpen] = React.useState(false);
     const has_dashboard_strategies = !!load_modal.dashboard_strategies?.length;
 
     return (
@@ -103,6 +106,13 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
                                 />
                             </div>
                         </div>
+                        <div className='stat-divider' />
+                        <Button
+                            className='dashboard-risk-button'
+                            transparent
+                            text={localize('Risk disclaimer')}
+                            onClick={() => setIsRiskModalOpen(true)}
+                        />
                     </div>
                 </header>
 
@@ -144,6 +154,10 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
 
             {/* Tours and Overlays */}
             {dashboard.active_tab === 0 && <OnboardTourHandler is_mobile={!isDesktop} />}
+            {/* Risk Disclaimer */}
+            <React.Suspense fallback={null}>
+                <RiskDisclaimerModal is_open={is_risk_modal_open} onClose={() => setIsRiskModalOpen(false)} />
+            </React.Suspense>
         </div>
     );
 });

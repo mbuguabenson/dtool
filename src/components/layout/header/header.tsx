@@ -196,8 +196,8 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
             })}
         >
             <Wrapper variant='left'>
+                {!isDesktop && <MobileMenu />}
                 <AppLogo />
-                <MobileMenu />
                 {isDesktop && <MenuItems />}
             </Wrapper>
             <Wrapper variant='right'>

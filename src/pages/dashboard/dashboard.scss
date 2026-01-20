@@ -686,3 +686,32 @@
     border-radius: 1.6rem;
     border: 1px dashed rgba(255, 255, 255, 0.1);
 }
+
+.dashboard-footer-disclaimer {
+    margin-top: 4rem;
+    padding: 2.4rem 6.4rem;
+    background: rgba(var(--general-main-1-rgb), 0.5);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+
+    @media (max-width: 768px) {
+        padding: 2rem 1.5rem;
+        margin-top: 2.4rem;
+    }
+
+    .disclaimer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        opacity: 0.6;
+        transition: opacity 0.3s ease;
+
+        &:hover {
+            opacity: 0.9;
+        }
+
+        .deriv-text {
+            line-height: 1.6;
+            font-size: 1.1rem !important;
+        }
+    }
+}

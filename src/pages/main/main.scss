@@ -37,7 +37,7 @@
 }
 
 .controls__section {
-    z-index: 10000 !important; // Must be higher than my global drawer override
+    z-index: 100001 !important; // Must be higher than my global drawer override (99999)
 }
 
 .main {
