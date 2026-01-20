@@ -74,6 +74,14 @@ const useTMB = (): UseTMBReturn => {
     const authTokenRef = useRef(localStorage.getItem('authToken'));
     const activeSessionsRef = useRef<TMBWebsocketTokens | undefined>(undefined);
 
+    // Force disable TMB for localhost to use standard OAuth flow
+    useEffect(() => {
+        if (window.location.hostname === 'localhost') {
+            localStorage.setItem('is_tmb_enabled', 'false');
+            window.is_tmb_enabled = false;
+        }
+    }, []);
+
     const getActiveSessions = useCallback(async (): Promise<TMBWebsocketTokens | undefined> => {
         // Skip TMB check for non-whitelisted domains (e.g., Vercel deployments)
         if (!isTMBSupportedDomain) {

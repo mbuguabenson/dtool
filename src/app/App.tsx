@@ -126,16 +126,7 @@ function App() {
         }
     }, []);
 
-    return (
-        <AuthProvider
-            appId={String(getAppId())}
-            onRedirectedAuthenticationError={error => {
-                console.error('[AuthProvider] OIDC error:', error);
-            }}
-        >
-            <RouterProvider router={router} />
-        </AuthProvider>
-    );
+    return <RouterProvider router={router} />;
 }
 
 export default App;

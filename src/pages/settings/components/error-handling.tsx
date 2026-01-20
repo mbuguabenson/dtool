@@ -22,16 +22,6 @@ const ErrorHandling = () => {
                     <label htmlFor="verbose-logging">Enable verbose logging</label>
                 </div>
             </div>
-
-            <div className="settings-card">
-                <h3>Recent Exceptions</h3>
-                <div className="log-entry error">
-                    [SubscriptionManager] Failed to subscribe: AlreadySubscribed (Patched)
-                </div>
-                <div className="log-entry warn">
-                    [WebSocket] Connection slow detected
-                </div>
-            </div>
         </div>
     );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+import React, { useState } from 'react';
 
 const SystemLogs = () => {
     const [logs, setLogs] = useState<Array<{ time: string, level: string, message: string }>>([
@@ -6,29 +6,8 @@ const SystemLogs = () => {
         { time: new Date().toLocaleTimeString(), level: 'info', message: 'Connected to WebSocket' },
     ]);
 
-    // Mock incoming logs
-    useEffect(() => {
-        const interval = setInterval(() => {
-            const levels = ['info', 'warn', 'error'];
-            const randomLevel = levels[Math.floor(Math.random() * levels.length)];
-            const messages = [
-                'Tick received',
-                'Heartbeat check',
-                'Latency spike detected',
-                'Connection stable',
-                'Updating chart data'
-            ];
-            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-
-            setLogs(prev => [...prev.slice(-19), {
-                time: new Date().toLocaleTimeString(),
-                level: randomLevel === 'error' ? 'info' : randomLevel, // Reduce mock errors
-                message: randomMessage
-            }]);
-        }, 5000);
-
-        return () => clearInterval(interval);
-    }, []);
+    // Mock log generation disabled to avoid confusion with real system logs
+    // Users can monitor actual console logs in browser DevTools
 
     return (
         <div className="system-logs-section">
