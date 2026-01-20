@@ -142,6 +142,12 @@ export const getDebugServiceWorker = () => {
 
 export const generateOAuthURL = () => {
     const hostname = window.location.hostname;
+    // Special strict fix for Vercel Production
+    if (hostname === 'profithubtool.vercel.app') {
+        const lang = window.localStorage.getItem('lang') || 'EN';
+        return `https://oauth.deriv.com/oauth2/authorize?app_id=121856&l=${lang}&brand=deriv`;
+    }
+
     const lang = window.localStorage.getItem('lang') || 'EN';
     let oauth_url = 'https://oauth.deriv.com/oauth2/authorize';
 
