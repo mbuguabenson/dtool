@@ -345,7 +345,7 @@ const AppWrapper = observer(() => {
                                 <Suspense
                                     fallback={<ChunkLoader message={localize('Please wait, loading chart...')} />}
                                 >
-                                    <ChartWrapper show_digits_stats={false} />
+                                    <ChartWrapper show_digits_stats={true} />
                                 </Suspense>
                             </div>
                             <div
