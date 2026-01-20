@@ -218,7 +218,7 @@ const AppWrapper = observer(() => {
 
     React.useEffect(() => {
         const trashcan_init_id = setTimeout(() => {
-            if (active_tab === BOT_BUILDER && (Blockly as any)?.derivWorkspace?.trashcan) {
+            if (active_tab === BOT_BUILDER && (Blockly as typeof Blockly & { derivWorkspace?: { trashcan?: { setTrashcanPosition: (x: number, y: number) => void } } })?.derivWorkspace?.trashcan) {
                 const trashcanY = window.innerHeight - 250;
                 let trashcanX;
                 if (is_drawer_open) {
@@ -226,7 +226,7 @@ const AppWrapper = observer(() => {
                 } else {
                     trashcanX = isDbotRTL() ? 20 : window.innerWidth - 100;
                 }
-                (Blockly as any)?.derivWorkspace?.trashcan?.setTrashcanPosition(trashcanX, trashcanY);
+                (Blockly as typeof Blockly & { derivWorkspace?: { trashcan?: { setTrashcanPosition: (x: number, y: number) => void } } })?.derivWorkspace?.trashcan?.setTrashcanPosition(trashcanX, trashcanY);
             }
         }, 100);
 
@@ -294,7 +294,7 @@ const AppWrapper = observer(() => {
                             className='main__tabs'
                             onTabItemClick={handleTabChange}
                             top
-                            history={historyShim as any}
+                            history={historyShim as { replace: (path: string) => void; location: typeof location }}
                             is_scrollable
                         >
                             <div
