@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
+import { useStore } from '@/hooks/useStore';
+import DigitDistributionCircles from '@/pages/chart/digit-distribution-circles';
+import MarketSelector from '@/pages/smart-trading/components/market-selector';
 import { Localize } from '@deriv-com/translations';
 import AdvancedOUAnalyzer from './advanced-ou-analyzer';
 import EvenOddPattern from './even-odd-pattern';
 import MatchesDiffersAnalyzer from './matches-differs-analyzer';
 import OverUnderPattern from './over-under-pattern';
-import { useStore } from '@/hooks/useStore';
-import DigitDistributionCircles from '@/pages/chart/digit-distribution-circles';
-import MarketSelector from '@/pages/smart-trading/components/market-selector';
 import './easy-tool.scss';
 
 const DIGIT_COLORS: Record<number, string> = {
@@ -239,7 +239,7 @@ const EasyTool = observer(() => {
                                     style={
                                         {
                                             '--digit-color': DIGIT_COLORS[digit],
-                                        } as any
+                                        } as React.CSSProperties
                                     }
                                 >
                                     {digit}
