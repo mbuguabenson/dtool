@@ -28,6 +28,18 @@
     }
 }
 
+// Global Drawer/Portal z-index overrides
+.deriv-drawer__container,
+.dc-drawer,
+.dc-modal,
+.dc-mobile-drawer {
+    z-index: 99999 !important;
+}
+
+.controls__section {
+    z-index: 10000 !important; // Must be higher than my global drawer override
+}
+
 .main {
     display: flex;
     overflow: hidden;
