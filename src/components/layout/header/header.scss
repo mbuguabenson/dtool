@@ -80,23 +80,6 @@
                 filter: drop-shadow(0 0 20px rgba(124, 58, 237, 0.7));
             }
         }
-
-        .brand-details {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            line-height: 1;
-            margin-left: 12px;
-
-            .brand-title {
-                font-family: 'Outfit', sans-serif;
-                font-weight: 700;
-                font-size: 1.4rem;
-                color: #ffffff;
-                letter-spacing: 0.8px;
-                text-shadow: 0 0 15px rgba(124, 58, 237, 0.4);
-            }
-        }
     }
 }
 
