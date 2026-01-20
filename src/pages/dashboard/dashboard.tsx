@@ -1,13 +1,13 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { localize } from '@deriv-com/translations';
-import { useDevice } from '@deriv-com/ui';
 import Button from '@/components/shared_ui/button';
 import Text from '@/components/shared_ui/text';
 import { useStore } from '@/hooks/useStore';
+import { localize } from '@deriv-com/translations';
+import { useDevice } from '@deriv-com/ui';
 import OnboardTourHandler from '../tutorials/dbot-tours/onboarding-tour';
-import Announcements from './announcements';
 import DashboardBotList from './bot-list/dashboard-bot-list';
+import Announcements from './announcements';
 import Cards from './cards';
 import InfoPanel from './info-panel';
 
@@ -36,6 +36,7 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
                     </div>
 
                     <div className='hero-text'>
+                        <img src='/logo-ph.png' alt='ProfitHub' className='hero-brand-logo' style={{ width: '80px', height: '80px', marginBottom: '1.5rem', filter: 'drop-shadow(0 0 20px rgba(124, 58, 237, 0.6))' }} />
                         <div className='hero-badge'>{localize('Platform of Choice')}</div>
                         <Text as='h1' color='prominent' size={isDesktop ? 'xl' : 'm'} weight='bold'>
                             {localize('Welcome back,')}{' '}

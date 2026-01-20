@@ -4,10 +4,7 @@ export const AppLogo = () => {
     return (
         <div className='app-header__logo-container'>
             <div className='header-branding'>
-                <div className='brand-logo'>
-                    <div className='logo-glow'></div>
-                    <span className='logo-letter'>Ph</span>
-                </div>
+                <img src='/logo-ph.png' alt='Ph' className='brand-logo-img' />
                 <div className='brand-details'>
                     <span className='brand-title'>PROFIT HUB</span>
                 </div>

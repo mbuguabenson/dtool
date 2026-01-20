@@ -68,46 +68,16 @@
             }
         }
 
-        .brand-logo {
-            position: relative;
-            width: 48px; // Wider for better horizontal balance
-            height: 38px;
-            background: linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 20px rgba(124, 58, 237, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-            overflow: hidden;
+        .brand-logo-img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 15px rgba(124, 58, 237, 0.5));
+            transition: all 0.3s ease;
 
-            .logo-letter {
-                color: #ffffff;
-                font-weight: 800;
-                font-size: 1.8rem;
-                font-family: 'Outfit', sans-serif;
-                z-index: 2;
-                text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-                letter-spacing: -1px;
-            }
-
-            .logo-glow {
-                position: absolute;
-                inset: -20%;
-                background: radial-gradient(circle at center, rgba(255, 255, 255, 0.6) 0%, transparent 60%);
-                opacity: 0.5;
-                filter: blur(8px);
-                animation: logo-glow-pulse 3s infinite alternate;
-            }
-
-            @media (max-width: 768px) {
-                width: 36px;
-                height: 30px;
-
-                .logo-letter {
-                    font-size: 1.4rem;
-                }
+            &:hover {
+                transform: scale(1.05);
+                filter: drop-shadow(0 0 20px rgba(124, 58, 237, 0.7));
             }
         }
 
