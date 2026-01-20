@@ -49,8 +49,9 @@ const RiskDisclaimerModal = observer(({ is_open, onClose, force_show }: RiskDisc
     };
 
     const onDecline = () => {
-        // Redirect to Deriv as per request to "close the app"
-        window.location.href = 'https://deriv.com';
+        // Just close the modal as requested
+        setIsVisible(false);
+        if (onClose) onClose();
     };
 
     if (!is_visible && !is_open) return null;

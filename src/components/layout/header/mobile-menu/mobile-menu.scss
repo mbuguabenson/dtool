@@ -104,9 +104,13 @@
                     margin-right: 1.6rem;
                 }
 
+                .deriv-text {
+                    color: #ffffff !important; // Enforce white text
+                }
+
                 &--active {
                     .deriv-text {
-                        color: var(--text-prominent);
+                        color: #00c6ff !important; // Active color
                         font-weight: bold;
                     }
                 }
@@ -119,12 +123,15 @@
             &--chevron {
                 position: absolute;
                 right: 1.5rem;
+                path {
+                    fill: #ffffff !important; // Enforce white chevron
+                }
             }
 
             &__icons {
                 g > path,
                 path {
-                    fill: var(--text-prominent);
+                    fill: #ffffff !important; // Enforce white icons
                 }
             }
         }
