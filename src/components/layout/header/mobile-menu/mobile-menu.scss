@@ -180,7 +180,16 @@
     .deriv-drawer__header__close-btn {
         button > svg > path,
         svg > path {
-            fill: var(--text-prominent);
+            fill: #ffffff !important; // Enforce white
+        }
+    }
+
+    &__toggle-button {
+        // ... existing styles ...
+        .mobile-menu__hamburger {
+            span {
+                background-color: #ffffff !important; // Enforce white hamburger
+            }
         }
     }
 }

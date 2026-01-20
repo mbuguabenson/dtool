@@ -12,7 +12,7 @@
     &__menu {
         svg > path,
         svg > g > path {
-            fill: var(--text-prominent);
+            fill: #ffffff !important; // Enforce white visibility
         }
     }
 

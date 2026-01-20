@@ -93,7 +93,7 @@ const RiskDisclaimerModal = observer(({ is_open, onClose, force_show }: RiskDisc
             <Modal.Footer>
                 <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', width: '100%' }}>
                     <Button
-                        text={localize('Decline')}
+                        text={localize('Close')}
                         onClick={onDecline}
                         secondary
                     />

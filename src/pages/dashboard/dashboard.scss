@@ -465,10 +465,10 @@
 
 .quick-access-card {
     position: relative;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 1.6rem; // Reduced from 2.4rem
-    padding: 2rem; // Reduced from 3.2rem
+    background: rgba(255, 255, 255, 0.05); // Increased opacity from 0.03
+    border: 1px solid rgba(255, 255, 255, 0.1); // Increased opacity
+    border-radius: 1.6rem;
+    padding: 2rem;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     overflow: hidden;
@@ -477,7 +477,7 @@
     flex-direction: column;
 
     @media (max-width: 480px) {
-        padding: 1.6rem; // Even smaller on mobile
+        padding: 1.6rem;
     }
 
     .card-glow {
@@ -537,16 +537,16 @@
     }
 
     .card-icon-wrapper {
-        width: 4.8rem; // Reduced from 6.4rem
-        height: 4.8rem; // Reduced from 6.4rem
+        width: 4.8rem;
+        height: 4.8rem;
         display: flex;
         align-items: center;
         justify-content: center;
         background: rgba(255, 255, 255, 0.05);
-        border-radius: 1.2rem; // Reduced from 1.6rem
+        border-radius: 1.2rem;
         color: var(--brand-red-coral);
         transition: all 0.4s ease;
-        margin-bottom: 1.6rem; // Reduced from 2.4rem
+        margin-bottom: 1.6rem;
     }
 
     .card-content {
@@ -555,35 +555,35 @@
         z-index: 2;
 
         h3 {
-            font-size: 1.6rem; // Reduced from 2rem
+            font-size: 1.6rem;
             font-weight: 700;
-            margin-bottom: 0.6rem; // Reduced from 0.8rem
-            color: var(--text-prominent);
+            margin-bottom: 0.6rem;
+            color: #ffffff; // Enforce white text
             transition: color 0.3s ease;
         }
 
         p {
-            font-size: 1.2rem; // Reduced from 1.4rem
-            line-height: 1.5; // Reduced from 1.6
-            color: var(--text-less-prominent);
-            opacity: 0.7;
+            font-size: 1.2rem;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.7); // Enforce visible secondary text
+            opacity: 1;
         }
     }
 
     .card-arrow {
-        margin-top: 1.6rem; // Reduced from 2.4rem
-        font-size: 1.6rem; // Reduced from 2rem
-        opacity: 0.3;
+        margin-top: 1.6rem;
+        font-size: 1.6rem;
+        opacity: 0.5; // Increased visibility
         transform: translateX(0);
         transition: all 0.3s ease;
-        color: var(--brand-red-coral);
+        color: #ffffff; // Visible arrow
     }
 
     // Hover States
     &:hover {
         transform: translateY(-8px);
-        background: rgba(255, 255, 255, 0.06);
-        border-color: rgba(0, 198, 255, 0.3);
+        background: rgba(255, 255, 255, 0.08); // Lighter on hover
+        border-color: rgba(0, 198, 255, 0.5);
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 
         .card-icon-wrapper {
@@ -603,6 +603,7 @@
         .card-arrow {
             opacity: 1;
             transform: translateX(8px);
+            color: #00c6ff;
         }
     }
 
