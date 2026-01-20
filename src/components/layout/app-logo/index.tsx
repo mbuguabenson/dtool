@@ -1,12 +1,16 @@
-import { standalone_routes } from '@/components/shared';
-import { DerivLogo, useDevice } from '@deriv-com/ui';
 import './app-logo.scss';
 
 export const AppLogo = () => {
-    const { isDesktop } = useDevice();
-
-    if (!isDesktop) return null;
     return (
-        <DerivLogo className='app-header__logo' href={standalone_routes.deriv_com} target='_blank' variant='wallets' />
+        <div className='app-header__logo-container'>
+            <div className='profithub-logo'>
+                <div className='profithub-logo__wordmark'>
+                    <span className='profithub-logo__text-profit'>PROFIT</span>
+                    <span className='profithub-logo__text-hub'>HUB</span>
+                </div>
+                <div className='profithub-logo__tagline'>Advanced Trading Site</div>
+            </div>
+        </div>
     );
 };
+

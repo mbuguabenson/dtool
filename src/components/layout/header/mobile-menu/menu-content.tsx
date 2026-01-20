@@ -3,7 +3,6 @@ import { observer } from 'mobx-react-lite';
 import { useStore } from '@/hooks/useStore';
 import { LegacyChevronRight1pxIcon } from '@deriv/quill-icons/Legacy';
 import { MenuItem, Text, useDevice } from '@deriv-com/ui';
-import PlatformSwitcher from '../platform-switcher';
 import useMobileMenuConfig from './use-mobile-menu-config';
 
 type TMenuContentProps = {
@@ -18,9 +17,7 @@ const MenuContent = observer(({ onOpenSubmenu }: TMenuContentProps) => {
 
     return (
         <div className='mobile-menu__content'>
-            <div className='mobile-menu__content__platform'>
-                <PlatformSwitcher />
-            </div>
+
 
             <div className='mobile-menu__content__items'>
                 {config.map((item, index) => {
@@ -45,7 +42,7 @@ const MenuContent = observer(({ onOpenSubmenu }: TMenuContentProps) => {
                                     submenu,
                                     target,
                                     isActive,
-                                }) => {
+                                }, childIndex) => {
                                     const is_deriv_logo = label === 'Deriv.com';
                                     if (as === 'a') {
                                         return (
@@ -57,7 +54,7 @@ const MenuContent = observer(({ onOpenSubmenu }: TMenuContentProps) => {
                                                 })}
                                                 disableHover
                                                 href={href}
-                                                key={label}
+                                                key={childIndex}
                                                 leftComponent={
                                                     <LeftComponent
                                                         className='mobile-menu__content__items--right-margin'
@@ -79,7 +76,7 @@ const MenuContent = observer(({ onOpenSubmenu }: TMenuContentProps) => {
                                                 'mobile-menu__content__items__item--active': isActive,
                                             })}
                                             disableHover
-                                            key={label}
+                                            key={childIndex}
                                             leftComponent={
                                                 <LeftComponent
                                                     className='mobile-menu__content__items--right-margin'

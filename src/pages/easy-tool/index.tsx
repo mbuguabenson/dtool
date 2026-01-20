@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import { useStore } from '@/hooks/useStore';
 import { Localize } from '@deriv-com/translations';
-import DigitDistributionCircles from '@/pages/chart/digit-distribution-circles';
-import EvenOddPattern from './even-odd-pattern';
-import OverUnderPattern from './over-under-pattern';
-import MarketSelector from '@/pages/smart-trading/components/market-selector';
 import AdvancedOUAnalyzer from './advanced-ou-analyzer';
+import EvenOddPattern from './even-odd-pattern';
 import MatchesDiffersAnalyzer from './matches-differs-analyzer';
+import OverUnderPattern from './over-under-pattern';
+import { useStore } from '@/hooks/useStore';
+import DigitDistributionCircles from '@/pages/chart/digit-distribution-circles';
+import MarketSelector from '@/pages/smart-trading/components/market-selector';
 import './easy-tool.scss';
 
 const DIGIT_COLORS: Record<number, string> = {
@@ -24,7 +24,7 @@ const DIGIT_COLORS: Record<number, string> = {
 };
 
 const EasyTool = observer(() => {
-    const { smart_trading, common, app, client } = useStore();
+    const { smart_trading, common, app, client, ui } = useStore();
     const {
         symbol,
         current_price,
@@ -37,6 +37,7 @@ const EasyTool = observer(() => {
     } = smart_trading;
     const { balance, currency } = client;
     const { latency, is_socket_opened } = common;
+    const { is_dark_mode_on } = ui;
     const ticks_service = app.api_helpers_store?.ticks_service;
 
     const [selected_digit, setSelectedDigit] = useState<number | null>(null);
@@ -69,9 +70,10 @@ const EasyTool = observer(() => {
                     }
                 };
                 listenerKey = await ticks_service.monitor({ symbol, callback });
-            } catch (error: any) {
+            } catch (error: unknown) {
                 // Don't log or clear if it's just AlreadySubscribed (often happens during rapid switching)
-                if (error?.code !== 'AlreadySubscribed' && error?.message !== 'AlreadySubscribed') {
+                const err = error as { code?: string; message?: string };
+                if (err?.code !== 'AlreadySubscribed' && err?.message !== 'AlreadySubscribed') {
                     console.error('EasyTool: Failed to monitor ticks', error);
                     if (is_mounted) {
                         updateDigitStats([], 0);
@@ -91,10 +93,10 @@ const EasyTool = observer(() => {
         if (selected_digit === null && last_digit !== undefined) {
             setSelectedDigit(last_digit);
         }
-    }, [last_digit]);
+    }, [last_digit, selected_digit, setSelectedDigit]);
 
     return (
-        <div className='easy-tool'>
+        <div className={`easy-tool ${is_dark_mode_on ? 'easy-tool--dark' : 'easy-tool--light'}`}>
             <div className='easy-tool__header'>
                 <div className='easy-tool__title-group'>
                     <div className='easy-tool__title'>

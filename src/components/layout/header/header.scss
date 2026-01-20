@@ -462,3 +462,27 @@
         }
     }
 }
+
+.app-header {
+    &__whatsapp {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1.2rem;
+        padding: 0.4rem;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background-color: var(--general-section-1);
+            transform: scale(1.1);
+        }
+
+        &-icon {
+            fill: #25d366;
+            width: 2.8rem;
+            height: 2.8rem;
+            filter: drop-shadow(0 0 2px rgba(37, 211, 102, 0.3));
+        }
+    }
+}

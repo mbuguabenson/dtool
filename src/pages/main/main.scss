@@ -94,13 +94,13 @@
             overflow: hidden;
 
             &__active-line {
-                background-color: #00c6ff;
+                background-color: #7c3aed;
                 transition: none;
             }
 
             &__active {
-                background: rgba(0, 198, 255, 0.1) !important;
-                color: #00c6ff !important;
+                background: rgba(124, 58, 237, 0.1) !important;
+                color: #7c3aed !important;
                 border-bottom: none !important;
                 border: none !important;
                 font-weight: 700;
@@ -109,7 +109,7 @@
                 border-top-right-radius: 1rem;
 
                 svg {
-                    fill: #00c6ff !important;
+                    fill: #7c3aed !important;
                 }
             }
 
@@ -122,11 +122,11 @@
                 scrollbar-width: thin; // Thin scrollbar for Firefox
                 border: none;
                 padding-top: 0.8rem;
-                padding-inline-end: 40rem; // Extra large padding to ensure no tabs are hidden
-                flex-wrap: nowrap; // Prevent wrapping to allow scrolling
+                padding-inline-end: 2rem; 
+                flex-wrap: nowrap;
 
                 @include mobile-or-tablet-screen {
-                    padding-inline-end: 10rem; // Reduced from 25rem to allow more space for tabs
+                    padding-inline-end: 1rem;
                 }
 
                 // Style the scrollbar

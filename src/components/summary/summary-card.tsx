@@ -24,7 +24,7 @@ const SummaryCard = observer(({ contract_info, is_contract_loading, is_bot_runni
     React.useEffect(() => {
         const cleanup = setIsBotRunning();
         return cleanup;
-    }, [is_contract_loading]);
+    }, [is_contract_loading, setIsBotRunning]);
 
     const card_header = (
         <ContractCard.Header
@@ -106,11 +106,14 @@ const SummaryCard = observer(({ contract_info, is_contract_loading, is_bot_runni
                 </ContractCard>
             )}
             {!is_contract_loading && !contract_info && !is_bot_running && (
-                <Text as='p' align='center' lineHeight='s' size='xs'>
-                    {localize('When you’re ready to trade, hit ')}
-                    <strong className='summary-panel-inactive__strong'>{localize('Run')}</strong>
-                    {localize('. You’ll be able to track your bot’s performance here.')}
-                </Text>
+                <div className='db-summary-card--empty'>
+                    <span className='db-summary-card--empty-icon'>🚀</span>
+                    <Text as='p' align='center' lineHeight='s' size='xs'>
+                        {localize('When you’re ready to trade, hit ')}
+                        <strong className='summary-panel-inactive__strong'>{localize('Run')}</strong>
+                        {localize('. You’ll be able to track your bot’s performance here.')}
+                    </Text>
+                </div>
             )}
         </div>
     );

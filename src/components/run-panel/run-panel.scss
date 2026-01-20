@@ -197,9 +197,11 @@
         justify-content: center;
 
         .run-panel__speed-icon {
-            font-size: 1.4rem;
-            display: inline-flex;
+            font-size: 1.2rem;
+            margin-left: 0.6rem;
+            display: inline-block;
             animation: run-speed-pulse 1.5s infinite ease-in-out;
+            filter: drop-shadow(0 0 4px rgba(124, 58, 237, 0.6));
         }
     }
 }
@@ -207,7 +209,7 @@
 @keyframes run-speed-pulse {
     0% {
         transform: scale(1) rotate(0deg);
-        filter: drop-shadow(0 0 0px #ffa500);
+        filter: drop-shadow(0 0 0px rgba(124, 58, 237, 0.6));
     }
     50% {
         transform: scale(1.2) rotate(-5deg);

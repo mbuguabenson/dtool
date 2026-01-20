@@ -10,18 +10,16 @@ import { useFirebaseCountriesConfig } from '@/hooks/firebase/useFirebaseCountrie
 import { useApiBase } from '@/hooks/useApiBase';
 import { useStore } from '@/hooks/useStore';
 import useTMB from '@/hooks/useTMB';
-import { clearAuthData, handleOidcAuthFailure } from '@/utils/auth-utils';
+import { clearAuthData } from '@/utils/auth-utils';
+import { LegacyWhatsappIcon } from '@deriv/quill-icons/Legacy';
 import { StandaloneCircleUserRegularIcon } from '@deriv/quill-icons/Standalone';
-import { requestOidcAuthentication } from '@deriv-com/auth-client';
 import { Localize, useTranslations } from '@deriv-com/translations';
-import { Header, useDevice, Wrapper } from '@deriv-com/ui';
-import { Tooltip } from '@deriv-com/ui';
+import { Header, useDevice, Wrapper, Tooltip } from '@deriv-com/ui';
 import { AppLogo } from '../app-logo';
 import AccountsInfoLoader from './account-info-loader';
 import AccountSwitcher from './account-switcher';
 import MenuItems from './menu-items';
 import MobileMenu from './mobile-menu';
-import PlatformSwitcher from './platform-switcher';
 import './header.scss';
 
 type TAppHeaderProps = {
@@ -141,8 +139,6 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
                             clearAuthData(false);
                             const getQueryParams = new URLSearchParams(window.location.search);
                             const currency = getQueryParams.get('account') ?? '';
-                            const query_param_currency =
-                                currency || sessionStorage.getItem('query_param_currency') || 'USD';
 
                             try {
                                 // First, explicitly wait for TMB status to be determined
@@ -179,7 +175,6 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
         isSingleLoggingIn,
         isDesktop,
         activeLoginid,
-        standalone_routes,
         client,
         has_wallet,
         currency,
@@ -188,6 +183,8 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
         is_virtual,
         onRenderTMBCheck,
         is_tmb_enabled,
+        hubEnabledCountryList,
+        isTmbEnabled,
     ]);
 
     if (client?.should_hide_header) return null;
@@ -201,11 +198,17 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
             <Wrapper variant='left'>
                 <AppLogo />
                 <MobileMenu />
-                {isDesktop && <MenuItems.TradershubLink />}
                 {isDesktop && <MenuItems />}
-                {isDesktop && <PlatformSwitcher />}
             </Wrapper>
             <Wrapper variant='right'>
+                <a
+                    href='https://wa.me/254757722344'
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    className='app-header__whatsapp'
+                >
+                    <LegacyWhatsappIcon className='app-header__whatsapp-icon' />
+                </a>
                 {!isDesktop && <PWAInstallButton variant='primary' size='medium' />}
                 {renderAccountSection()}
             </Wrapper>
