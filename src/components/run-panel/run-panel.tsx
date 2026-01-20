@@ -46,10 +46,9 @@ type TDrawerHeader = {
 };
 
 type TDrawerContent = {
-    active_index: number;
-    is_drawer_open: boolean;
     active_tour: string;
-    setActiveTabIndex: () => void;
+    setActiveTabIndex: (index: number) => void;
+    is_running: boolean;
 };
 
 type TDrawerFooter = {
@@ -131,7 +130,7 @@ const DrawerHeader = ({ is_clear_stat_disabled, is_mobile, is_drawer_open, onCle
         />
     );
 
-const DrawerContent = ({ active_index, is_drawer_open, active_tour, setActiveTabIndex, ...props }: TDrawerContent) => {
+const DrawerContent = ({ active_index, is_drawer_open, active_tour, setActiveTabIndex, is_running, ...props }: TDrawerContent) => {
     const { isDesktop } = useDevice();
     // Use the useBlockScroll hook to prevent body scrolling when drawer is open on mobile
 
@@ -150,7 +149,15 @@ const DrawerContent = ({ active_index, is_drawer_open, active_tour, setActiveTab
     return (
         <>
             <Tabs active_index={active_index} onTabItemClick={setActiveTabIndex} top>
-                <div id='db-run-panel-tab__summary' label={<Localize i18n_default_text='Summary' />}>
+                <div
+                    id='db-run-panel-tab__summary'
+                    label={
+                        <div className='run-panel__tab-label'>
+                            <Localize i18n_default_text='Summary' />
+                            {is_running && <span className='run-panel__speed-icon'>🚀</span>}
+                        </div>
+                    }
+                >
                     <Summary is_drawer_open={is_drawer_open} />
                 </div>
                 <div id='db-run-panel-tab__transactions' label={<Localize i18n_default_text='Transactions' />}>
@@ -267,6 +274,7 @@ const RunPanel = observer(() => {
         setActiveTabIndex,
         toggleDrawer,
         toggleStatisticsInfoModal,
+        is_running,
     } = run_panel;
     const { statistics } = transactions;
     const { active_tour, active_tab } = dashboard;
@@ -300,6 +308,7 @@ const RunPanel = observer(() => {
             total_stake={total_stake}
             won_contracts={won_contracts}
             active_tour={active_tour}
+            is_running={is_running}
         />
     );
 
