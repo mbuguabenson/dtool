@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import clsx from 'clsx';
 import { observer } from 'mobx-react-lite';
 import PWAInstallButton from '@/components/pwa-install-button';
-import { standalone_routes } from '@/components/shared';
+import { generateOAuthURL, standalone_routes } from '@/components/shared';
 import Button from '@/components/shared_ui/button';
 import useActiveAccount from '@/hooks/api/account/useActiveAccount';
 import { useOauth2 } from '@/hooks/auth/useOauth2';
@@ -10,7 +10,7 @@ import { useFirebaseCountriesConfig } from '@/hooks/firebase/useFirebaseCountrie
 import { useApiBase } from '@/hooks/useApiBase';
 import { useStore } from '@/hooks/useStore';
 import useTMB from '@/hooks/useTMB';
-import { clearAuthData } from '@/utils/auth-utils';
+import { clearAuthData, handleOidcAuthFailure } from '@/utils/auth-utils';
 import { StandaloneCircleUserRegularIcon } from '@deriv/quill-icons/Standalone';
 import { requestOidcAuthentication } from '@deriv-com/auth-client';
 import { Localize, useTranslations } from '@deriv-com/translations';
@@ -139,6 +139,10 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
                         tertiary
                         onClick={async () => {
                             clearAuthData(false);
+                            const getQueryParams = new URLSearchParams(window.location.search);
+                            const currency = getQueryParams.get('account') ?? '';
+                            const query_param_currency =
+                                currency || sessionStorage.getItem('query_param_currency') || 'USD';
 
                             try {
                                 // First, explicitly wait for TMB status to be determined
@@ -147,10 +151,8 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
                                 if (tmbEnabled) {
                                     await onRenderTMBCheck(true); // Pass true to indicate it's from login button
                                 } else {
-                                    // Use standard OIDC flow from @deriv-com/auth-client
-                                    await requestOidcAuthentication({
-                                        redirectCallbackUri: `${window.location.origin}/callback`,
-                                    });
+                                    // Use legacy OAuth flow (generateOAuthURL) instead of OIDC to avoid redirect_uri issues on Vercel
+                                    window.location.assign(generateOAuthURL());
                                 }
                             } catch (error) {
                                 // eslint-disable-next-line no-console
@@ -177,6 +179,7 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
         isSingleLoggingIn,
         isDesktop,
         activeLoginid,
+        standalone_routes,
         client,
         has_wallet,
         currency,
@@ -185,8 +188,6 @@ const AppHeader = observer(({ isAuthenticating }: TAppHeaderProps) => {
         is_virtual,
         onRenderTMBCheck,
         is_tmb_enabled,
-        hubEnabledCountryList,
-        isTmbEnabled,
     ]);
 
     if (client?.should_hide_header) return null;

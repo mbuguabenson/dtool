@@ -4,12 +4,11 @@ import React from 'react';
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom';
 import InitialLoader from '@/components/loader/initial-loader';
 import RoutePromptDialog from '@/components/route-prompt-dialog';
-import { crypto_currencies_display_order, fiat_currencies_display_order, getAppId } from '@/components/shared';
+import { crypto_currencies_display_order, fiat_currencies_display_order } from '@/components/shared';
 import { StoreProvider } from '@/hooks/useStore';
 import CallbackPage from '@/pages/callback';
 import Endpoint from '@/pages/endpoint';
 import { TAuthData } from '@/types/api-types';
-import { AuthProvider } from '@deriv-com/auth-client';
 import { initializeI18n, TranslationProvider } from '@deriv-com/translations';
 import CoreStoreProvider from './CoreStoreProvider';
 import './app-root.scss';
@@ -130,7 +129,7 @@ function App() {
     return (
         <AuthProvider
             appId={String(getAppId())}
-            onRedirectedAuthenticationError={(error) => {
+            onRedirectedAuthenticationError={error => {
                 console.error('[AuthProvider] OIDC error:', error);
             }}
         >
