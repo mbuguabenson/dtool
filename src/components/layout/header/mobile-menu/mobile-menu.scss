@@ -220,11 +220,24 @@
 }
 
 // Global Drawer Overrides (Outside .mobile-menu because Portal)
-.deriv-drawer__container {
-    background: rgba(15, 20, 30, 0.95) !important;
-    backdrop-filter: blur(24px) !important;
-    z-index: 10005 !important;
-    max-width: 80vw;
+.deriv-drawer {
+    &__overlay {
+        z-index: 99998 !important;
+        backdrop-filter: blur(4px);
+    }
+
+    &__container {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        height: 100vh !important;
+        background: rgba(15, 20, 30, 0.98) !important; // Almost opaque
+        backdrop-filter: blur(24px) !important;
+        z-index: 99999 !important; // Nuclear Z-Index
+        max-width: 85vw;
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.8) !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
 }
 
 .deriv-drawer__header__close-btn {

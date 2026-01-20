@@ -42,6 +42,7 @@
         flex-direction: column;
         gap: 3.2rem;
         padding-bottom: 4rem; // Ensure some space at the bottom
+        z-index: 1; // Ensure lower z-index than header/drawer
     }
 }
 
