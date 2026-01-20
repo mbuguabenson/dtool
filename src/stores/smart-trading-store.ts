@@ -796,8 +796,11 @@ export default class SmartTradingStore {
                     }
                 }
             );
-        } catch (error) {
-            console.error('[SmartTrading] Tick subscription failed:', error);
+        } catch (error: any) {
+             // @ts-ignore
+             window.LAST_SUB_ERROR = error;
+             console.error('[SmartTrading] Tick subscription failed details:', JSON.stringify(error, null, 2));
+             console.error('[SmartTrading] Tick subscription failed:', error);
         }
     };
 

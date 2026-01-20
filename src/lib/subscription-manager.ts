@@ -114,6 +114,7 @@ class SubscriptionManager {
             // Store unsubscribe function
             subscription.unsubscribe = this.api.onMessage().subscribe(messageHandler).unsubscribe;
         } catch (error) {
+            console.error('[SubscriptionManager] Failed to subscribe details:', JSON.stringify(error, null, 2));
             console.error('[SubscriptionManager] Failed to subscribe:', error);
             this.activeSubscriptions.delete(key);
             throw error;
