@@ -51,37 +51,73 @@
     align-items: center;
     gap: 1.5rem;
 
+    .logo-container {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        z-index: 2;
+    }
+
     .logo-glow-ring {
         position: absolute;
-        top: -15px;
+        top: -10px;
         left: 50%;
         transform: translateX(-50%);
-        width: 100px;
-        height: 100px;
+        width: 120px;
+        height: 120px;
         border: 2px solid transparent;
         border-top-color: #00c6ff;
         border-right-color: #38ef7d;
         border-radius: 50%;
-        filter: blur(10px);
-        opacity: 0.5;
+        filter: blur(15px);
+        opacity: 0.4;
     }
 
-    .main-logo-svg {
-        height: 70px;
-        width: auto;
-        filter: drop-shadow(0 0 20px rgba(0, 198, 255, 0.4));
+    .main-logo-img {
+        height: 80px;
+        width: 80px;
+        object-fit: contain;
+        filter: drop-shadow(0 0 25px rgba(124, 58, 237, 0.6));
+        animation: logo-pulse 2s infinite alternate;
     }
 
     .main-brand-title {
-        font-size: 2.8rem;
+        font-size: 3.2rem;
         font-weight: 900;
-        letter-spacing: 0.5rem;
+        letter-spacing: 0.2rem;
         margin: 0;
-        background: linear-gradient(90deg, #ffffff 0%, #94a3b8 100%);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        text-shadow: 
+            0 0 10px rgba(255, 255, 255, 0.4),
+            0 0 20px rgba(124, 58, 237, 0.4),
+            0 0 40px rgba(59, 130, 246, 0.4);
+        animation: text-glow 2s ease-in-out infinite alternate;
+    }
+}
+
+@keyframes logo-pulse {
+    from {
+        transform: scale(1);
+        filter: drop-shadow(0 0 20px rgba(124, 58, 237, 0.5));
+    }
+    to {
+        transform: scale(1.05);
+        filter: drop-shadow(0 0 35px rgba(124, 58, 237, 0.8));
+    }
+}
+
+@keyframes text-glow {
+    from {
+        text-shadow: 
+            0 0 10px rgba(255, 255, 255, 0.4),
+            0 0 20px rgba(124, 58, 237, 0.4),
+            0 0 30px rgba(59, 130, 246, 0.4);
+    }
+    to {
+        text-shadow: 
+            0 0 20px rgba(255, 255, 255, 0.8),
+            0 0 40px rgba(124, 58, 237, 0.8),
+            0 0 60px rgba(59, 130, 246, 0.8);
     }
 }
 

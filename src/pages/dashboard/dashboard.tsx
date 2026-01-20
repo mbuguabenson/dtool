@@ -36,7 +36,6 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
                     </div>
 
                     <div className='hero-text'>
-                        <img src='/logo-ph.png' alt='ProfitHub' className='hero-brand-logo' style={{ width: '80px', height: '80px', marginBottom: '1.5rem', filter: 'drop-shadow(0 0 20px rgba(124, 58, 237, 0.6))' }} />
                         <div className='hero-badge'>{localize('Platform of Choice')}</div>
                         <Text as='h1' color='prominent' size={isDesktop ? 'xl' : 'm'} weight='bold'>
                             {localize('Welcome back,')}{' '}
