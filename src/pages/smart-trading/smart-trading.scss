@@ -3,17 +3,37 @@
     flex-direction: column;
     gap: 2.4rem;
     padding: 2.4rem;
+    padding-top: 4rem; // Ensure extra space from header
     background: radial-gradient(circle at top right, #1a1033, #0d0d1a);
     min-height: calc(100vh - 8rem);
-    color: #e0e0e0;
+    color: #ffffff; // Enforce white
     overflow-y: auto;
     width: 100%;
     max-width: 1400px;
     margin: 0 auto;
+    position: relative;
+    z-index: 10; // Ensure it sits above background but below menu
+
+    // Global High Contrast Enforcement for this module
+    h1, h2, h3, h4, h5, h6, span, p, div, label {
+        color: #ffffff;
+    }
+
+    input, select, textarea {
+        background-color: rgba(0, 0, 0, 0.4) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+
+        option {
+            background-color: #1a1033 !important;
+            color: #ffffff !important;
+        }
+    }
 
     @media (max-width: 768px) {
         padding: 1.6rem;
         gap: 1.6rem;
+        padding-bottom: 8rem; // Space for mobile nav
     }
 
     &__sub-tabs {
@@ -29,7 +49,7 @@
             text-align: center;
             padding: 1rem;
             border-radius: 8px;
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.7); // Better contrast
             transition: all 0.3s ease;
             font-weight: 600;
 
