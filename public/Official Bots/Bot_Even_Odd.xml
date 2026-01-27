@@ -15,6 +15,7 @@
     <variable id="wait_counter">wait_counter</variable>
     <variable id="is_ready">is_ready</variable>
     <variable id="market_mode">market_mode</variable>
+    <variable id="text">text</variable>
   </variables>
   <block type="trade_definition" id="trade_def" deletable="false" x="0" y="0">
     <statement name="TRADE_OPTIONS">
@@ -121,32 +122,43 @@
   </block>
   <block type="before_purchase" id="before" x="0" y="600">
     <statement name="BEFOREPURCHASE_STACK">
-      <block type="notify" id="notify_stats">
-        <field name="NOTIFICATION_TYPE">info</field>
-        <field name="NOTIFICATION_SOUND">silent</field>
-        <value name="MESSAGE">
-          <block type="text_join">
-            <mutation items="2"></mutation>
-            <value name="ADD0">
+      <block type="text_join">
+        <field name="VARIABLE" id="text">text</field>
+        <statement name="STACK">
+          <block type="text_statement">
+            <value name="TEXT">
               <block type="text"><field name="TEXT">Digit History: </field></block>
             </value>
-            <value name="ADD1">
-              <block type="lastDigitList"></block>
-            </value>
-          </block>
-        </value>
-        <next>
-          <block type="controls_if" id="if_autotrade">
-            <value name="IF0">
-              <block type="variables_get"><field name="VAR" id="is_autotrade">is_autotrade</field></block>
-            </value>
-            <statement name="DO0">
-              <block type="purchase" id="buy_even">
-                <field name="PURCHASE_LIST">DIGITEVEN</field>
-                <field name="ALLOW_BULK_PURCHASE">no</field>
-                <field name="NUM_TRADES">1</field>
+            <next>
+              <block type="text_statement">
+                <value name="TEXT">
+                  <block type="lastDigitList"></block>
+                </value>
               </block>
-            </statement>
+            </next>
+          </block>
+        </statement>
+        <next>
+          <block type="notify" id="notify_stats">
+            <field name="NOTIFICATION_TYPE">info</field>
+            <field name="NOTIFICATION_SOUND">silent</field>
+            <value name="MESSAGE">
+              <block type="variables_get"><field name="VAR" id="text">text</field></block>
+            </value>
+            <next>
+              <block type="controls_if" id="if_autotrade">
+                <value name="IF0">
+                  <block type="variables_get"><field name="VAR" id="is_autotrade">is_autotrade</field></block>
+                </value>
+                <statement name="DO0">
+                  <block type="purchase" id="buy_even">
+                    <field name="PURCHASE_LIST">DIGITEVEN</field>
+                    <field name="ALLOW_BULK_PURCHASE">no</field>
+                    <field name="NUM_TRADES">1</field>
+                  </block>
+                </statement>
+              </block>
+            </next>
           </block>
         </next>
       </block>

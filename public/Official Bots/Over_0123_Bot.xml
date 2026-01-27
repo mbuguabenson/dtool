@@ -9,6 +9,7 @@
     <variable id="digit_list">Digit List</variable>
     <variable id="count_hits">Count Hits</variable>
     <variable id="i">i</variable>
+      <variable id="text">text</variable>
   </variables>
   <block type="trade_definition" id="trade_def" deletable="false" x="0" y="0">
     <statement name="TRADE_OPTIONS">
@@ -141,19 +142,36 @@
                       </block>
                     </value>
                     <next>
-                      <block type="notify" id="notify">
-                        <field name="NOTIFICATION_TYPE">info</field>
-                        <field name="NOTIFICATION_SOUND">silent</field>
-                        <value name="MESSAGE">
-                          <block type="text_join">
-                            <mutation items="4"></mutation>
-                            <value name="ADD0"><block type="text"><field name="TEXT">Over </field></block></value>
-                            <value name="ADD1"><block type="variables_get"><field name="VAR" id="prediction">Prediction</field></block></value>
-                            <value name="ADD2"><block type="text"><field name="TEXT"> Power: </field></block></value>
-                            <value name="ADD3"><block type="variables_get"><field name="VAR" id="power_over">Over Power</field></block></value>
-                          </block>
-                        </value>
-                        <next>
+                      <block type="text_join">
+        <field name="VARIABLE" id="text">text</field>
+        <statement name="STACK">
+          <block type="text_statement">
+            <value name="TEXT"><block type="text"><field name="TEXT">Over </field></block></value>
+            <next>
+              <block type="text_statement">
+                <value name="TEXT"><block type="variables_get"><field name="VAR" id="prediction">Prediction</field></block></value>
+                <next>
+                  <block type="text_statement">
+                    <value name="TEXT"><block type="text"><field name="TEXT"> Power: </field></block></value>
+                    <next>
+                      <block type="text_statement">
+                        <value name="TEXT"><block type="variables_get"><field name="VAR" id="power_over">Over Power</field></block></value>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </statement>
+        <next>
+          <block type="notify" id="notify">
+            <field name="NOTIFICATION_TYPE">info</field>
+            <field name="NOTIFICATION_SOUND">silent</field>
+            <value name="MESSAGE">
+              <block type="variables_get"><field name="VAR" id="text">text</field></block>
+            </value>
+            <next>
                           <block type="controls_if" id="trade_logic">
                             <value name="IF0">
                               <block type="logic_compare">
@@ -193,7 +211,9 @@
                                 </statement>
                               </block>
                             </next>
-                          </block>
+          </block>
+        </next>
+      </block>
                         </next>
                       </block>
                     </next>

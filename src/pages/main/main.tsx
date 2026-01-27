@@ -43,7 +43,6 @@ const FreeBotsTab = lazy(() => import('../free-bots/free-bots-tab'));
 const SmartTrading = lazy(() => import('../smart-trading/index'));
 const EasyTool = lazy(() => import('../easy-tool/index'));
 const Strategies = lazy(() => import('../strategies/index'));
-const Toolhub = lazy(() => import('../toolhub/toolhub'));
 const AnalysisTool = lazy(() => import('../analysis-tool/index'));
 const Settings = lazy(() => import('../settings/index'));
 // const DTrader = lazy(() => import('../dtrader/index')); // Removed as per request
@@ -89,7 +88,6 @@ const AppWrapper = observer(() => {
         'analysis_tool',
         'copy_trading',
         'strategies',
-        'toolhub',
         'auto_trader',
         'tutorials',
         'smart_auto24',
@@ -489,25 +487,6 @@ const AppWrapper = observer(() => {
                                 <PageContentWrapper>
                                     <Suspense fallback={<ChunkLoader message={localize('Loading Strategies...')} />}>
                                         <Strategies />
-                                    </Suspense>
-                                </PageContentWrapper>
-                            </div>
-                            <div
-                                label={
-                                    <div className='main__tabs-label'>
-                                        <LabelPairedLightbulbCaptionRegularIcon
-                                            height='20px'
-                                            width='20px'
-                                            fill='var(--text-general)'
-                                        />
-                                        <Localize i18n_default_text='Toolhub' />
-                                    </div>
-                                }
-                                id='id-toolhub'
-                            >
-                                <PageContentWrapper>
-                                    <Suspense fallback={<ChunkLoader message={localize('Loading Toolhub...')} />}>
-                                        <Toolhub />
                                     </Suspense>
                                 </PageContentWrapper>
                             </div>

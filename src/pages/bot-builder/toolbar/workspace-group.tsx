@@ -25,9 +25,7 @@ const WorkspaceGroup = observer(() => {
         setChartModalVisibility,
         setTradingViewModalVisibility,
         setActiveTab,
-        setToolhubSelectedTool,
-        setIsProfithubToolVisible,
-        is_profithub_tool_visible,
+        setActiveTab,
     } = dashboard;
     const { has_redo_stack, has_undo_stack, onResetClick, onSortClick, onUndoClick, onZoomInOutClick } = toolbar;
     const { toggleSaveModal } = save_modal;
@@ -119,22 +117,6 @@ const WorkspaceGroup = observer(() => {
                             onClick={() => setTradingViewModalVisibility()}
                         >
                             <LabelPairedChartTradingviewMdRegularIcon />
-                        </span>
-                    }
-                />
-                <ToolbarIcon
-                    popover_message={localize('Profithub Tool')}
-                    icon={
-                        <span
-                            className={classNames('toolbar__icon', {
-                                'toolbar__icon--active': is_profithub_tool_visible,
-                            })}
-                            id='db-toolbar__profithub-tool-button'
-                            onClick={() => {
-                                setIsProfithubToolVisible(!is_profithub_tool_visible);
-                            }}
-                        >
-                            <LabelPairedLightbulbMdRegularIcon />
                         </span>
                     }
                 />

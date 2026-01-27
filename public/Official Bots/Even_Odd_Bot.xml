@@ -14,6 +14,7 @@
     <variable id="count_even">Count Even</variable>
     <variable id="i">i</variable>
     <variable id="total_profit">Total Profit</variable>
+      <variable id="text">text</variable>
   </variables>
   <block type="trade_definition" id="trade_def" deletable="false" x="0" y="0">
     <statement name="TRADE_OPTIONS">
@@ -171,19 +172,36 @@
                           </block>
                         </value>
                         <next>
-                          <block type="notify" id="notify_power">
-                            <field name="NOTIFICATION_TYPE">success</field>
-                            <field name="NOTIFICATION_SOUND">silent</field>
-                            <value name="MESSAGE">
-                              <block type="text_join">
-                                <mutation items="4"></mutation>
-                                <value name="ADD0"><block type="text"><field name="TEXT">Even Power: </field></block></value>
-                                <value name="ADD1"><block type="variables_get"><field name="VAR" id="power_even">Even Power</field></block></value>
-                                <value name="ADD2"><block type="text"><field name="TEXT">% | Odd Power: </field></block></value>
-                                <value name="ADD3"><block type="variables_get"><field name="VAR" id="power_odd">Odd Power</field></block></value>
-                              </block>
-                            </value>
-                            <next>
+                          <block type="text_join">
+        <field name="VARIABLE" id="text">text</field>
+        <statement name="STACK">
+          <block type="text_statement">
+            <value name="TEXT"><block type="text"><field name="TEXT">Even Power: </field></block></value>
+            <next>
+              <block type="text_statement">
+                <value name="TEXT"><block type="variables_get"><field name="VAR" id="power_even">Even Power</field></block></value>
+                <next>
+                  <block type="text_statement">
+                    <value name="TEXT"><block type="text"><field name="TEXT">% | Odd Power: </field></block></value>
+                    <next>
+                      <block type="text_statement">
+                        <value name="TEXT"><block type="variables_get"><field name="VAR" id="power_odd">Odd Power</field></block></value>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </statement>
+        <next>
+          <block type="notify" id="notify_power">
+            <field name="NOTIFICATION_TYPE">success</field>
+            <field name="NOTIFICATION_SOUND">silent</field>
+            <value name="MESSAGE">
+              <block type="variables_get"><field name="VAR" id="text">text</field></block>
+            </value>
+            <next>
                               <block type="controls_if" id="trade_logic">
                                 <mutation elseif="1"></mutation>
                                 <value name="IF0">
@@ -248,7 +266,9 @@
                                         <value name="VALUE"><block type="variables_get"><field name="VAR" id="power_odd">Odd Power</field></block></value>
                                       </block>
                                     </next>
-                                  </block>
+          </block>
+        </next>
+      </block>
                                 </next>
                               </block>
                             </next>

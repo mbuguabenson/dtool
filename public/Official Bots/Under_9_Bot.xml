@@ -12,6 +12,7 @@
     <variable id="digit_list">Digit List</variable>
     <variable id="count_hits">Count Hits</variable>
     <variable id="i">i</variable>
+      <variable id="text">text</variable>
   </variables>
   <block type="trade_definition" id="trade_def" deletable="false" x="0" y="0">
     <statement name="TRADE_OPTIONS">
@@ -168,17 +169,26 @@
                       </block>
                     </value>
                     <next>
-                      <block type="notify" id="notify">
-                        <field name="NOTIFICATION_TYPE">warn</field>
-                        <field name="NOTIFICATION_SOUND">silent</field>
-                        <value name="MESSAGE">
-                          <block type="text_join">
-                            <mutation items="2"></mutation>
-                            <value name="ADD0"><block type="text"><field name="TEXT">Digit 9 Power: </field></block></value>
-                            <value name="ADD1"><block type="variables_get"><field name="VAR" id="digit_power">Digit Power</field></block></value>
-                          </block>
-                        </value>
-                        <next>
+                      <block type="text_join">
+        <field name="VARIABLE" id="text">text</field>
+        <statement name="STACK">
+          <block type="text_statement">
+            <value name="TEXT"><block type="text"><field name="TEXT">Digit 9 Power: </field></block></value>
+            <next>
+              <block type="text_statement">
+                <value name="TEXT"><block type="variables_get"><field name="VAR" id="digit_power">Digit Power</field></block></value>
+              </block>
+            </next>
+          </block>
+        </statement>
+        <next>
+          <block type="notify" id="notify">
+            <field name="NOTIFICATION_TYPE">warn</field>
+            <field name="NOTIFICATION_SOUND">silent</field>
+            <value name="MESSAGE">
+              <block type="variables_get"><field name="VAR" id="text">text</field></block>
+            </value>
+            <next>
                           <block type="controls_if" id="trigger">
                             <value name="IF0">
                               <block type="logic_operation">
@@ -212,7 +222,9 @@
                                 <value name="VALUE"><block type="variables_get"><field name="VAR" id="digit_power">Digit Power</field></block></value>
                               </block>
                             </next>
-                          </block>
+          </block>
+        </next>
+      </block>
                         </next>
                       </block>
                     </next>
