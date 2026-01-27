@@ -14,6 +14,11 @@ const BotCard = ({ bot, onLoad }: { bot: any; onLoad: (bot: any) => void }) => {
                     PREMIUM <span>★</span>
                 </div>
             )}
+            {bot.isNew && (
+                <div className='bot-card__badge bot-card__badge--new'>
+                    NEW <span>✨</span>
+                </div>
+            )}
 
             <div className='bot-card__header'>
                 <h3>{bot.name}</h3>
@@ -33,7 +38,7 @@ const BotCard = ({ bot, onLoad }: { bot: any; onLoad: (bot: any) => void }) => {
 const FreeBotsTab = observer(() => {
     const { selectedCategory, setSelectedCategory, categories, filteredBots, loadBotToBuilder, isLoading } =
         useFreeBots();
-    
+
     const { ui } = useStore();
     const { is_dark_mode_on } = ui;
 

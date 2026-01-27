@@ -15,11 +15,22 @@
     z-index: 10; // Ensure it sits above background but below menu
 
     // Global High Contrast Enforcement for this module
-    h1, h2, h3, h4, h5, h6, span, p, div, label {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    span,
+    p,
+    div,
+    label {
         color: #ffffff;
     }
 
-    input, select, textarea {
+    input,
+    select,
+    textarea {
         background-color: rgba(0, 0, 0, 0.4) !important;
         color: #ffffff !important;
         border: 1px solid rgba(255, 255, 255, 0.2) !important;

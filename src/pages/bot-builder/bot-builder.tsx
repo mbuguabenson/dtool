@@ -16,7 +16,8 @@ import './bot-builder.scss';
 
 const BotBuilder = observer(() => {
     const { dashboard, app, run_panel, toolbar, quick_strategy, blockly_store } = useStore();
-    const { active_tab, active_tour, is_preview_on_popup, is_profithub_tool_visible, setIsProfithubToolVisible } = dashboard;
+    const { active_tab, active_tour, is_preview_on_popup, is_profithub_tool_visible, setIsProfithubToolVisible } =
+        dashboard;
     const { is_open } = quick_strategy;
     const { is_running } = run_panel;
     const { is_loading } = blockly_store;
@@ -135,9 +136,9 @@ const BotBuilder = observer(() => {
                 <>
                     {isMinimized ? (
                         <div
-                            className="profithub-minimized-icon"
+                            className='profithub-minimized-icon'
                             onClick={() => setIsMinimized(false)}
-                            title="Restore Profithub Tool"
+                            title='Restore Profithub Tool'
                         >
                             <span className='tool-icon'>P</span>
                         </div>
@@ -147,18 +148,18 @@ const BotBuilder = observer(() => {
                                 <span className='tool-title'>
                                     <Localize i18n_default_text='Profithub Tool' />
                                 </span>
-                                <div className="tool-controls">
+                                <div className='tool-controls'>
                                     <button
                                         className='control-btn'
                                         onClick={() => setIsScaled(!isScaled)}
-                                        title={isScaled ? "Maximize" : "Scale Down"}
+                                        title={isScaled ? 'Maximize' : 'Scale Down'}
                                     >
                                         {isScaled ? '□' : '❐'}
                                     </button>
                                     <button
                                         className='control-btn'
                                         onClick={() => setIsMinimized(true)}
-                                        title="Minimize"
+                                        title='Minimize'
                                     >
                                         _
                                     </button>

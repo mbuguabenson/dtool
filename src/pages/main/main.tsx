@@ -218,7 +218,14 @@ const AppWrapper = observer(() => {
 
     React.useEffect(() => {
         const trashcan_init_id = setTimeout(() => {
-            if (active_tab === BOT_BUILDER && (Blockly as typeof Blockly & { derivWorkspace?: { trashcan?: { setTrashcanPosition: (x: number, y: number) => void } } })?.derivWorkspace?.trashcan) {
+            if (
+                active_tab === BOT_BUILDER &&
+                (
+                    Blockly as typeof Blockly & {
+                        derivWorkspace?: { trashcan?: { setTrashcanPosition: (x: number, y: number) => void } };
+                    }
+                )?.derivWorkspace?.trashcan
+            ) {
                 const trashcanY = window.innerHeight - 250;
                 let trashcanX;
                 if (is_drawer_open) {
@@ -226,7 +233,11 @@ const AppWrapper = observer(() => {
                 } else {
                     trashcanX = isDbotRTL() ? 20 : window.innerWidth - 100;
                 }
-                (Blockly as typeof Blockly & { derivWorkspace?: { trashcan?: { setTrashcanPosition: (x: number, y: number) => void } } })?.derivWorkspace?.trashcan?.setTrashcanPosition(trashcanX, trashcanY);
+                (
+                    Blockly as typeof Blockly & {
+                        derivWorkspace?: { trashcan?: { setTrashcanPosition: (x: number, y: number) => void } };
+                    }
+                )?.derivWorkspace?.trashcan?.setTrashcanPosition(trashcanX, trashcanY);
             }
         }, 100);
 
@@ -359,7 +370,8 @@ const AppWrapper = observer(() => {
                                         <Localize i18n_default_text='Easy Tool' />
                                     </div>
                                 }
-                                id='id-easy-tool'>
+                                id='id-easy-tool'
+                            >
                                 <PageContentWrapper>
                                     <Suspense fallback={<ChunkLoader message={localize('Loading Easy Tool...')} />}>
                                         <EasyTool />

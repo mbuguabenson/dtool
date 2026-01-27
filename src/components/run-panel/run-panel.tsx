@@ -130,7 +130,14 @@ const DrawerHeader = ({ is_clear_stat_disabled, is_mobile, is_drawer_open, onCle
         />
     );
 
-const DrawerContent = ({ active_index, is_drawer_open, active_tour, setActiveTabIndex, is_running, ...props }: TDrawerContent) => {
+const DrawerContent = ({
+    active_index,
+    is_drawer_open,
+    active_tour,
+    setActiveTabIndex,
+    is_running,
+    ...props
+}: TDrawerContent) => {
     const { isDesktop } = useDevice();
     // Use the useBlockScroll hook to prevent body scrolling when drawer is open on mobile
 

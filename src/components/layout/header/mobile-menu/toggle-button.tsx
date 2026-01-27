@@ -1,6 +1,5 @@
 import { ComponentProps } from 'react';
 
-
 type TToggleButton = {
     onClick: ComponentProps<'button'>['onClick'];
 };

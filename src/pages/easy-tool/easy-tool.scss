@@ -3,7 +3,9 @@
     height: 100%;
     overflow-y: auto;
     font-family: 'Inter', sans-serif;
-    transition: background 0.3s ease, color 0.3s ease;
+    transition:
+        background 0.3s ease,
+        color 0.3s ease;
 
     // Dark mode (default)
     &--dark {
@@ -840,7 +842,7 @@
 
         &__vitals-row {
             gap: 8px;
-            
+
             .v-item {
                 min-width: 60px;
 

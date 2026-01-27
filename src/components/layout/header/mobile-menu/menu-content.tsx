@@ -17,8 +17,6 @@ const MenuContent = observer(({ onOpenSubmenu }: TMenuContentProps) => {
 
     return (
         <div className='mobile-menu__content'>
-
-
             <div className='mobile-menu__content__items'>
                 {config.map((item, index) => {
                     const removeBorderBottom = item.find(({ removeBorderBottom }) => removeBorderBottom);
@@ -32,17 +30,20 @@ const MenuContent = observer(({ onOpenSubmenu }: TMenuContentProps) => {
                             key={index}
                         >
                             {item.map(
-                                ({
-                                    LeftComponent,
-                                    RightComponent,
-                                    as,
-                                    href,
-                                    label,
-                                    onClick,
-                                    submenu,
-                                    target,
-                                    isActive,
-                                }, childIndex) => {
+                                (
+                                    {
+                                        LeftComponent,
+                                        RightComponent,
+                                        as,
+                                        href,
+                                        label,
+                                        onClick,
+                                        submenu,
+                                        target,
+                                        isActive,
+                                    },
+                                    childIndex
+                                ) => {
                                     const is_deriv_logo = label === 'Deriv.com';
                                     if (as === 'a') {
                                         return (

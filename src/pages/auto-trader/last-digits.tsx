@@ -34,7 +34,7 @@ const LastDigits = observer(() => {
                     flexWrap: 'wrap',
                     gap: '4px',
                     justifyContent: 'flex-start',
-                    maxHeight: 'none' // Allow wrapping
+                    maxHeight: 'none', // Allow wrapping
                 }}
             >
                 {displayDigits.map((digit, index) => (
@@ -55,7 +55,7 @@ const LastDigits = observer(() => {
                             borderRadius: '4px',
                             background: digit % 2 === 0 ? 'rgba(59, 130, 246, 0.2)' : 'rgba(236, 72, 153, 0.2)',
                             color: digit % 2 === 0 ? '#60a5fa' : '#f472b6',
-                            border: `1px solid ${digit % 2 === 0 ? 'rgba(59, 130, 246, 0.4)' : 'rgba(236, 72, 153, 0.4)'}`
+                            border: `1px solid ${digit % 2 === 0 ? 'rgba(59, 130, 246, 0.4)' : 'rgba(236, 72, 153, 0.4)'}`,
                         }}
                     >
                         {digit}
@@ -69,7 +69,7 @@ const LastDigits = observer(() => {
                     style={{
                         fontSize: '1.6rem',
                         fontWeight: 'bold',
-                        color: (last_digit !== null && last_digit % 2 === 0) ? '#60a5fa' : '#f472b6'
+                        color: last_digit !== null && last_digit % 2 === 0 ? '#60a5fa' : '#f472b6',
                     }}
                 >
                     {last_digit !== null ? last_digit : '-'}

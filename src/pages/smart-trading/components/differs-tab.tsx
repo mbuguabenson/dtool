@@ -310,6 +310,29 @@ const DiffersTab = observer(() => {
                     })}
                 </div>
             </div>
+            {/* Visual Timeline - Last 40 Digits */}
+            <div className='visual-timeline'>
+                <div className='timeline-title'>Last 40 Digits (Boxes updating live)</div>
+                <div className='timeline-grid'>
+                    {ticks.slice(-40).map((digit, idx) => {
+                        const isLatest = idx === ticks.slice(-40).length - 1;
+                        const isTarget = digit === speedbot_prediction;
+
+                        return (
+                            <div
+                                key={idx}
+                                className={classNames('timeline-box', {
+                                    latest: isLatest,
+                                    target: isTarget,
+                                })}
+                                title={`Digit: ${digit}`}
+                            >
+                                {digit}
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
         </div>
     );
 });

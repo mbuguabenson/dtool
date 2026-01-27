@@ -490,6 +490,7 @@ export default class AutoTraderStore {
         // For now, let's assume one trade per tick is throttled by API response anyway.
 
         // Construct Bot Object on the fly for the `executeTrade` function
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const tempBot: TAutoBot = {
             id: 'strategy-bot',
             name: `Strategy ${type}`,

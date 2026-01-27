@@ -12,10 +12,7 @@ declare global {
     }
 }
 
-const setLocalStorageToken = async (
-    loginInfo: URLUtils.LoginInfo[],
-    paramsToDelete: string[]
-) => {
+const setLocalStorageToken = async (loginInfo: URLUtils.LoginInfo[], paramsToDelete: string[]) => {
     if (loginInfo.length) {
         try {
             const defaultActiveAccount = URLUtils.getDefaultActiveAccount(loginInfo);

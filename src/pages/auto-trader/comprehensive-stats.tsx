@@ -51,12 +51,14 @@ const ComprehensiveStats = observer(() => {
         <div className='market-stats-premium' style={{ gridTemplateColumns: '1fr', marginTop: '1rem' }}>
             <div
                 className={classNames('stat-card-glass', { 'glow-dominant': overall_glow })}
-                style={{
-                    '--glow-color': glow_color,
-                    padding: '1.2rem', // Reduced padding
-                    borderRadius: '12px',
-                    border: `1px solid ${overall_glow ? glow_color : 'rgba(255,255,255,0.1)'}`
-                } as React.CSSProperties}
+                style={
+                    {
+                        '--glow-color': glow_color,
+                        padding: '1.2rem', // Reduced padding
+                        borderRadius: '12px',
+                        border: `1px solid ${overall_glow ? glow_color : 'rgba(255,255,255,0.1)'}`,
+                    } as React.CSSProperties
+                }
             >
                 {/* Header for Combined Card - Horizontal */}
                 <div
@@ -67,10 +69,13 @@ const ComprehensiveStats = observer(() => {
                         paddingBottom: '0.5rem',
                         display: 'flex',
                         justifyContent: 'space-between',
-                        alignItems: 'center'
+                        alignItems: 'center',
                     }}
                 >
-                    <span className='title' style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-prominent)' }}>
+                    <span
+                        className='title'
+                        style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-prominent)' }}
+                    >
                         MARKET OVERVIEW
                     </span>
                     {(eo_status.status === 'HIGH SIGNAL' || ou_status.status === 'HIGH SIGNAL') && (
@@ -81,7 +86,7 @@ const ComprehensiveStats = observer(() => {
                                 borderColor: '#10b981',
                                 background: 'rgba(16, 185, 129, 0.1)',
                                 fontSize: '0.9rem',
-                                padding: '0.2rem 0.6rem'
+                                padding: '0.2rem 0.6rem',
                             }}
                         >
                             ACTION RECOMMENDED
@@ -91,12 +96,24 @@ const ComprehensiveStats = observer(() => {
 
                 {/* Horizontal Layout for Stats */}
                 <div className='stats-container-horizontal' style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
-
                     {/* Even / Odd Section */}
                     <div className='sub-section' style={{ flex: 1, minWidth: '200px' }}>
-                        <div className='card-header' style={{ marginBottom: '0.4rem', justifyContent: 'space-between', display: 'flex' }}>
-                            <span className='title' style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.7)' }}>EVEN / ODD</span>
-                            <span className='status-badge' style={{ color: eo_status.color, borderColor: eo_status.color, fontSize: '0.9rem', padding: '0 0.4rem' }}>
+                        <div
+                            className='card-header'
+                            style={{ marginBottom: '0.4rem', justifyContent: 'space-between', display: 'flex' }}
+                        >
+                            <span className='title' style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.7)' }}>
+                                EVEN / ODD
+                            </span>
+                            <span
+                                className='status-badge'
+                                style={{
+                                    color: eo_status.color,
+                                    borderColor: eo_status.color,
+                                    fontSize: '0.9rem',
+                                    padding: '0 0.4rem',
+                                }}
+                            >
                                 {eo_status.status}
                             </span>
                         </div>
@@ -126,9 +143,22 @@ const ComprehensiveStats = observer(() => {
 
                     {/* Over / Under Section */}
                     <div className='sub-section' style={{ flex: 1, minWidth: '200px' }}>
-                        <div className='card-header' style={{ marginBottom: '0.4rem', justifyContent: 'space-between', display: 'flex' }}>
-                            <span className='title' style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.7)' }}>OVER / UNDER</span>
-                            <span className='status-badge' style={{ color: ou_status.color, borderColor: ou_status.color, fontSize: '0.9rem', padding: '0 0.4rem' }}>
+                        <div
+                            className='card-header'
+                            style={{ marginBottom: '0.4rem', justifyContent: 'space-between', display: 'flex' }}
+                        >
+                            <span className='title' style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.7)' }}>
+                                OVER / UNDER
+                            </span>
+                            <span
+                                className='status-badge'
+                                style={{
+                                    color: ou_status.color,
+                                    borderColor: ou_status.color,
+                                    fontSize: '0.9rem',
+                                    padding: '0 0.4rem',
+                                }}
+                            >
                                 {ou_status.status}
                             </span>
                         </div>
@@ -153,10 +183,17 @@ const ComprehensiveStats = observer(() => {
                             </div>
                         </div>
                     </div>
-
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.8rem', fontSize: '0.9rem', color: 'rgba(255,255,255,0.5)' }}>
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        marginTop: '0.8rem',
+                        fontSize: '0.9rem',
+                        color: 'rgba(255,255,255,0.5)',
+                    }}
+                >
                     <span>{eo_status.msg}</span>
                     <span>{ou_status.msg}</span>
                 </div>

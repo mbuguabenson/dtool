@@ -121,7 +121,9 @@ class APIBase {
                 this.api.onMessage().subscribe((message: any) => {
                     if (message.error && message.error.code === 'AlreadySubscribed') {
                         // Suppress console error - this is handled by the application
-                        console.log(`[API] AlreadySubscribed to ${message.echo_req?.ticks_history} - using existing subscription`);
+                        console.log(
+                            `[API] AlreadySubscribed to ${message.echo_req?.ticks_history} - using existing subscription`
+                        );
                     }
                 });
             }

@@ -90,7 +90,7 @@
         align-items: center;
         gap: 2.4rem;
         padding: 4rem 2rem;
-        
+
         &-icon {
             font-size: 4rem;
             animation: bounce-rocket 2s infinite ease-in-out;
@@ -100,10 +100,11 @@
 }
 
 @keyframes bounce-rocket {
-    0%, 100% { 
-        transform: translateY(0) scale(1); 
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
     }
-    50% { 
-        transform: translateY(-15px) scale(1.05); 
+    50% {
+        transform: translateY(-15px) scale(1.05);
     }
 }

@@ -13,7 +13,7 @@ interface RiskDisclaimerModalProps {
 
 const RiskDisclaimerModal = observer(({ is_open, onClose, force_show }: RiskDisclaimerModalProps) => {
     const [is_visible, setIsVisible] = useState(false);
-    
+
     const checkAcceptance = useCallback(() => {
         const accepted = localStorage.getItem('profithub_risk_accepted');
         if (!accepted || force_show) {
@@ -25,7 +25,7 @@ const RiskDisclaimerModal = observer(({ is_open, onClose, force_show }: RiskDisc
 
     useEffect(() => {
         checkAcceptance();
-        
+
         // Listen for storage changes in case it's accepted in another tab
         const handleStorage = (e: StorageEvent) => {
             if (e.key === 'profithub_risk_accepted' && e.newValue === 'true') {
@@ -68,9 +68,11 @@ const RiskDisclaimerModal = observer(({ is_open, onClose, force_show }: RiskDisc
             <Modal.Body>
                 <div className='risk-disclaimer-content'>
                     <div className='risk-warning-text'>
-                        {localize('Deriv offers complex derivatives, such as options and contracts for difference ("CFDs"). These products may not be suitable for all clients, and trading them puts you at risk.')}
+                        {localize(
+                            'Deriv offers complex derivatives, such as options and contracts for difference ("CFDs"). These products may not be suitable for all clients, and trading them puts you at risk.'
+                        )}
                     </div>
-                    
+
                     <div className='risk-points'>
                         <div className='risk-point'>
                             <div className='point-bullet'></div>
@@ -81,28 +83,24 @@ const RiskDisclaimerModal = observer(({ is_open, onClose, force_show }: RiskDisc
                         <div className='risk-point'>
                             <div className='point-bullet'></div>
                             <span className='point-text'>
-                                {localize('If your trade involves currency conversion, exchange rates will affect your profit and loss.')}
+                                {localize(
+                                    'If your trade involves currency conversion, exchange rates will affect your profit and loss.'
+                                )}
                             </span>
                         </div>
                     </div>
 
                     <div className='risk-footer-note'>
-                        {localize('You should never trade with borrowed money or with money that you cannot afford to lose.')}
+                        {localize(
+                            'You should never trade with borrowed money or with money that you cannot afford to lose.'
+                        )}
                     </div>
                 </div>
             </Modal.Body>
             <Modal.Footer>
                 <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', width: '100%' }}>
-                    <Button
-                        text={localize('Close')}
-                        onClick={onDecline}
-                        secondary
-                    />
-                    <Button
-                        text={localize('I Understand & Accept')}
-                        onClick={onAccept}
-                        primary
-                    />
+                    <Button text={localize('Close')} onClick={onDecline} secondary />
+                    <Button text={localize('I Understand & Accept')} onClick={onAccept} primary />
                 </div>
             </Modal.Footer>
         </Modal>

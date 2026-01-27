@@ -1,10 +1,10 @@
-import { useState, useCallback } from 'react';
-import { useStore } from '@/hooks/useStore';
-import { FREE_BOTS_DATA, TFreeBot } from '../pages/free-bots/free-bots-data';
+import { useCallback, useState } from 'react';
+import { FREE_BOTS_DATA } from '../pages/free-bots/free-bots-data';
+import { useStore } from './useStore';
 
 export const useFreeBots = () => {
     const { load_modal, dashboard } = useStore();
-    const [selectedCategory, setSelectedCategory] = useState<string>('Popular');
+    const [selectedCategory, setSelectedCategory] = useState<string>('Automatic');
     const [isLoading, setIsLoading] = useState(false);
 
     const categories = ['Popular', 'Automatic', 'Hybrid', 'Normal'];
@@ -12,11 +12,11 @@ export const useFreeBots = () => {
     const filteredBots = FREE_BOTS_DATA.filter(bot => bot.category === selectedCategory);
 
     const loadBotToBuilder = useCallback(
-        async (bot: TFreeBot) => {
+        async (bot: (typeof FREE_BOTS_DATA)[0]) => {
             setIsLoading(true);
             try {
                 // Fetch the XML from the server or local path
-                const response = await fetch(`/${bot.xmlPath}`);
+                const response = await fetch(bot.xmlPath);
                 if (!response.ok) {
                     throw new Error(`Failed to fetch bot XML: ${response.status} ${response.statusText}`);
                 }
@@ -41,7 +41,8 @@ export const useFreeBots = () => {
                     id: bot.id,
                     name: bot.name,
                     xml: xmlString,
-                    save_type: 'unsaved' as const, // Using 'unsaved' to load directly to workspace
+                    save_type: 'unsaved' as const,
+                    timestamp: Date.now(),
                 };
 
                 // Load into Blockly workspace via load_modal
@@ -51,10 +52,11 @@ export const useFreeBots = () => {
                 dashboard.setActiveTab(1);
 
                 console.log(`Successfully loaded bot: ${bot.name}`);
-            } catch (error: any) {
+            } catch (error: unknown) {
+                const errorMessage = error instanceof Error ? error.message : 'Unknown error';
                 console.error('Error loading bot:', error);
                 // Show user-friendly error
-                alert(`Failed to load bot "${bot.name}": ${error.message || 'Unknown error'}`);
+                alert(`Failed to load bot "${bot.name}": ${errorMessage}`);
             } finally {
                 setIsLoading(false);
             }

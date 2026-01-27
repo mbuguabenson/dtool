@@ -69,9 +69,7 @@ const AnalysisTool = observer(() => {
                 </button>
             </div>
 
-            <div className='analysis-tool__content'>
-                {renderActiveTab()}
-            </div>
+            <div className='analysis-tool__content'>{renderActiveTab()}</div>
         </div>
     );
 });

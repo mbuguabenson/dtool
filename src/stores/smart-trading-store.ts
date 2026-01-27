@@ -167,7 +167,7 @@ export default class SmartTradingStore {
         {};
 
     // V-SENSE™ TurboExec Bot State
-   @observable accessor is_turbo_bot_running: boolean = false;
+    @observable accessor is_turbo_bot_running: boolean = false;
     @observable accessor turbo_bot_state: 'STOPPED' | 'LISTENING' | 'SETUP' | 'CONFIRMING' | 'EXECUTING' | 'COOLDOWN' =
         'STOPPED';
     @observable accessor turbo_settings = {
@@ -764,38 +764,35 @@ export default class SmartTradingStore {
         if (!this.symbol || !this.is_connected) return;
 
         try {
-            this.unsubscribeTicks = await subscriptionManager.subscribeToTicks(
-                this.symbol,
-                (data) => {
-                    if (data.msg_type === 'tick') {
-                        const quote = data.tick.quote;
-                        // Construct single-item array or just pass quote if updateDigitStats handles parsing
-                        // updateDigitStats expects last_digits array.
-                        // We need to maintain a local history if we are the primary source,
-                        // or just pass what we have.
-                        // Ideally, we should fetch history first, but for now let's push the new tick.
-                        
-                        // Extract digit
-                         const price_str = String(quote);
-                         const last_char = price_str[price_str.length - 1];
-                         const digit = parseInt(last_char);
-                         
-                         // Append to current ticks if valid
-                         if (!isNaN(digit)) {
-                             // We need to pass the *full* updated array to updateDigitStats because it replaces `this.ticks`
-                             const new_ticks = [...this.ticks, digit].slice(-1000); // Keep last 1000
-                             this.updateDigitStats(new_ticks, quote);
-                         }
-                    } else if (data.msg_type === 'history') {
-                        const prices = data.history.prices;
-                        const digits = prices.map((p: any) => {
-                            const s = String(p);
-                            return parseInt(s[s.length - 1]);
-                        });
-                        this.updateDigitStats(digits, prices[prices.length-1]);
+            this.unsubscribeTicks = await subscriptionManager.subscribeToTicks(this.symbol, data => {
+                if (data.msg_type === 'tick') {
+                    const quote = data.tick.quote;
+                    // Construct single-item array or just pass quote if updateDigitStats handles parsing
+                    // updateDigitStats expects last_digits array.
+                    // We need to maintain a local history if we are the primary source,
+                    // or just pass what we have.
+                    // Ideally, we should fetch history first, but for now let's push the new tick.
+
+                    // Extract digit
+                    const price_str = String(quote);
+                    const last_char = price_str[price_str.length - 1];
+                    const digit = parseInt(last_char);
+
+                    // Append to current ticks if valid
+                    if (!isNaN(digit)) {
+                        // We need to pass the *full* updated array to updateDigitStats because it replaces `this.ticks`
+                        const new_ticks = [...this.ticks, digit].slice(-1000); // Keep last 1000
+                        this.updateDigitStats(new_ticks, quote);
                     }
+                } else if (data.msg_type === 'history') {
+                    const prices = data.history.prices;
+                    const digits = prices.map((p: any) => {
+                        const s = String(p);
+                        return parseInt(s[s.length - 1]);
+                    });
+                    this.updateDigitStats(digits, prices[prices.length - 1]);
                 }
-            );
+            });
         } catch (error) {
             console.error('[SmartTrading] Tick subscription failed:', error);
         }

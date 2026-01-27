@@ -24,11 +24,7 @@ class SubscriptionManager {
      * Subscribe to ticks_history for a symbol
      * Returns unsubscribe function
      */
-    async subscribeToTicks(
-        symbol: string,
-        callback: SubscriptionCallback,
-        count: number = 1000
-    ): Promise<() => void> {
+    async subscribeToTicks(symbol: string, callback: SubscriptionCallback, count: number = 1000): Promise<() => void> {
         const key = `ticks_${symbol}`;
 
         // If already subscribed, just add callback

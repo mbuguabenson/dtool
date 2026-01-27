@@ -56,7 +56,7 @@ class APIMiddleware {
                     this.defineMeasure(res_type);
                 }
             })
-            .catch(() => { });
+            .catch(() => {});
         return response_promise;
     };
 }

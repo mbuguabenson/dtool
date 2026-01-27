@@ -26,7 +26,7 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        
+
         span {
             display: block;
             width: 100%;
@@ -64,7 +64,15 @@
         }
 
         // Force header text to white
-        .deriv-text, p, span, h1, h2, h3, h4, h5, h6 {
+        .deriv-text,
+        p,
+        span,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
             color: #ffffff !important;
         }
     }
@@ -137,16 +145,17 @@
 
             &__icons {
                 // Nuclear option for icons
-                svg, img {
+                svg,
+                img {
                     filter: brightness(0) invert(1); // Force white
                 }
-                
+
                 // Specific SVG overrides just in case
                 g > path,
                 path,
                 rect,
                 circle {
-                    fill: #ffffff !important; 
+                    fill: #ffffff !important;
                     stroke: transparent;
                 }
             }

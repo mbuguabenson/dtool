@@ -155,12 +155,13 @@ export const load = async ({
     setLoading(true);
     // Delay execution to allow fully previewing previous strategy if users quickly switch between strategies.
     await delayExecution(100);
-    const showInvalidStrategyError = (message) => {
+    const showInvalidStrategyError = message => {
         setLoadedLocalFile(null);
         const errorContent = message ? { message } : notification_message().invalid_xml;
         botNotification(errorContent);
         setLoading(false);
-        const error_message = message || localize('XML file contains unsupported elements. Please check or modify file.');
+        const error_message =
+            message || localize('XML file contains unsupported elements. Please check or modify file.');
         globalObserver.emit('ui.log.error', error_message);
         return {
             error: error_message,

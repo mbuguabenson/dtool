@@ -2,9 +2,9 @@ const lightMode = () => {
     const workspace = Blockly;
     // Changed from blue (#064e72) to purple
     workspace.Colours.RootBlock = {
-        colour: '#7c3aed',  // Vibrant purple
-        colourSecondary: '#6d28d9',  // Darker purple
-        colourTertiary: '#ffffff',  // White text
+        colour: '#7c3aed', // Vibrant purple
+        colourSecondary: '#6d28d9', // Darker purple
+        colourTertiary: '#ffffff', // White text
     };
 
     // Keep grey blocks as they were

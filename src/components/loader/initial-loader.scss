@@ -87,7 +87,7 @@
         letter-spacing: 0.2rem;
         margin: 0;
         color: #ffffff;
-        text-shadow: 
+        text-shadow:
             0 0 10px rgba(255, 255, 255, 0.4),
             0 0 20px rgba(124, 58, 237, 0.4),
             0 0 40px rgba(59, 130, 246, 0.4);
@@ -108,13 +108,13 @@
 
 @keyframes text-glow {
     from {
-        text-shadow: 
+        text-shadow:
             0 0 10px rgba(255, 255, 255, 0.4),
             0 0 20px rgba(124, 58, 237, 0.4),
             0 0 30px rgba(59, 130, 246, 0.4);
     }
     to {
-        text-shadow: 
+        text-shadow:
             0 0 20px rgba(255, 255, 255, 0.8),
             0 0 40px rgba(124, 58, 237, 0.8),
             0 0 60px rgba(59, 130, 246, 0.8);

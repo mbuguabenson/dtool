@@ -97,7 +97,7 @@ const DigitStats = observer(() => {
                             borderRadius: '6px',
                             cursor: 'pointer',
                             outline: 'none',
-                            fontSize: '1.1rem' // Reduced font
+                            fontSize: '1.1rem', // Reduced font
                         }}
                     >
                         <option value={25}>25 Ticks</option>

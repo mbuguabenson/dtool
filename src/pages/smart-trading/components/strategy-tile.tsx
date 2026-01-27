@@ -55,7 +55,7 @@ const StrategyTile = observer(({ strategy }: { strategy: any }) => {
                         </div>
                     </div>
                 );
-            case 'matches_differs':
+            case 'matches_differs': {
                 const stat = digit_stats.find(s => s.digit === strategy.target_digit);
                 return (
                     <div className='analysis-bar'>
@@ -67,6 +67,7 @@ const StrategyTile = observer(({ strategy }: { strategy: any }) => {
                         </div>
                     </div>
                 );
+            }
             default:
                 return null;
         }
