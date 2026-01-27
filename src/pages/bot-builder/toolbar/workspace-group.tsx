@@ -12,20 +12,15 @@ import {
     LabelPairedMagnifyingGlassMinusMdRegularIcon,
     LabelPairedMagnifyingGlassPlusMdRegularIcon,
     LabelPairedObjectsAlignLeftMdRegularIcon,
-    LabelPairedLightbulbMdRegularIcon,
 } from '@deriv/quill-icons/LabelPaired';
 import { localize } from '@deriv-com/translations';
-import { rudderStackSendOpenEvent } from '../../../analytics/rudderstack-common-events';
 import ToolbarIcon from './toolbar-icon';
 
 const WorkspaceGroup = observer(() => {
     const { dashboard, toolbar, load_modal, save_modal } = useStore();
     const {
-        setPreviewOnPopup,
         setChartModalVisibility,
         setTradingViewModalVisibility,
-        setActiveTab,
-        setActiveTab,
     } = dashboard;
     const { has_redo_stack, has_undo_stack, onResetClick, onSortClick, onUndoClick, onZoomInOutClick } = toolbar;
     const { toggleSaveModal } = save_modal;
@@ -51,19 +46,10 @@ const WorkspaceGroup = observer(() => {
                     popover_message={localize('Import')}
                     icon={
                         <span
-                            className='toolbar__icon'
                             id='db-toolbar__import-button'
+                            className='toolbar__icon'
+                            onClick={() => toggleLoadModal()}
                             data-testid='dt_toolbar_import_button'
-                            onClick={() => {
-                                setPreviewOnPopup(true);
-                                toggleLoadModal();
-                                rudderStackSendOpenEvent({
-                                    subpage_name: 'bot_builder',
-                                    subform_source: 'bot_builder',
-                                    subform_name: 'load_strategy',
-                                    load_strategy_tab: 'recent',
-                                } as any);
-                            }}
                         >
                             <LabelPairedFolderOpenMdRegularIcon />
                         </span>
@@ -73,36 +59,95 @@ const WorkspaceGroup = observer(() => {
                     popover_message={localize('Save')}
                     icon={
                         <span
-                            className='toolbar__icon'
                             id='db-toolbar__save-button'
+                            className='toolbar__icon'
+                            onClick={() => toggleSaveModal()}
                             data-testid='dt_toolbar_save_button'
-                            onClick={toggleSaveModal}
                         >
                             <LabelPairedFloppyDiskMdRegularIcon />
                         </span>
                     }
                 />
+                <div className='toolbar__separator' />
                 <ToolbarIcon
-                    popover_message={localize('Sort blocks')}
+                    popover_message={localize('Undo')}
                     icon={
                         <span
-                            className='toolbar__icon'
+                            id='db-toolbar__undo-button'
+                            className={classNames('toolbar__icon', {
+                                'toolbar__icon--disabled': !has_undo_stack,
+                            })}
+                            onClick={() => onUndoClick(false)}
+                            data-testid='dt_toolbar_undo_button'
+                        >
+                            <LabelPairedArrowRotateLeftMdRegularIcon />
+                        </span>
+                    }
+                />
+                <ToolbarIcon
+                    popover_message={localize('Redo')}
+                    icon={
+                        <span
+                            id='db-toolbar__redo-button'
+                            className={classNames('toolbar__icon', {
+                                'toolbar__icon--disabled': !has_redo_stack,
+                            })}
+                            onClick={() => onUndoClick(true)}
+                            data-testid='dt_toolbar_redo_button'
+                        >
+                            <LabelPairedArrowRotateRightMdRegularIcon />
+                        </span>
+                    }
+                />
+                <div className='toolbar__separator' />
+                <ToolbarIcon
+                    popover_message={localize('Sort block')}
+                    icon={
+                        <span
                             id='db-toolbar__sort-button'
-                            data-testid='dt_toolbar_sort_button'
+                            className='toolbar__icon'
                             onClick={onSortClick}
+                            data-testid='dt_toolbar_sort_button'
                         >
                             <LabelPairedObjectsAlignLeftMdRegularIcon />
                         </span>
                     }
                 />
-                <div className='vertical-divider' />
                 <ToolbarIcon
-                    popover_message={localize('Charts')}
+                    popover_message={localize('Zoom in')}
                     icon={
                         <span
+                            id='db-toolbar__zoom-in-button'
                             className='toolbar__icon'
-                            id='db-toolbar__charts-button'
-                            onClick={() => setChartModalVisibility()}
+                            onClick={() => onZoomInOutClick(true)}
+                            data-testid='dt_toolbar_zoom_in_button'
+                        >
+                            <LabelPairedMagnifyingGlassPlusMdRegularIcon />
+                        </span>
+                    }
+                />
+                <ToolbarIcon
+                    popover_message={localize('Zoom out')}
+                    icon={
+                        <span
+                            id='db-toolbar__zoom-out-button'
+                            className='toolbar__icon'
+                            onClick={() => onZoomInOutClick(false)}
+                            data-testid='dt_toolbar_zoom_out_button'
+                        >
+                            <LabelPairedMagnifyingGlassMinusMdRegularIcon />
+                        </span>
+                    }
+                />
+                <div className='toolbar__separator' />
+                <ToolbarIcon
+                    popover_message={localize('Chart')}
+                    icon={
+                        <span
+                            id='db-toolbar__chart-button'
+                            className='toolbar__icon'
+                            onClick={() => setChartModalVisibility(true)}
+                            data-testid='dt_toolbar_chart_button'
                         >
                             <LabelPairedChartLineMdRegularIcon />
                         </span>
@@ -114,67 +159,9 @@ const WorkspaceGroup = observer(() => {
                         <span
                             className='toolbar__icon'
                             id='db-toolbar__tradingview-button'
-                            onClick={() => setTradingViewModalVisibility()}
+                            onClick={() => setTradingViewModalVisibility(true)}
                         >
                             <LabelPairedChartTradingviewMdRegularIcon />
-                        </span>
-                    }
-                />
-                <div className='vertical-divider' />
-                <ToolbarIcon
-                    popover_message={localize('Undo')}
-                    icon={
-                        <span
-                            className={classNames('toolbar__icon undo', {
-                                'toolbar__icon--disabled': !has_undo_stack,
-                            })}
-                            id='db-toolbar__undo-button'
-                            data-testid='dt_toolbar_undo_button'
-                            onClick={() => onUndoClick(/* redo */ false)}
-                        >
-                            <LabelPairedArrowRotateLeftMdRegularIcon />
-                        </span>
-                    }
-                />
-                <ToolbarIcon
-                    popover_message={localize('Redo')}
-                    icon={
-                        <span
-                            className={classNames('toolbar__icon redo', {
-                                'toolbar__icon--disabled': !has_redo_stack,
-                            })}
-                            id='db-toolbar__redo-button'
-                            data-testid='dt_toolbar_redo_button'
-                            onClick={() => onUndoClick(/* redo */ true)}
-                        >
-                            <LabelPairedArrowRotateRightMdRegularIcon />
-                        </span>
-                    }
-                />
-                <div className='vertical-divider' />
-                <ToolbarIcon
-                    popover_message={localize('Zoom in')}
-                    icon={
-                        <span
-                            className='toolbar__icon'
-                            id='db-toolbar__zoom-in-button'
-                            data-testid='dt_toolbar_zoom_in_button'
-                            onClick={() => onZoomInOutClick(/* in */ true)}
-                        >
-                            <LabelPairedMagnifyingGlassPlusMdRegularIcon />
-                        </span>
-                    }
-                />
-                <ToolbarIcon
-                    popover_message={localize('Zoom out')}
-                    icon={
-                        <span
-                            className='toolbar__icon'
-                            id='db-toolbar__zoom-out'
-                            data-testid='dt_toolbar_zoom_out_button'
-                            onClick={() => onZoomInOutClick(/* in */ false)}
-                        >
-                            <LabelPairedMagnifyingGlassMinusMdRegularIcon />
                         </span>
                     }
                 />
