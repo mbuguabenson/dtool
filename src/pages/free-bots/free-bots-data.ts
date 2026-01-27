@@ -2,7 +2,7 @@ export interface TFreeBot {
     id: string;
     name: string;
     description: string;
-    category: 'Automatic' | 'Hybrid' | 'Normal' | 'Popular';
+    category: 'Automatic' | 'Hybrid';
     xmlPath: string;
     isPremium: boolean;
     isNew?: boolean;
@@ -42,25 +42,16 @@ export const FREE_BOTS_DATA: TFreeBot[] = [
         id: 'normal-simple-martingale',
         name: 'Simple Martingale',
         description: 'Classic martingale strategy for consistent small gains.',
-        category: 'Normal',
+        category: 'Hybrid',
         xmlPath: 'Normal Bots/Simple Martingale.xml',
         isPremium: false,
         color: '#3b82f6',
     },
     {
-        id: 'popular-digit-reaper',
-        name: 'Digit Reaper',
-        description: 'Optimized for digit contracts with high win rate.',
-        category: 'Popular',
-        xmlPath: 'Popular/Digit Reaper.xml',
-        isPremium: false,
-        color: '#a855f7',
-    },
-    {
         id: 'normal-speedbot-updated',
         name: 'SPEED BOT updated',
         description: 'Updated version of the popular speed bot strategy.',
-        category: 'Normal',
+        category: 'Hybrid',
         xmlPath: 'Normal Bots/SPEED BOT updated.xml',
         isPremium: false,
         color: '#3b82f6',
@@ -191,7 +182,7 @@ export const FREE_BOTS_DATA: TFreeBot[] = [
         id: 'compounding-bot',
         name: 'Compounding Bot',
         description: 'Reinvests winnings into the next stake for exponential growth.',
-        category: 'Automatic',
+        category: 'Hybrid',
         xmlPath: 'Official Bots/Compounding_Bot.xml',
         isPremium: true,
         isNew: true,
@@ -201,7 +192,7 @@ export const FREE_BOTS_DATA: TFreeBot[] = [
         id: 'sequential-under-recovery',
         name: 'Sequential Under Recovery',
         description: 'Sequential Under 9-8-7 strategy with advanced loss protection and market switching.',
-        category: 'Automatic',
+        category: 'Hybrid',
         xmlPath: 'Official Bots/Sequential_Under_Recovery.xml',
         isPremium: true,
         isNew: true,
@@ -211,7 +202,7 @@ export const FREE_BOTS_DATA: TFreeBot[] = [
         id: 'sequential-over-recovery',
         name: 'Sequential Over Recovery',
         description: 'Sequential Over 1-2-3 strategy with advanced loss protection and market switching.',
-        category: 'Automatic',
+        category: 'Hybrid',
         xmlPath: 'Official Bots/Sequential_Over_Recovery.xml',
         isPremium: true,
         isNew: true,
