@@ -44,6 +44,9 @@ const SmartTrading = lazy(() => import('../smart-trading/index'));
 const EasyTool = lazy(() => import('../easy-tool/index'));
 const Strategies = lazy(() => import('../strategies/index'));
 const AnalysisTool = lazy(() => import('../analysis-tool/index'));
+const AutoTrader = lazy(() => import('../auto-trader/index'));
+const Tutorials = lazy(() => import('../tutorials/tutorials'));
+const SmartAuto24 = lazy(() => import('../circles-analysis/index'));
 const Settings = lazy(() => import('../settings/index'));
 // const DTrader = lazy(() => import('../dtrader/index')); // Removed as per request
 
@@ -487,6 +490,63 @@ const AppWrapper = observer(() => {
                                 <PageContentWrapper>
                                     <Suspense fallback={<ChunkLoader message={localize('Loading Strategies...')} />}>
                                         <Strategies />
+                                    </Suspense>
+                                </PageContentWrapper>
+                            </div>
+                            <div
+                                label={
+                                    <div className='main__tabs-label'>
+                                        <LabelPairedLightbulbCaptionRegularIcon
+                                            height='20px'
+                                            width='20px'
+                                            fill='var(--text-general)'
+                                        />
+                                        <Localize i18n_default_text='Auto Trader' />
+                                    </div>
+                                }
+                                id='id-auto-trader'
+                            >
+                                <PageContentWrapper>
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
+                                        <AutoTrader />
+                                    </Suspense>
+                                </PageContentWrapper>
+                            </div>
+                            <div
+                                label={
+                                    <div className='main__tabs-label'>
+                                        <LabelPairedLightbulbCaptionRegularIcon
+                                            height='20px'
+                                            width='20px'
+                                            fill='var(--text-general)'
+                                        />
+                                        <Localize i18n_default_text='Tutorials' />
+                                    </div>
+                                }
+                                id='id-tutorials'
+                            >
+                                <PageContentWrapper>
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
+                                        <Tutorials />
+                                    </Suspense>
+                                </PageContentWrapper>
+                            </div>
+                            <div
+                                label={
+                                    <div className='main__tabs-label'>
+                                        <LabelPairedLightbulbCaptionRegularIcon
+                                            height='20px'
+                                            width='20px'
+                                            fill='var(--text-general)'
+                                        />
+                                        <Localize i18n_default_text='Smart Auto 24' />
+                                    </div>
+                                }
+                                id='id-smart-auto24'
+                            >
+                                <PageContentWrapper>
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
+                                        <SmartAuto24 />
                                     </Suspense>
                                 </PageContentWrapper>
                             </div>
