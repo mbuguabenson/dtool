@@ -7,7 +7,7 @@ export const useFreeBots = () => {
     const [selectedCategory, setSelectedCategory] = useState<string>('Automatic');
     const [isLoading, setIsLoading] = useState(false);
 
-    const categories = ['Popular', 'Automatic', 'Hybrid', 'Normal'];
+    const categories = ['Automatic', 'Hybrid'];
 
     const filteredBots = FREE_BOTS_DATA.filter(bot => bot.category === selectedCategory);
 
