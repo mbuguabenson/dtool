@@ -69,7 +69,7 @@
         <next>
           <block type="variables_set" id="init_mi">
             <field name="VAR" id="market_index">Market Index</field>
-            <value name="VALUE"><block type="math_number"><field name="NUM"1</field></block></value>
+            <value name="VALUE"><block type="math_number"><field name="NUM">1</field></block></value>
             <next>
               <block type="variables_set" id="init_stake">
                 <field name="VAR" id="stake">Stake</field>
