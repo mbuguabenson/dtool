@@ -147,6 +147,15 @@ const BulkTradingView = observer(() => {
                             />
                         </div>
 
+                        <div className='bot-toggle'>
+                            <label>Compounding Martingale:</label>
+                            <ToggleSwitch
+                                id='bulk_use_compounding'
+                                is_enabled={smart_trading.use_compounding}
+                                handleToggle={() => (smart_trading.use_compounding = !smart_trading.use_compounding)}
+                            />
+                        </div>
+
                         <div className='bot-field'>
                             <label>Multiplier:</label>
                             <input

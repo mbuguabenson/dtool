@@ -18,7 +18,7 @@ export const DBOT_TABS: TDashboardTabIndex = Object.freeze({
     EASY_TOOL: 3,
     FREE_BOTS: 4,
     SIGNALS: 5,
-    SMART_TRADING: 6,
+    SMART_TRADING: 6, // Kept for index stability but removed from UI
     ANALYSIS_TOOL: 7,
     COPY_TRADING: 8,
     STRATEGIES: 9,
@@ -37,7 +37,6 @@ export const TAB_IDS = [
     'id-easy-tool',
     'id-free-bots',
     'id-signals',
-    'id-smart-trading',
     'id-analysis-tool',
     'id-copy-trading',
     'id-strategies',

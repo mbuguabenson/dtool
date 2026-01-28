@@ -6,6 +6,9 @@ export type TDigitStat = {
     digit: number;
     count: number;
     percentage: number;
+    rank: number;
+    power: number;
+    is_increasing: boolean;
 };
 
 export type TAnalysisHistory = {
@@ -21,6 +24,9 @@ export default class AnalysisStore {
         digit: i,
         count: 0,
         percentage: 0,
+        rank: i + 1,
+        power: 50,
+        is_increasing: false,
     }));
 
     @observable accessor ticks: number[] = [];
@@ -78,6 +84,7 @@ export default class AnalysisStore {
             this.ticks = last_digits;
             this.updateStats();
             this.updateHistory(this.last_digit || 0, Number(price));
+            this.root_store.smart_auto.processTick();
         });
     };
 
@@ -87,11 +94,37 @@ export default class AnalysisStore {
         this.ticks.forEach(d => counts[d]++);
 
         const total = this.ticks.length || 1;
-        this.digit_stats = counts.map((count, digit) => ({
-            digit,
-            count,
-            percentage: (count / total) * 100,
-        }));
+        
+        // Calculate powers/trend for each digit
+        const last_50_ticks = this.ticks.slice(-50);
+        const last_10_ticks = this.ticks.slice(-10);
+        
+        // Rank digits by frequency
+        const sorted_indices = counts
+            .map((c, i) => ({ count: c, index: i }))
+            .sort((a, b) => b.count - a.count);
+
+        this.digit_stats = counts.map((count, digit) => {
+            const percentage = (count / total) * 100;
+            
+            // Calculate rank (1=most, 10=least)
+            const rank = sorted_indices.findIndex(s => s.index === digit) + 1;
+            
+            // Calculate power movement (trend)
+            const recent_count = last_10_ticks.filter(d => d === digit).length;
+            const mid_count = last_50_ticks.filter(d => d === digit).length / 5;
+            const is_increasing = recent_count > mid_count;
+            const power = 50 + (recent_count - mid_count) * 10;
+
+            return {
+                digit,
+                count,
+                percentage,
+                rank,
+                power: Math.min(100, Math.max(0, power)),
+                is_increasing,
+            };
+        });
     };
 
     @action

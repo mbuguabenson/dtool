@@ -19,6 +19,40 @@ const getBotInterface = tradeEngine => {
         isResult: result => getDetail(10) === result,
         isTradeAgain: result => globalObserver.emit('bot.trade_again', result),
         readDetails: i => getDetail(i - 1),
+        getAnalysisPower: (target) => {
+            const { analysis } = (window).root_store || {};
+            if (!analysis) return 0;
+            switch(target) {
+                case 'OVER': return analysis.percentages.over;
+                case 'UNDER': return analysis.percentages.under;
+                case 'EVEN': return analysis.percentages.even;
+                case 'ODD': return analysis.percentages.odd;
+                default: return 0;
+            }
+        },
+        isAnalysisIncreasing: (target) => {
+            const { analysis } = (window).root_store || {};
+            if (!analysis || !analysis.ticks || analysis.ticks.length < 50) return false;
+            
+            const ticks = analysis.ticks;
+            const last_10 = ticks.slice(-10);
+            const last_50 = ticks.slice(-50);
+            
+            const checkCondition = (digit) => {
+                switch(target) {
+                    case 'OVER': return digit >= 5;
+                    case 'UNDER': return digit < 5;
+                    case 'EVEN': return digit % 2 === 0;
+                    case 'ODD': return digit % 2 !== 0;
+                    default: return false;
+                }
+            };
+
+            const recent_count = last_10.filter(checkCondition).length;
+            const mid_count = last_50.filter(checkCondition).length / 5;
+            
+            return recent_count > mid_count;
+        }
     };
 };
 

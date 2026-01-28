@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useStore } from '@/hooks/useStore';
-import { AnalysisSection, DigitCircles } from './components';
+import { AnalysisSection, DigitCircles, TradingEngine } from './components';
 import './circles-analysis.scss';
 
 const CirclesAnalysis = observer(() => {
@@ -91,9 +91,9 @@ const CirclesAnalysis = observer(() => {
                         <span className='label'>LIVE PRICE</span>
                         <span className='price-value'>{current_price}</span>
                     </div>
-                    <div className={`digit-display-card digit--${last_digit}`}>
+                    <div className={`digit-display-card ${last_digit !== null ? (last_digit % 2 === 0 ? 'digit--even' : 'digit--odd') : ''}`}>
                         <span className='label'>LAST DIGIT</span>
-                        <span className='digit-value'>{last_digit}</span>
+                        <span className='digit-value'>{last_digit ?? '-'}</span>
                     </div>
                 </div>
             </header>
@@ -101,6 +101,8 @@ const CirclesAnalysis = observer(() => {
             <DigitCircles />
 
             <div className='circles-analysis__content'>
+                <TradingEngine />
+                
                 <div className='analysis-sections-grid'>
                     <AnalysisSection
                         title='Matches/Differs'

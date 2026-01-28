@@ -50,33 +50,34 @@ const AnalysisSection = observer(
                 )}
 
                 <div className='percentage-bars'>
-                    <div className='bar-container left'>
+                    <div className={`bar-container left ${left_pct > right_pct ? 'dominant' : ''}`}>
                         <div className='bar-header'>
                             <span className='label'>{left_label}</span>
                             <span className='value'>{left_pct.toFixed(1)}%</span>
                         </div>
                         <div className='bar-bg'>
-                            <div className='bar-fill' style={{ width: `${left_pct}%`, background: '#10b981' }}></div>
+                            <div className='bar-fill green' style={{ width: `${left_pct}%` }}></div>
                         </div>
                     </div>
-                    <div className='bar-container right'>
+                    <div className={`bar-container right ${right_pct > left_pct ? 'dominant' : ''}`}>
                         <div className='bar-header'>
                             <span className='label'>{right_label}</span>
                             <span className='value'>{right_pct.toFixed(1)}%</span>
                         </div>
                         <div className='bar-bg'>
-                            <div className='bar-fill' style={{ width: `${right_pct}%`, background: '#ef4444' }}></div>
+                            <div className='bar-fill red' style={{ width: `${right_pct}%` }}></div>
                         </div>
                     </div>
                 </div>
 
-                <div className='history-grid'>
-                    {history.slice(0, 48).map((item, i) => (
-                        <div key={i} className='history-item' style={{ background: item.color }}>
-                            {item.type}
-                        </div>
-                    ))}
-                    <button className='less-btn'>LESS</button>
+                <div className='history-list-wrapper'>
+                    <div className='history-grid'>
+                        {history.slice(0, 48).map((item, i) => (
+                            <div key={i} className='history-item' style={{ '--item-bg': item.color } as any}>
+                                {item.type}
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         );

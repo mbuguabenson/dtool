@@ -493,6 +493,11 @@ export const ToolboxItems = () => {
                     <Block type='ask_price' />
                 </Category>
 
+                <Category name={localize('Analysis Logics')} id='analysis_logics'>
+                    <Block type='analysis_get_power' />
+                    <Block type='analysis_is_increasing' />
+                </Category>
+
                 <Category name={localize('Stats')} id='stats'>
                     <Block type='balance' />
                     <Block type='total_profit' />

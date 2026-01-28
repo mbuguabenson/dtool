@@ -10,6 +10,8 @@ import {
     LabelPairedCopyCaptionRegularIcon,
     LabelPairedSlidersCaptionRegularIcon,
     LabelPairedFolderOpenCaptionRegularIcon,
+    LabelPairedChartLineCaptionRegularIcon,
+    LabelPairedCircleBoltCaptionRegularIcon,
 } from '@deriv/quill-icons/LabelPaired';
 import { DBOT_TABS } from '@/constants/bot-contents';
 
@@ -71,18 +73,27 @@ const Cards = observer(({ search_query, handleTabChange }: TCardProps) => {
             tagType: 'popular',
         },
         {
-            id: 'smart-trading',
-            title: localize('Smart Trading'),
+            id: 'smart-auto',
+            title: localize('Smart Auto AI'),
             icon: LabelPairedLightbulbCaptionRegularIcon,
-            description: localize('Use smart tools to enhance your trading edge'),
-            tabIndex: DBOT_TABS.SMART_TRADING,
+            description: localize('Professional 24H Bots and Super Rise/Fall automation'),
+            tabIndex: DBOT_TABS.SMART_AUTO24,
             tag: localize('Pro'),
             tagType: 'pro',
         },
         {
+            id: 'analysis-tool',
+            title: localize('Analysis Tool'),
+            icon: LabelPairedChartLineCaptionRegularIcon,
+            description: localize('Advanced digit stats for Over/Under and Even/Odd'),
+            tabIndex: DBOT_TABS.ANALYSIS_TOOL,
+            tag: localize('Premium'),
+            tagType: 'hot',
+        },
+        {
             id: 'easy-tool',
             title: localize('Easy Tool'),
-            icon: LabelPairedSlidersCaptionRegularIcon, // Using similar icon or import a new one if available
+            icon: LabelPairedCircleBoltCaptionRegularIcon,
             description: localize('Simple analysis tools for quick trading decisions'),
             tabIndex: DBOT_TABS.EASY_TOOL,
             tag: localize('New'),

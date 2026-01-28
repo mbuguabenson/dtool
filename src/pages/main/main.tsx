@@ -40,7 +40,6 @@ const ChartWrapper = lazy(() => import('../chart/chart-wrapper'));
 const CopyTrading = lazy(() => import('../copy-trader'));
 const SignalsTab = lazy(() => import('../signals/signals-tab'));
 const FreeBotsTab = lazy(() => import('../free-bots/free-bots-tab'));
-const SmartTrading = lazy(() => import('../smart-trading/index'));
 const EasyTool = lazy(() => import('../easy-tool/index'));
 const Strategies = lazy(() => import('../strategies/index'));
 const AnalysisTool = lazy(() => import('../analysis-tool/index'));
@@ -87,13 +86,12 @@ const AppWrapper = observer(() => {
         'easy_tool',
         'free_bots',
         'signals',
-        'smart_trading',
         'analysis_tool',
         'copy_trading',
         'strategies',
         'auto_trader',
         'tutorials',
-        'smart_auto24',
+        'smart_auto',
         'settings',
     ];
     const { isDesktop } = useDevice();
@@ -420,25 +418,6 @@ const AppWrapper = observer(() => {
                             <div
                                 label={
                                     <div className='main__tabs-label'>
-                                        <LabelPairedLightbulbCaptionRegularIcon
-                                            height='20px'
-                                            width='20px'
-                                            fill='var(--text-general)'
-                                        />
-                                        <Localize i18n_default_text='Smart Trading' />
-                                    </div>
-                                }
-                                id='id-smart-trading'
-                            >
-                                <PageContentWrapper>
-                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                        <SmartTrading />
-                                    </Suspense>
-                                </PageContentWrapper>
-                            </div>
-                            <div
-                                label={
-                                    <div className='main__tabs-label'>
                                         <LabelPairedSlidersCaptionRegularIcon
                                             height='20px'
                                             width='20px'
@@ -539,10 +518,10 @@ const AppWrapper = observer(() => {
                                             width='20px'
                                             fill='var(--text-general)'
                                         />
-                                        <Localize i18n_default_text='Smart Auto 24' />
+                                        <Localize i18n_default_text='Smart Auto' />
                                     </div>
                                 }
-                                id='id-smart-auto24'
+                                id='id-smart-auto'
                             >
                                 <PageContentWrapper>
                                     <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>

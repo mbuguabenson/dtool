@@ -10,7 +10,8 @@ type TStoreProvider = {
 };
 
 const StoreProvider: React.FC<TStoreProvider> = ({ children, mockStore: mockedStore }) => {
-    const [store] = useState<RootStore>(mockedStore || new RootStore(Bot));
+    const [store] = (window as any).root_store ? [ (window as any).root_store ] : useState<RootStore>(mockedStore || new RootStore(Bot));
+    if (!(window as any).root_store) (window as any).root_store = store;
 
     return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;
 };

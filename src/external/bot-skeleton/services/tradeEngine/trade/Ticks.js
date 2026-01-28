@@ -326,8 +326,6 @@ export default Engine =>
                     const lastTicks = ticks.slice(-tickCount);
                     if (lastTicks.length < 3) return resolve('none');
 
-                    if (lastTicks.length < 3) return resolve('none');
-
                     // Ticks.js has access to OHLC via this.getOhlc (inherited or injected)
                     // Let's assume we use the getOhlc method
                     this.getOhlc({ granularity: 60, count: tickCount }).then(ohlc => {

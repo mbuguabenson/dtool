@@ -112,6 +112,7 @@ export default class SmartTradingStore {
 
     // Martingale Settings
     @observable accessor use_martingale = false;
+    @observable accessor use_compounding = false;
     @observable accessor martingale_multiplier = 2.0;
     @observable accessor max_stake_limit = 100;
     @observable accessor is_max_stake_enabled = false;
