@@ -15,6 +15,10 @@ const getTicksInterface = tradeEngine => {
         countDigitsInRange: (...args) => tradeEngine.countDigitsInRange(...args),
         calculateVolatility: (...args) => tradeEngine.calculateVolatility(...args),
         analyzeTrend: (...args) => tradeEngine.analyzeTrend(...args),
+        getDigitByRank: (...args) => tradeEngine.getDigitByRank(...args),
+        identifyCandlePattern: (...args) => tradeEngine.identifyCandlePattern(...args),
+        analyzeMomentum: (...args) => tradeEngine.analyzeMomentum(...args),
+        checkVolumeHealth: (...args) => tradeEngine.checkVolumeHealth(...args),
     };
 };
 
