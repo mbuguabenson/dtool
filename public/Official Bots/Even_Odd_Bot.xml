@@ -223,7 +223,7 @@
                                     <value name="IF1">
                                       <block type="logic_operation" inline="false">
                                         <field name="OP">AND</field>
-                                        <value name="A"><block type="logic_compare"><field name="OP">GT</field><value name="A"><block type="variables_get"><field name="VAR" id="power_odd">Odd Power</field></block></value><value name="B"><block name="math_number"><field name="NUM">55</field></block></value></block></value>
+                                        <value name="A"><block type="logic_compare"><field name="OP">GT</field><value name="A"><block type="variables_get"><field name="VAR" id="power_odd">Odd Power</field></block></value><value name="B"><block type="math_number"><field name="NUM">55</field></block></value></block></value>
                                         <value name="B">
                                           <block type="logic_operation" inline="false">
                                             <field name="OP">AND</field>

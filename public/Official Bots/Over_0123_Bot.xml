@@ -143,33 +143,19 @@
                     </value>
                     <next>
                       <block type="text_join">
-        <field name="VARIABLE" id="text">text</field>
-        <statement name="STACK">
-          <block type="text_statement">
-            <value name="TEXT"><block type="text"><field name="TEXT">Over </field></block></value>
-            <next>
-              <block type="text_statement">
-                <value name="TEXT"><block type="variables_get"><field name="VAR" id="prediction">Prediction</field></block></value>
-                <next>
-                  <block type="text_statement">
-                    <value name="TEXT"><block type="text"><field name="TEXT"> Power: </field></block></value>
-                    <next>
-                      <block type="text_statement">
-                        <value name="TEXT"><block type="variables_get"><field name="VAR" id="power_over">Over Power</field></block></value>
-                      </block>
-                    </next>
-                  </block>
-                </next>
-              </block>
-            </next>
-          </block>
-        </statement>
+        <mutation items="2"></mutation>
+        <value name="ADD0"><block type="text"><field name="TEXT">Digit Power: </field></block></value>
+        <value name="ADD1"><block type="variables_get"><field name="VAR" id="digit_power">Digit Power</field></block></value>
         <next>
           <block type="notify" id="notify">
             <field name="NOTIFICATION_TYPE">info</field>
             <field name="NOTIFICATION_SOUND">silent</field>
             <value name="MESSAGE">
-              <block type="variables_get"><field name="VAR" id="text">text</field></block>
+              <block type="text_join">
+                <mutation items="2"></mutation>
+                <value name="ADD0"><block type="text"><field name="TEXT">Over Power: </field></block></value>
+                <value name="ADD1"><block type="variables_get"><field name="VAR" id="power_over">Over Power</field></block></value>
+              </block>
             </value>
             <next>
                           <block type="controls_if" id="trade_logic">

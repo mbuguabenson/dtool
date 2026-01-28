@@ -198,6 +198,147 @@ export default Engine =>
             }
         }
 
+        // Advanced Analysis Methods
+        digitFrequency(digit, tickCount = 50) {
+            return new Promise(resolve => 
+                this.getTicks().then(ticks => {
+                    const digits = this.getLastDigitsFromList(ticks.slice(-tickCount));
+                    const count = digits.filter(d => d === Number(digit)).length;
+                    const frequency = (count / digits.length) * 100;
+                    resolve(Math.round(frequency * 100) / 100);
+                })
+            );
+        }
+
+        detectStreak(patternType, valueType, tickCount = 10) {
+            return new Promise(resolve => 
+                this.getTicks().then(ticks => {
+                    const digits = this.getLastDigitsFromList(ticks.slice(-tickCount));
+                    let streakLength = 0;
+                    
+                    const checkCondition = (digit) => {
+                        switch (valueType) {
+                            case 'even':
+                                return digit % 2 === 0;
+                            case 'odd':
+                                return digit % 2 !== 0;
+                            case 'over5':
+                                return digit >= 5;
+                            case 'under5':
+                                return digit < 5;
+                            default:
+                                return false;
+                        }
+                    };
+
+                    if (patternType === 'consecutive') {
+                        for (let i = digits.length - 1; i >= 0; i--) {
+                            if (checkCondition(digits[i])) {
+                                streakLength++;
+                            } else {
+                                break;
+                            }
+                        }
+                    } else if (patternType === 'alternating') {
+                        let lastCondition = checkCondition(digits[digits.length - 1]);
+                        for (let i = digits.length - 1; i >= 0; i--) {
+                            const currentCondition = checkCondition(digits[i]);
+                            if (i === digits.length - 1 || currentCondition !== lastCondition) {
+                                streakLength++;
+                                lastCondition = !lastCondition;
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+
+                    resolve(streakLength);
+                })
+            );
+        }
+
+        countDigitsInRange(minDigit, maxDigit, tickCount = 50) {
+            return new Promise(resolve => 
+                this.getTicks().then(ticks => {
+                    const digits = this.getLastDigitsFromList(ticks.slice(-tickCount));
+                    const count = digits.filter(d => d >= minDigit && d <= maxDigit).length;
+                    resolve(count);
+                })
+            );
+        }
+
+        calculateVolatility(tickCount = 50) {
+            return new Promise(resolve => 
+                this.getTicks().then(ticks => {
+                    const digits = this.getLastDigitsFromList(ticks.slice(-tickCount));
+                    
+                    // Calculate frequency distribution
+                    const distribution = Array(10).fill(0);
+                    digits.forEach(d => distribution[d]++);
+                    
+                    // Calculate standard deviation
+                    const mean = digits.reduce((a, b) => a + b, 0) / digits.length;
+                    const variance = digits.reduce((sum, d) => sum + Math.pow(d - mean, 2), 0) / digits.length;
+                    const stdDev = Math.sqrt(variance);
+                    
+                    // Calculate entropy (disorder)
+                    let entropy = 0;
+                    distribution.forEach(count => {
+                        if (count > 0) {
+                            const p = count / digits.length;
+                            entropy -= p * Math.log2(p);
+                        }
+                    });
+                    
+                    // Normalize to 0-100 scale
+                    const maxEntropy = Math.log2(10); // Maximum entropy for 10 digits
+                    const volatilityScore = ((stdDev / 3) * 0.5 + (entropy / maxEntropy) * 0.5) * 100;
+                    
+                    resolve(Math.min(100, Math.round(volatilityScore * 100) / 100));
+                })
+            );
+        }
+
+        analyzeTrend(trendType, tickCount = 20) {
+            return new Promise(resolve => 
+                this.getTicks().then(ticks => {
+                    const digits = this.getLastDigitsFromList(ticks.slice(-tickCount));
+                    const halfPoint = Math.floor(digits.length / 2);
+                    const firstHalf = digits.slice(0, halfPoint);
+                    const secondHalf = digits.slice(halfPoint);
+                    
+                    let firstValue, secondValue;
+                    
+                    switch (trendType) {
+                        case 'sum':
+                            firstValue = firstHalf.reduce((a, b) => a + b, 0) / firstHalf.length;
+                            secondValue = secondHalf.reduce((a, b) => a + b, 0) / secondHalf.length;
+                            break;
+                        case 'evenodd':
+                            firstValue = firstHalf.filter(d => d % 2 === 0).length / firstHalf.length;
+                            secondValue = secondHalf.filter(d => d % 2 === 0).length / secondHalf.length;
+                            break;
+                        case 'highlow':
+                            firstValue = firstHalf.filter(d => d >= 5).length / firstHalf.length;
+                            secondValue = secondHalf.filter(d => d >= 5).length / secondHalf.length;
+                            break;
+                        default:
+                            resolve('neutral');
+                            return;
+                    }
+                    
+                    const threshold = 0.1; // 10% threshold
+                    if (secondValue > firstValue + threshold) {
+                        resolve('rising');
+                    } else if (secondValue < firstValue - threshold) {
+                        resolve('falling');
+                    } else {
+                        resolve('neutral');
+                    }
+                })
+            );
+        }
+
         async getDelayTickValue(tick_value) {
             return new Promise((resolve, reject) => {
                 try {
