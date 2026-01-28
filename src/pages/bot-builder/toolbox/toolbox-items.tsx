@@ -392,6 +392,56 @@ export const ToolboxItems = () => {
                     <Block type='stat_list' />
                     <Block type='ticks' />
                     <Block type='lastDigitList' />
+                    <Block type='digitFrequencyAnalysis'>
+                        <Value name='DIGIT'>
+                            <Shadow type='math_number'>
+                                <Field name='NUM'>0</Field>
+                            </Shadow>
+                        </Value>
+                        <Value name='TICK_COUNT'>
+                            <Shadow type='math_number'>
+                                <Field name='NUM'>50</Field>
+                            </Shadow>
+                        </Value>
+                    </Block>
+                    <Block type='streakDetection'>
+                        <Value name='TICK_COUNT'>
+                            <Shadow type='math_number'>
+                                <Field name='NUM'>10</Field>
+                            </Shadow>
+                        </Value>
+                    </Block>
+                    <Block type='digitRangeCounter'>
+                        <Value name='MIN_DIGIT'>
+                            <Shadow type='math_number'>
+                                <Field name='NUM'>0</Field>
+                            </Shadow>
+                        </Value>
+                        <Value name='MAX_DIGIT'>
+                            <Shadow type='math_number'>
+                                <Field name='NUM'>2</Field>
+                            </Shadow>
+                        </Value>
+                        <Value name='TICK_COUNT'>
+                            <Shadow type='math_number'>
+                                <Field name='NUM'>50</Field>
+                            </Shadow>
+                        </Value>
+                    </Block>
+                    <Block type='volatilityScore'>
+                        <Value name='TICK_COUNT'>
+                            <Shadow type='math_number'>
+                                <Field name='NUM'>50</Field>
+                            </Shadow>
+                        </Value>
+                    </Block>
+                    <Block type='trendDirection'>
+                        <Value name='TICK_COUNT'>
+                            <Shadow type='math_number'>
+                                <Field name='NUM'>20</Field>
+                            </Shadow>
+                        </Value>
+                    </Block>
                     <Block type='check_direction' />
                     <Block type='is_candle_black' />
                     <Block type='read_ohlc'>
