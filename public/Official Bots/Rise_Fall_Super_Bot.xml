@@ -5,7 +5,15 @@
     <variable id="target_profit">Target Profit</variable>
     <variable id="stop_loss">Stop Loss</variable>
     <variable id="current_stake">Current Stake</variable>
-    <variable id="state">State</variable>
+    <variable id="total_profit">Total Profit</variable>
+    <variable id="ticks">Ticks List</variable>
+    <variable id="rsi_val">RSI Value</variable>
+    <variable id="bb_list">BB List</variable>
+    <variable id="bb_mid">BB Middle</variable>
+    <variable id="bb_top">BB Upper</variable>
+    <variable id="bb_bot">BB Lower</variable>
+    <variable id="last_tick">Last Tick</variable>
+    <variable id="analysis_text">Analysis Text</variable>
   </variables>
   <block type="trade_definition" id="trade_def" deletable="false" x="0" y="0">
     <statement name="TRADE_OPTIONS">
@@ -62,9 +70,9 @@
                         <field name="VAR" id="current_stake">Current Stake</field>
                         <value name="VALUE"><block type="variables_get"><field name="VAR" id="stake">Stake</field></block></value>
                         <next>
-                          <block type="variables_set" id="init_state">
-                            <field name="VAR" id="state">State</field>
-                            <value name="VALUE"><block type="text"><field name="TEXT">IDLE</field></block></value>
+                          <block type="variables_set" id="init_tp_var">
+                             <field name="VAR" id="total_profit">Total Profit</field>
+                             <value name="VALUE"><block type="math_number"><field name="NUM">0</field></block></value>
                           </block>
                         </next>
                       </block>
@@ -82,7 +90,7 @@
         <mutation has_first_barrier="false" has_second_barrier="false" has_prediction="false"></mutation>
         <field name="DURATIONTYPE_LIST">t</field>
         <value name="DURATION">
-          <block type="math_number"><field name="NUM">1</field></block>
+          <block type="math_number"><field name="NUM">5</field></block>
         </value>
         <value name="AMOUNT">
           <block type="variables_get"><field name="VAR" id="current_stake">Current Stake</field></block>
@@ -92,102 +100,193 @@
   </block>
   <block type="before_purchase" id="before" x="0" y="800">
     <statement name="BEFOREPURCHASE_STACK">
-      <block type="controls_if" id="check_volume">
-        <mutation else="1"></mutation>
-        <value name="IF0">
-          <block type="logic_compare">
-            <field name="OP">EQ</field>
-            <value name="A"><block type="checkVolumeHealth"><value name="TICK_COUNT"><block type="math_number"><field name="NUM">20</field></block></value></block></value>
-            <value name="B"><block type="text"><field name="TEXT">high</field></block></value>
-          </block>
-        </value>
-        <statement name="DO0">
-          <block type="controls_if" id="strategy_logic">
-            <mutation else="0"></mutation>
-            <value name="IF0">
-              <block type="logic_operation">
-                <field name="OP">OR</field>
-                <value name="A">
-                  <block type="logic_compare">
-                    <field name="OP">EQ</field>
-                    <value name="A"><block type="identifyCandlePattern"><value name="TICK_COUNT"><block type="math_number"><field name="NUM">3</field></block></value></block></value>
-                    <value name="B"><block type="text"><field name="TEXT">hammer</field></block></value>
-                  </block>
-                </value>
-                <value name="B">
-                  <block type="logic_compare">
-                    <field name="OP">EQ</field>
-                    <value name="A"><block type="analyzeMomentum"><value name="TICK_COUNT"><block type="math_number"><field name="NUM">10</field></block></value></block></value>
-                    <value name="B"><block type="text"><field name="TEXT">strong_bullish</field></block></value>
-                  </block>
-                </value>
-              </block>
-            </value>
-            <statement name="DO0">
-              <block type="purchase" id="buy_rise">
-                <field name="PURCHASE_LIST">CALL</field>
-                <field name="ALLOW_BULK_PURCHASE">no</field>
-                <field name="NUM_TRADES">1</field>
-              </block>
-            </statement>
+      <block type="variables_set" id="set_ticks">
+        <field name="VAR" id="ticks">Ticks List</field>
+        <value name="VALUE"><block type="ticks"></block></value>
+        <next>
+          <block type="variables_set" id="set_last_tick">
+            <field name="VAR" id="last_tick">Last Tick</field>
+            <value name="VALUE"><block type="tick"></block></value>
             <next>
-              <block type="controls_if" id="strategy_logic_fall">
-                <value name="IF0">
-                  <block type="logic_operation">
-                    <field name="OP">OR</field>
-                    <value name="A">
-                      <block type="logic_compare">
-                        <field name="OP">EQ</field>
-                        <value name="A"><block type="identifyCandlePattern"><value name="TICK_COUNT"><block type="math_number"><field name="NUM">3</field></block></value></block></value>
-                        <value name="B"><block type="text"><field name="TEXT">shooting_star</field></block></value>
-                      </block>
-                    </value>
-                    <value name="B">
-                      <block type="logic_compare">
-                        <field name="OP">EQ</field>
-                        <value name="A"><block type="analyzeMomentum"><value name="TICK_COUNT"><block type="math_number"><field name="NUM">10</field></block></value></block></value>
-                        <value name="B"><block type="text"><field name="TEXT">strong_bearish</field></block></value>
-                      </block>
-                    </value>
-                  </block>
-                </value>
-                <statement name="DO0">
-                  <block type="purchase" id="buy_fall">
-                    <field name="PURCHASE_LIST">PUT</field>
-                    <field name="ALLOW_BULK_PURCHASE">no</field>
-                    <field name="NUM_TRADES">1</field>
-                  </block>
-                </statement>
-              </block>
+               <block type="variables_set" id="set_rsi">
+                 <field name="VAR" id="rsi_val">RSI Value</field>
+                 <value name="VALUE">
+                   <block type="rsi">
+                     <value name="INPUT"><block type="variables_get"><field name="VAR" id="ticks">Ticks List</field></block></value>
+                     <value name="PERIOD"><block type="math_number"><field name="NUM">14</field></block></value>
+                   </block>
+                 </value>
+                 <next>
+                   <block type="variables_set" id="set_bb">
+                     <field name="VAR" id="bb_list">BB List</field>
+                     <value name="VALUE">
+                       <block type="bb">
+                         <value name="INPUT"><block type="variables_get"><field name="VAR" id="ticks">Ticks List</field></block></value>
+                         <value name="PERIOD"><block type="math_number"><field name="NUM">20</field></block></value>
+                         <value name="UPMULTIPLIER"><block type="math_number"><field name="NUM">2</field></block></value>
+                         <value name="DOWNMULTIPLIER"><block type="math_number"><field name="NUM">2</field></block></value>
+                       </block>
+                     </value>
+                     <next>
+                       <block type="variables_set" id="set_bb_mid">
+                         <field name="VAR" id="bb_mid">BB Middle</field>
+                         <value name="VALUE">
+                            <block type="lists_getIndex">
+                              <mutation statement="false" at="true"></mutation>
+                              <field name="MODE">GET</field>
+                              <field name="WHERE">FROM_START</field>
+                              <value name="VALUE"><block type="variables_get"><field name="VAR" id="bb_list">BB List</field></block></value>
+                              <value name="AT"><block type="math_number"><field name="NUM">1</field></block></value>
+                            </block>
+                         </value>
+                         <next>
+                           <block type="variables_set" id="set_bb_top">
+                             <field name="VAR" id="bb_top">BB Upper</field>
+                             <value name="VALUE">
+                                <block type="lists_getIndex">
+                                  <mutation statement="false" at="true"></mutation>
+                                  <field name="MODE">GET</field>
+                                  <field name="WHERE">FROM_START</field>
+                                  <value name="VALUE"><block type="variables_get"><field name="VAR" id="bb_list">BB List</field></block></value>
+                                  <value name="AT"><block type="math_number"><field name="NUM">2</field></block></value>
+                                </block>
+                             </value>
+                             <next>
+                               <block type="variables_set" id="set_bb_bot">
+                                 <field name="VAR" id="bb_bot">BB Lower</field>
+                                 <value name="VALUE">
+                                    <block type="lists_getIndex">
+                                      <mutation statement="false" at="true"></mutation>
+                                      <field name="MODE">GET</field>
+                                      <field name="WHERE">FROM_START</field>
+                                      <value name="VALUE"><block type="variables_get"><field name="VAR" id="bb_list">BB List</field></block></value>
+                                      <value name="AT"><block type="math_number"><field name="NUM">3</field></block></value>
+                                    </block>
+                                 </value>
+                                 <next>
+                                    <block type="notify" id="notify_analysis">
+                                      <field name="NOTIFICATION_TYPE">info</field>
+                                      <field name="NOTIFICATION_SOUND">silent</field>
+                                      <value name="MESSAGE">
+                                        <block type="text_join">
+                                          <mutation items="6"></mutation>
+                                          <value name="ADD0"><block type="text"><field name="TEXT">Chart Analysis | Price: </field></block></value>
+                                          <value name="ADD1"><block type="variables_get"><field name="VAR" id="last_tick">Last Tick</field></block></value>
+                                          <value name="ADD2"><block type="text"><field name="TEXT"> | RSI: </field></block></value>
+                                          <value name="ADD3"><block type="variables_get"><field name="VAR" id="rsi_val">RSI Value</field></block></value>
+                                          <value name="ADD4"><block type="text"><field name="TEXT"> | BB Mid: </field></block></value>
+                                          <value name="ADD5"><block type="variables_get"><field name="VAR" id="bb_mid">BB Middle</field></block></value>
+                                        </block>
+                                      </value>
+                                      <next>
+                                        <block type="controls_if" id="trade_logic">
+                                           <mutation elseif="1"></mutation>
+                                           <value name="IF0">
+                                             <block type="logic_operation">
+                                               <field name="OP">AND</field>
+                                               <value name="A"><block type="logic_compare"><field name="OP">GT</field><value name="A"><block type="variables_get"><field name="VAR" id="last_tick">Last Tick</field></block></value><value name="B"><block type="variables_get"><field name="VAR" id="bb_mid">BB Middle</field></block></value></block></value>
+                                               <value name="B"><block type="logic_compare"><field name="OP">GT</field><value name="A"><block type="variables_get"><field name="VAR" id="rsi_val">RSI Value</field></block></value><value name="B"><block type="math_number"><field name="NUM">55</field></block></value></block></value>
+                                             </block>
+                                           </value>
+                                           <statement name="DO0">
+                                              <block type="purchase" id="buy_call"><field name="PURCHASE_LIST">CALL</field><field name="ALLOW_BULK_PURCHASE">no</field><field name="NUM_TRADES">1</field></block>
+                                           </statement>
+                                           <value name="IF1">
+                                             <block type="logic_operation">
+                                               <field name="OP">AND</field>
+                                               <value name="A"><block type="logic_compare"><field name="OP">LT</field><value name="A"><block type="variables_get"><field name="VAR" id="last_tick">Last Tick</field></block></value><value name="B"><block type="variables_get"><field name="VAR" id="bb_mid">BB Middle</field></block></value></block></value>
+                                               <value name="B"><block type="logic_compare"><field name="OP">LT</field><value name="A"><block type="variables_get"><field name="VAR" id="rsi_val">RSI Value</field></block></value><value name="B"><block type="math_number"><field name="NUM">45</field></block></value></block></value>
+                                             </block>
+                                           </value>
+                                           <statement name="DO1">
+                                              <block type="purchase" id="buy_put"><field name="PURCHASE_LIST">PUT</field><field name="ALLOW_BULK_PURCHASE">no</field><field name="NUM_TRADES">1</field></block>
+                                           </statement>
+                                        </block>
+                                      </next>
+                                    </block>
+                                 </next>
+                               </block>
+                             </next>
+                           </block>
+                         </next>
+                       </block>
+                     </next>
+                   </block>
+                 </next>
+               </block>
             </next>
           </block>
-        </statement>
-        <statement name="ELSE">
-          <block type="notify" id="notify_bad">
-            <field name="NOTIFICATION_TYPE">warn</field>
-            <field name="NOTIFICATION_SOUND">silent</field>
-            <value name="MESSAGE">
-              <block type="text"><field name="TEXT">Market conditions unfavorable: Low volume activity.</field></block>
-            </value>
-          </block>
-        </statement>
+        </next>
       </block>
     </statement>
   </block>
-  <block type="after_purchase" id="after" x="0" y="1600">
+  <block type="after_purchase" id="after" x="0" y="1800">
     <statement name="AFTERPURCHASE_STACK">
-      <block type="variables_set" id="update_cs">
-        <field name="VAR" id="current_stake">Current Stake</field>
+      <block type="variables_set" id="update_total_profit">
+        <field name="VAR" id="total_profit">Total Profit</field>
         <value name="VALUE">
-          <block type="martingaleWithCompounding">
-            <field name="STRATEGY">standard</field>
-            <value name="BASE_STAKE"><block type="variables_get"><field name="VAR" id="stake">Stake</field></block></value>
-            <value name="MULTIPLIER"><block type="variables_get"><field name="VAR" id="multiplier">Multiplier</field></block></value>
-            <value name="PROFIT"><block type="read_details"><field name="DETAIL_INDEX">4</field></block></value>
+          <block type="math_arithmetic">
+            <field name="OP">ADD</field>
+            <value name="A"><block type="variables_get"><field name="VAR" id="total_profit">Total Profit</field></block></value>
+            <value name="B"><block type="read_details"><field name="DETAIL_INDEX">4</field></block></value>
           </block>
         </value>
         <next>
-          <block type="trade_again"></block>
+          <block type="controls_if" id="check_result_martingale">
+            <mutation else="1"></mutation>
+            <value name="IF0"><block type="contract_check_result"><field name="CHECK_RESULT">win</field></block></value>
+            <statement name="DO0">
+              <block type="variables_set" id="reset_stake">
+                <field name="VAR" id="current_stake">Current Stake</field>
+                <value name="VALUE"><block type="variables_get"><field name="VAR" id="stake">Stake</field></block></value>
+              </block>
+            </statement>
+            <statement name="ELSE">
+              <block type="variables_set" id="martingale">
+                <field name="VAR" id="current_stake">Current Stake</field>
+                <value name="VALUE">
+                  <block type="math_arithmetic">
+                    <field name="OP">MULTIPLY</field>
+                    <value name="A"><block type="variables_get"><field name="VAR" id="current_stake">Current Stake</field></block></value>
+                    <value name="B"><block type="variables_get"><field name="VAR" id="multiplier">Multiplier</field></block></value>
+                  </block>
+                </value>
+              </block>
+            </statement>
+            <next>
+               <block type="controls_if" id="check_stops">
+                  <mutation elseif="1"></mutation>
+                  <value name="IF0">
+                    <block type="logic_compare">
+                      <field name="OP">GTE</field>
+                      <value name="A"><block type="variables_get"><field name="VAR" id="total_profit">Total Profit</field></block></value>
+                      <value name="B"><block type="variables_get"><field name="VAR" id="target_profit">Target Profit</field></block></value>
+                    </block>
+                  </value>
+                  <statement name="DO0">
+                    <block type="text_print"><value name="TEXT"><block type="text"><field name="TEXT">Target Profit Reached!</field></block></value></block>
+                  </statement>
+                  <value name="IF1">
+                     <block type="logic_compare">
+                       <field name="OP">LTE</field>
+                       <value name="A"><block type="variables_get"><field name="VAR" id="total_profit">Total Profit</field></block></value>
+                       <value name="B">
+                          <block type="math_single">
+                            <field name="OP">NEG</field>
+                            <value name="NUM"><block type="variables_get"><field name="VAR" id="stop_loss">Stop Loss</field></block></value>
+                          </block>
+                       </value>
+                     </block>
+                  </value>
+                  <statement name="DO1">
+                     <block type="text_print"><value name="TEXT"><block type="text"><field name="TEXT">Stop Loss Hit!</field></block></value></block>
+                  </statement>
+                  <next>
+                     <block type="trade_again"></block>
+                  </next>
+               </block>
+            </next>
+          </block>
         </next>
       </block>
     </statement>

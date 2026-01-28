@@ -11,7 +11,7 @@ import {
     LabelPairedSlidersCaptionRegularIcon,
     LabelPairedFolderOpenCaptionRegularIcon,
     LabelPairedChartLineCaptionRegularIcon,
-    LabelPairedCircleBoltCaptionRegularIcon,
+    LabelPairedCircleDotCaptionRegularIcon,
 } from '@deriv/quill-icons/LabelPaired';
 import { DBOT_TABS } from '@/constants/bot-contents';
 
@@ -93,7 +93,7 @@ const Cards = observer(({ search_query, handleTabChange }: TCardProps) => {
         {
             id: 'easy-tool',
             title: localize('Easy Tool'),
-            icon: LabelPairedCircleBoltCaptionRegularIcon,
+            icon: LabelPairedCircleDotCaptionRegularIcon,
             description: localize('Simple analysis tools for quick trading decisions'),
             tabIndex: DBOT_TABS.EASY_TOOL,
             tag: localize('New'),

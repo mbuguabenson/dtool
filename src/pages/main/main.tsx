@@ -43,7 +43,7 @@ const FreeBotsTab = lazy(() => import('../free-bots/free-bots-tab'));
 const EasyTool = lazy(() => import('../easy-tool/index'));
 const Strategies = lazy(() => import('../strategies/index'));
 const AnalysisTool = lazy(() => import('../analysis-tool/index'));
-const AutoTrader = lazy(() => import('../auto-trader/index'));
+
 const Tutorials = lazy(() => import('../tutorials/tutorials'));
 const SmartAuto24 = lazy(() => import('../circles-analysis/index'));
 const Settings = lazy(() => import('../settings/index'));
@@ -472,25 +472,7 @@ const AppWrapper = observer(() => {
                                     </Suspense>
                                 </PageContentWrapper>
                             </div>
-                            <div
-                                label={
-                                    <div className='main__tabs-label'>
-                                        <LabelPairedLightbulbCaptionRegularIcon
-                                            height='20px'
-                                            width='20px'
-                                            fill='var(--text-general)'
-                                        />
-                                        <Localize i18n_default_text='Auto Trader' />
-                                    </div>
-                                }
-                                id='id-auto-trader'
-                            >
-                                <PageContentWrapper>
-                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                        <AutoTrader />
-                                    </Suspense>
-                                </PageContentWrapper>
-                            </div>
+
                             <div
                                 label={
                                     <div className='main__tabs-label'>

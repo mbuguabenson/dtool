@@ -26,8 +26,10 @@ export default Engine =>
                         this.checkProposalReady();
                     }
                     const lastTick = ticks.slice(-1)[0];
-                    const { epoch } = lastTick;
-                    this.store.dispatch({ type: constants.NEW_TICK, payload: epoch });
+                    if (lastTick) {
+                        const { epoch } = lastTick;
+                        this.store.dispatch({ type: constants.NEW_TICK, payload: epoch });
+                    }
                 };
 
                 const key = await ticksService.monitor({ symbol, callback });

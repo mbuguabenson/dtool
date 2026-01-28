@@ -48,36 +48,7 @@ const SmartTrading = observer(() => {
     return (
         <div className='smart-trading'>
             <div className='smart-trading__sub-tabs'>
-                <button
-                    className={`sub-tab ${active_subtab === 'speed' ? 'active' : ''}`}
-                    onClick={() => smart_trading.setActiveSubtab('speed')}
-                >
-                    🚀 Speed Bot
-                </button>
-                <button
-                    className={`sub-tab ${active_subtab === 'scp' ? 'active' : ''}`}
-                    onClick={() => smart_trading.setActiveSubtab('scp')}
-                >
-                    🤖 AutoTrader
-                </button>
-                <button
-                    className={`sub-tab ${active_subtab === 'vsense_turbo' ? 'active' : ''}`}
-                    onClick={() => smart_trading.setActiveSubtab('vsense_turbo')}
-                >
-                    💎 V-SENSE™ Turbo
-                </button>
-                <button
-                    className={`sub-tab ${active_subtab === 'bulk' ? 'active' : ''}`}
-                    onClick={() => smart_trading.setActiveSubtab('bulk')}
-                >
-                    📦 Bulk Trading
-                </button>
-                <button
-                    className={`sub-tab ${active_subtab === 'money_maker_ultra' ? 'active' : ''}`}
-                    onClick={() => smart_trading.setActiveSubtab('money_maker_ultra')}
-                >
-                    💎 ULTRA
-                </button>
+                {/* Tabs hidden as per user request */}
             </div>
 
             {active_subtab === 'bulk' && <BulkTradingView />}

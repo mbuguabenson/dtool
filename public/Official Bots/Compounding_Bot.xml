@@ -175,9 +175,15 @@
                           </block>
                         </statement>
                         <statement name="ELSE">
-                          <block type="variables_set" id="reset_c_stake">
+                          <block type="variables_set" id="martingale_logic">
                             <field name="VAR" id="current_stake">Current Stake</field>
-                            <value name="VALUE"><block type="variables_get"><field name="VAR" id="initial_stake">Initial Stake</field></block></value>
+                            <value name="VALUE">
+                              <block type="math_arithmetic">
+                                <field name="OP">MULTIPLY</field>
+                                <value name="A"><block type="variables_get"><field name="VAR" id="current_stake">Current Stake</field></block></value>
+                                <value name="B"><block type="math_number"><field name="NUM">2.1</field></block></value>
+                              </block>
+                            </value>
                           </block>
                         </statement>
                         <next>
