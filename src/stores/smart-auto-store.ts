@@ -422,15 +422,32 @@ export default class SmartAutoStore {
         let contract_type = '';
         const prediction = config.prediction ?? 4;
 
-        if (bot_type === 'even_odd') contract_type = 'DIGITEVEN'; 
-        else if (bot_type === 'over_under') contract_type = prediction >= 5 ? 'DIGITUNDER' : 'DIGITOVER'; 
-        else if (bot_type === 'smart_auto_24') contract_type = 'DIGITOVER';
-        else if (bot_type === 'differs') contract_type = 'DIGITDIFF';
-        else if (bot_type === 'matches') contract_type = 'DIGITMATCH';
-        else if (bot_type === 'rise_fall') contract_type = 'CALL'; 
+        switch (bot_type) {
+            case 'even_odd':
+                contract_type = 'DIGITEVEN';
+                break;
+            case 'over_under':
+                contract_type = prediction >= 5 ? 'DIGITUNDER' : 'DIGITOVER';
+                break;
+            case 'smart_auto_24':
+                contract_type = 'DIGITOVER';
+                break;
+            case 'differs':
+                contract_type = 'DIGITDIFF';
+                break;
+            case 'matches':
+                contract_type = 'DIGITMATCH';
+                break;
+            case 'rise_fall':
+                contract_type = 'CALL';
+                break;
+        }
 
         this.executeContract(contract_type, prediction, config);
-        setTimeout(() => runInAction(() => { config.is_running = false; this.active_bot = null; }), 1000);
+        setTimeout(() => runInAction(() => { 
+            config.is_running = false; 
+            this.active_bot = null; 
+        }), 1000);
     };
 
     private executeContract = async (contract_type: string, prediction: number, config: TBotConfig) => {

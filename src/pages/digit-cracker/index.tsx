@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import { runInAction, autorun } from 'mobx';
-import { useStores } from '@/stores/root-store';
+import { useStore } from '@/hooks/useStore';
 import { 
     LabelPairedPlayMdFillIcon, 
     LabelPairedSquareMdFillIcon, 
@@ -10,7 +10,7 @@ import {
 import './digit-cracker.scss';
 
 const DigitCracker = observer(() => {
-    const { smart_auto, analysis, client } = useStores();
+    const { smart_auto, analysis, client } = useStore();
     const [activeStrategy, setActiveStrategy] = useState<'even_odd' | 'differs' | 'matches' | 'over_under'>('even_odd');
     const [activeLogTab, setActiveLogTab] = useState<'summary' | 'transactions' | 'journal'>('summary');
     const logRef = useRef<HTMLDivElement>(null);
@@ -200,10 +200,10 @@ const DigitCracker = observer(() => {
 
     const renderLogContent = () => {
         switch (activeLogTab) {
-            case 'summary':
-                const totalTrades = logs.filter(l => l.type === 'trade' || l.type === 'success' || l.type === 'error').length;
-                const wins = logs.filter(l => l.type === 'success').length;
-                const losses = logs.filter(l => l.type === 'error').length;
+            case 'summary': {
+                const totalTrades = logs.filter((l: any) => l.type === 'trade' || l.type === 'success' || l.type === 'error').length;
+                const wins = logs.filter((l: any) => l.type === 'success').length;
+                const losses = logs.filter((l: any) => l.type === 'error').length;
                 const winRate = totalTrades > 0 ? ((wins / totalTrades) * 100).toFixed(1) : '0.0';
                 
                 return (
@@ -240,9 +240,10 @@ const DigitCracker = observer(() => {
                         </div>
                     </div>
                 );
+            }
             
-            case 'transactions':
-                const tradeLogs = logs.filter(l => l.type === 'trade' || l.type === 'success' || l.type === 'error');
+            case 'transactions': {
+                const tradeLogs = logs.filter((l: any) => l.type === 'trade' || l.type === 'success' || l.type === 'error');
                 return (
                     <div className='transactions-content'>
                         {tradeLogs.length === 0 ? (
@@ -259,6 +260,7 @@ const DigitCracker = observer(() => {
                         )}
                     </div>
                 );
+            }
             
             case 'journal':
                 return (
@@ -324,7 +326,7 @@ const DigitCracker = observer(() => {
                 <div className='header-stats'>
                     <div className='stat-card balance'>
                         <span className='label'>Balance</span>
-                        <span className='value'>${typeof client.balance === 'number' ? client.balance.toFixed(2) : '0.00'}</span>
+                        <span className='value'>${typeof client.balance === 'string' ? parseFloat(client.balance).toFixed(2) : '0.00'}</span>
                     </div>
                     <div className='stat-card market'>
                         <span className='label'>Market</span>
