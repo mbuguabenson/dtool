@@ -44,6 +44,9 @@ export default class AnalysisStore {
     @observable accessor over_under_threshold = 5;
     @observable accessor match_diff_digit = 6;
     @observable accessor markets: { group: string; items: { value: string; label: string }[] }[] = [];
+    
+    @observable accessor subscription_id: string | null = null;
+    private msg_subscription: any = null;
 
     constructor(root_store: RootStore) {
         makeObservable(this);
@@ -55,6 +58,9 @@ export default class AnalysisStore {
                 this.is_connected = !!is_socket_opened;
                 if (is_socket_opened) {
                     this.fetchMarkets();
+                    this.subscribeToTicks(); // Auto-subscribe if connected
+                } else {
+                    this.unsubscribeFromTicks(); // Clean up on disconnect
                 }
             }
         );
@@ -66,7 +72,95 @@ export default class AnalysisStore {
 
     @action
     init = async () => {
-        // No longer need manual subscription here, handled by component
+        if (this.is_connected) {
+            this.subscribeToTicks();
+        }
+    };
+
+    @action
+    handleTick = (tick: any) => {
+        if (tick.symbol !== this.symbol) return;
+        
+        const price = tick.quote;
+        const price_str = String(price);
+        const last_char = price_str[price_str.length - 1];
+        const new_digit = parseInt(last_char);
+
+        if (!isNaN(new_digit)) {
+            const current_ticks = [...this.ticks];
+            current_ticks.push(new_digit);
+            if (current_ticks.length > 1000) current_ticks.shift();
+            
+            this.updateDigitStats(current_ticks, price);
+        }
+    };
+
+    @action
+    subscribeToTicks = async () => {
+        if (!this.is_connected || !this.symbol) return;
+        
+        this.unsubscribeFromTicks();
+
+        try {
+            // Setup listener
+            this.msg_subscription = api_base.api.onMessage().subscribe((response: any) => {
+                if (response.msg_type === 'tick') {
+                    this.handleTick(response.tick);
+                }
+            });
+
+            // Get history
+            const history = await api_base.api.send({
+                ticks_history: this.symbol,
+                adjust_start_time: 1,
+                count: 100,
+                end: 'latest',
+                style: 'ticks',
+            });
+
+            if (history.ticks_history) {
+                const prices = history.ticks_history.prices || [];
+                const last_digits = prices.map((p: any) => {
+                     const s = String(p);
+                     return parseInt(s[s.length-1]);
+                }).filter((d: any) => !isNaN(d));
+                
+                runInAction(() => {
+                    this.ticks = last_digits;
+                    this.current_price = prices[prices.length - 1];
+                    this.updateStats();
+                });
+            }
+
+            // Subscribe
+            const sub = await api_base.api.send({
+                ticks: this.symbol,
+                subscribe: 1
+            });
+            
+            if (sub.subscription) {
+                runInAction(() => {
+                    this.subscription_id = sub.subscription.id;
+                });
+            }
+
+        } catch (e) {
+            console.error('Subscribe error:', e);
+        }
+    };
+
+    @action
+    unsubscribeFromTicks = () => {
+        if (this.subscription_id) {
+            api_base.api.send({ forget: this.subscription_id }).catch(() => {});
+            runInAction(() => {
+                this.subscription_id = null;
+            });
+        }
+        if (this.msg_subscription) {
+            this.msg_subscription.unsubscribe();
+            this.msg_subscription = null;
+        }
     };
 
     @action
@@ -177,6 +271,8 @@ export default class AnalysisStore {
         this.over_under_history = [];
         this.matches_differs_history = [];
         this.rise_fall_history = [];
+        
+        this.subscribeToTicks(); // Resubscribe to new symbol
     };
 
     @action

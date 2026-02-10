@@ -22,99 +22,17 @@ const DigitCracker = observer(() => {
 
     // Initialize markets and WebSocket feed
     useEffect(() => {
-        const initializeFeed = async () => {
-            try {
-                // Fetch markets if not already loaded
-                if (markets.length === 0 && analysis.is_connected) {
-                    await analysis.fetchMarkets();
-                }
-
-                // Start tick subscription
-                if (api_base.api && symbol) {
-                    // Unsubscribe from previous
-                    if (subscriptionRef.current) {
-                        api_base.api.send({ forget: subscriptionRef.current }).catch(() => {});
-                    }
-
-                    // Subscribe to ticks
-                    const response = await api_base.api.send({
-                        ticks_history: symbol,
-                        adjust_start_time: 1,
-                        count: 60,
-                        end: 'latest',
-                        start: 1,
-                        style: 'ticks',
-                    });
-
-                    if (response.ticks_history) {
-                        const prices = response.ticks_history.prices || [];
-                        const last_digits = prices.map((p: number) => {
-                            const price_str = String(p);
-                            return parseInt(price_str[price_str.length - 1]);
-                        }).filter((d: number) => !isNaN(d));
-                        
-                        const lastPrice = prices[prices.length - 1];
-                        analysis.updateDigitStats(last_digits, lastPrice);
-                    }
-
-                    // Subscribe to live ticks
-                    const tick_response = await api_base.api.send({
-                        ticks: symbol,
-                        subscribe: 1,
-                    });
-
-                    if (tick_response.subscription) {
-                        subscriptionRef.current = tick_response.subscription.id;
-                    }
-                }
-            } catch (error) {
-                // Silently handle errors to keep console clean
-            }
-        };
-
-        initializeFeed();
+        // Subscribe to ticks via store
+        analysis.subscribeToTicks();
 
         return () => {
-            // Cleanup subscription on unmount
-            if (subscriptionRef.current && api_base.api) {
-                api_base.api.send({ forget: subscriptionRef.current }).catch(() => {});
-            }
+             // Cleanup subscription via store
+            analysis.unsubscribeFromTicks();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [symbol, analysis.is_connected]);
-
-    // Listen for tick updates
-    useEffect(() => {
-        if (!api_base.api || !analysis.is_connected) {
-            console.log('DigitCracker: waiting for connection...');
-            return;
-        }
-
-        console.log('DigitCracker: Subscribing to tick updates');
-
-        const tickHandler = (response: any) => {
-            if (response.tick && response.tick.quote) {
-                const price = response.tick.quote;
-                const price_str = String(price);
-                const last_char = price_str[price_str.length - 1];
-                const new_digit = parseInt(last_char);
-
-                if (!isNaN(new_digit)) {
-                    const current_ticks = [...analysis.ticks];
-                    current_ticks.push(new_digit);
-                    if (current_ticks.length > 1000) current_ticks.shift();
-                    console.log('Live digit updated:', new_digit, 'Total ticks:', current_ticks.length);
-                    analysis.updateDigitStats(current_ticks, price);
-                }
-            }
-        };
-
-        const subscription = api_base.api.onMessage().subscribe(tickHandler);
-
-        return () => {
-            subscription.unsubscribe();
-        };
     }, [analysis, analysis.is_connected]);
+
+    // Auto-scroll logs
 
     // Auto-scroll logs
     useEffect(() => {
@@ -240,6 +158,18 @@ const DigitCracker = observer(() => {
                         <label>Tick Duration</label>
                         <input type='number' value={config.ticks} onChange={(e) => smart_auto.updateConfig(activeStrategy, 'ticks', parseInt(e.target.value))} />
                     </div>
+                    {['over_under', 'matches', 'differs'].includes(activeStrategy) && (
+                        <div className='input-field'>
+                            <label>Prediction</label>
+                            <input 
+                                type='number' 
+                                min='0' 
+                                max='9' 
+                                value={config.prediction} 
+                                onChange={(e) => smart_auto.updateConfig(activeStrategy, 'prediction', parseInt(e.target.value))} 
+                            />
+                        </div>
+                    )}
                 </div>
 
                 <div className='toggles-row'>
@@ -494,18 +424,52 @@ const DigitCracker = observer(() => {
                                     </div>
                                     {percentages.under > 55 && (
                                         <div className='power-item suggestion'>
-                                            <span className='label'>💡 Best Prediction:</span>
-                                            <span className='value' style={{ color: '#10b981', fontWeight: 'bold' }}>
-                                                Trade UNDER 6, 7, 8, or 9
-                                            </span>
+                                            <span className='label'>💡 Best Prediction (Trade UNDER):</span>
+                                            <div className='prediction-buttons' style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                                                {[6, 7, 8, 9].map(p => (
+                                                    <button 
+                                                        key={p} 
+                                                        className={`pred-btn ${smart_auto.over_under_config.prediction === p ? 'active' : ''}`}
+                                                        style={{
+                                                            padding: '0.5rem 1rem',
+                                                            borderRadius: '8px',
+                                                            background: smart_auto.over_under_config.prediction === p ? '#10b981' : '#1f2937',
+                                                            color: '#fff',
+                                                            border: 'none',
+                                                            cursor: 'pointer',
+                                                            fontWeight: 'bold'
+                                                        }}
+                                                        onClick={() => smart_auto.updateConfig('over_under', 'prediction', p)}
+                                                    >
+                                                        {p}
+                                                    </button>
+                                                ))}
+                                            </div>
                                         </div>
                                     )}
                                     {percentages.over > 55 && (
                                         <div className='power-item suggestion'>
-                                            <span className='label'>💡 Best Prediction:</span>
-                                            <span className='value' style={{ color: '#10b981', fontWeight: 'bold' }}>
-                                                Trade OVER 0, 1, 2, or 3
-                                            </span>
+                                            <span className='label'>💡 Best Prediction (Trade OVER):</span>
+                                            <div className='prediction-buttons' style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                                                {[0, 1, 2, 3].map(p => (
+                                                    <button 
+                                                        key={p} 
+                                                        className={`pred-btn ${smart_auto.over_under_config.prediction === p ? 'active' : ''}`}
+                                                        style={{
+                                                            padding: '0.5rem 1rem',
+                                                            borderRadius: '8px',
+                                                            background: smart_auto.over_under_config.prediction === p ? '#10b981' : '#1f2937',
+                                                            color: '#fff',
+                                                            border: 'none',
+                                                            cursor: 'pointer',
+                                                            fontWeight: 'bold'
+                                                        }}
+                                                        onClick={() => smart_auto.updateConfig('over_under', 'prediction', p)}
+                                                    >
+                                                        {p}
+                                                    </button>
+                                                ))}
+                                            </div>
                                         </div>
                                     )}
                                     <div className='power-item prediction'>
