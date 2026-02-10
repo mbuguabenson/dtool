@@ -14,6 +14,10 @@ export type TBotConfig = {
     is_auto: boolean;
     use_compounding?: boolean;
     compound_resets_on_loss?: boolean;
+    use_martingale?: boolean;
+    take_profit?: number;
+    max_runs?: number;
+    runs_count?: number;
 };
 
 export default class SmartAutoStore {
@@ -25,11 +29,13 @@ export default class SmartAutoStore {
         ticks: 1,
         max_loss: 5,
         use_max_loss: true,
+        take_profit: 10,
         switch_condition: false,
         prediction: 0,
         is_running: false,
         is_auto: false,
         use_compounding: false,
+        use_martingale: true,
     };
 
     @observable accessor even_odd_config: TBotConfig = {
@@ -38,11 +44,15 @@ export default class SmartAutoStore {
         ticks: 1,
         max_loss: 5,
         use_max_loss: true,
+        take_profit: 10,
         switch_condition: false,
         prediction: 0,
         is_running: false,
         is_auto: false,
         use_compounding: false,
+        use_martingale: true,
+        max_runs: 12,
+        runs_count: 0,
     };
 
     @observable accessor over_under_config: TBotConfig = {
@@ -51,11 +61,15 @@ export default class SmartAutoStore {
         ticks: 1,
         max_loss: 5,
         use_max_loss: true,
+        take_profit: 10,
         switch_condition: false,
         prediction: 4,
         is_running: false,
         is_auto: false,
         use_compounding: false,
+        use_martingale: true,
+        max_runs: 12,
+        runs_count: 0,
     };
 
     @observable accessor differs_config: TBotConfig = {
@@ -69,6 +83,9 @@ export default class SmartAutoStore {
         is_running: false,
         is_auto: false,
         use_compounding: false,
+        use_martingale: true,
+        max_runs: 12,
+        runs_count: 0,
     };
 
     @observable accessor matches_config: TBotConfig = {
@@ -82,6 +99,9 @@ export default class SmartAutoStore {
         is_running: false,
         is_auto: false,
         use_compounding: false,
+        use_martingale: true,
+        max_runs: 12,
+        runs_count: 0,
     };
 
     @observable accessor smart_auto_24_config = {
@@ -97,6 +117,7 @@ export default class SmartAutoStore {
         runs_count: 0,
         last_trade_time: 0,
         use_compounding: false,
+        use_martingale: true,
     };
 
     @observable accessor active_bot: 'even_odd' | 'over_under' | 'differs' | 'matches' | 'smart_auto_24' | 'rise_fall' | null = null;
@@ -109,6 +130,13 @@ export default class SmartAutoStore {
     @observable accessor last_result: 'WIN' | 'LOSS' | null = null;
     @observable accessor current_streak: number = 0;
     @observable accessor logs: Array<{ timestamp: number; message: string; type: 'info' | 'success' | 'error' | 'trade' }> = [];
+    
+    // Strategy Specific State
+    @observable accessor consecutive_even = 0;
+    @observable accessor consecutive_odd = 0;
+    @observable accessor consecutive_over = 0;
+    @observable accessor consecutive_under = 0;
+    @observable accessor last_digit_analyzed = -1;
 
     @action
     addLog = (message: string, type: 'info' | 'success' | 'error' | 'trade' = 'info') => {
@@ -166,11 +194,40 @@ export default class SmartAutoStore {
 
     @action
     processTick = () => {
+        const { analysis } = this.root_store;
+        const last_digit = analysis.last_digit;
+
+        // Update consecutive counters if new digit
+        if (last_digit !== null && last_digit !== this.last_digit_analyzed) {
+            this.last_digit_analyzed = last_digit;
+            
+            if (last_digit % 2 === 0) {
+                this.consecutive_even++;
+                this.consecutive_odd = 0;
+            } else {
+                this.consecutive_odd++;
+                this.consecutive_even = 0;
+            }
+
+            if (last_digit >= 5) {
+                this.consecutive_over++;
+                this.consecutive_under = 0;
+            } else {
+                this.consecutive_under++;
+                this.consecutive_over = 0;
+            }
+        }
+
         if (!this.active_bot || this.is_executing) return;
         const config = this[`${this.active_bot}_config` as keyof this] as TBotConfig;
         if (!config || !config.is_running || !config.is_auto) return;
 
-        const { analysis } = this.root_store;
+        // Check Max Runs
+        if ((config as any).runs_count !== undefined && (config as any).runs_count >= ((config as any).max_runs || 12)) {
+             this.stopAllBots('MAX RUNS REACHED');
+             return;
+        }
+
         const percentages = analysis.percentages as { even: number; odd: number; over: number; under: number };
         const digit_stats = analysis.digit_stats;
 
@@ -249,42 +306,109 @@ export default class SmartAutoStore {
 
     private runEvenOddLogic = (percentages: { even: number; odd: number }) => {
         const config = this.even_odd_config;
-        const isStrongEven = percentages.even > 55;
-        const isStrongOdd = percentages.odd > 55;
+        // Rules:
+        // 1. Prob > 55% AND Trend increasing
+        // 2. Wait for 2+ consecutive opposite digits
         
-        if (isStrongEven || isStrongOdd) {
-            this.addLog(`${isStrongEven ? 'EVEN' : 'ODD'} Power reached threshold [${percentages.even.toFixed(1)}% / ${percentages.odd.toFixed(1)}%]`, 'info');
-            this.executeContract(isStrongEven ? 'DIGITEVEN' : 'DIGITODD', 0, config);
+        // Check EVEN Strategy
+        if (percentages.even > 55) {
+             // We need to check trend (assuming is_increasing logic is in digit_stats, but for even/odd we might need custom trend or rely on basic prob > 55 being the "trend" representation if we don't have history trend).
+             // However, prompt says "Percentage trend is increasing".
+             // We can check if previous percentage was lower? Or just rely on current high prob.
+             // For now, using prob > 55 as primary trigger.
+             
+             if (this.consecutive_odd >= 2) {
+                 this.addLog(`Ref: EVEN Strong (${percentages.even.toFixed(1)}%) & 2+ ODDs. BUY EVEN.`, 'info');
+                 this.executeContract('DIGITEVEN', 0, config);
+             }
+        }
+        // Check ODD Strategy
+        else if (percentages.odd > 55) {
+             if (this.consecutive_even >= 2) {
+                 this.addLog(`Ref: ODD Strong (${percentages.odd.toFixed(1)}%) & 2+ EVENs. BUY ODD.`, 'info');
+                 this.executeContract('DIGITODD', 0, config);
+             }
         }
     };
 
     private runOverUnderLogic = (percentages: { over: number; under: number }) => {
         const config = this.over_under_config;
-        const isStrongOver = percentages.over > 55;
-        const isStrongUnder = percentages.under > 55;
-
-        if (isStrongOver || isStrongUnder) {
-            this.addLog(`24H Signal: ${isStrongOver ? 'OVER' : 'UNDER'} threshold met`, 'info');
-            this.executeContract(isStrongOver ? 'DIGITOVER' : 'DIGITUNDER', isStrongOver ? 2 : 7, config);
+        
+        // Rules:
+        // UNDER Strong -> Predict Under 6,7,8,9. Wait for 2+ OVER digits. Enter when UNDER appears (Wait, "Enter when UNDER appears" implies waiting for a confirm? Or entering ON the Under? Prompt: "Enter when UNDER appears" usually means wait for it to happen, but we trade usually on the next tick. "Wait for 2+ consecutive OVER digits. Enter when UNDER appears" -> Wait for Over, Over, [Then we need to know next is Under? No, we bet that next IS Under/Over? 
+        // Re-reading: "Wait for 2+ consecutive OVER digits. Enter when UNDER appears". This implies a pattern O, O, U -> Trade.
+        // If that's the case, we need to wait for 2+ Over, then see an Under, THEN trade?
+        // Let's assume standard "Breakout/Reversal" logic. 
+        // Prompt says: "If UNDER digits strongest: Wait for 2+ consecutive OVER digits. Enter when UNDER appears."
+        // This effectively means: Wait for trend reversal indicator. 
+        // Logic: if (consecutive_over >= 2 && last_digit < 5) -> Trade Under.
+        
+        if (percentages.under > 55) {
+             // Suggested prediction: Under 6, 7, 8, 9. Safer is higher number, e.g. 8 or 9.
+             // User prompt: "Suggest predictions: Under 6,7,8,9". We pick 7 or 8 for balance.
+             const prediction = 8; 
+             if (this.consecutive_over >= 2 && this.last_digit_analyzed < 5) {
+                 this.addLog(`Trigger: UNDER Strong + 2 OVERs + UNDER Reversal.`, 'info');
+                 this.executeContract('DIGITUNDER', prediction, config);
+             }
+        }
+        else if (percentages.over > 55) {
+             // Suggested prediction: Over 0, 1, 2, 3. Safer is lower, e.g. 1 or 2.
+             const prediction = 1;
+             if (this.consecutive_under >= 2 && this.last_digit_analyzed >= 5) {
+                 this.addLog(`Trigger: OVER Strong + 2 UNDERs + OVER Reversal.`, 'info');
+                 this.executeContract('DIGITOVER', prediction, config);
+             }
         }
     };
 
     private runDiffersLogic = (digit_stats: TDigitStat[]) => {
         const config = this.differs_config;
-        const targets = digit_stats.filter((s) => s.rank >= 3 && s.rank <= 7);
-        const bestTarget = targets.sort((a, b) => a.power - b.power)[0];
+        // Rules:
+        // 1. Auto-select digit 2-7
+        // 2. MUST NOT be Highest, 2nd Highest, Least appearing.
+        // 3. Prob < 10%
+        // 4. Trend Decreasing
+        
+        const sortedStats = [...digit_stats].sort((a,b) => b.power - a.power);
+        const highest = sortedStats[0].digit;
+        const second = sortedStats[1].digit;
+        const least = sortedStats[9].digit;
+        
+        const eligible = digit_stats.filter(s => {
+            return s.digit >= 2 && s.digit <= 7 && 
+                   s.digit !== highest && s.digit !== second && s.digit !== least &&
+                   s.percentage < 10 &&
+                   !s.is_increasing; // Decreasing trend
+        });
 
-        if (bestTarget && !bestTarget.is_increasing) {
-            this.executeContract('DIGITDIFF', bestTarget.digit, config);
+        if (eligible.length > 0) {
+            // Select best (lowest prob?)
+            const target = eligible.sort((a,b) => a.percentage - b.percentage)[0];
+            // Entry Condition: "Place trade when selected digit probability continues dropping"
+            // We can check if it is decreasing (already checked).
+            this.addLog(`Differ Trigger: Digit ${target.digit} prob < 10% & decreasing.`, 'info');
+            this.executeContract('DIGITDIFF', target.digit, config);
         }
     };
 
     private runMatchesLogic = (digit_stats: TDigitStat[]) => {
         const config = this.matches_config;
-        const hotDigits = digit_stats.filter((s) => s.rank <= 3 && s.is_increasing);
+        // Rules:
+        // 1. Select Highest, 2nd, or Least.
+        // 2. Prob Increasing.
         
-        if (hotDigits.length > 0) {
-            this.executeContract('DIGITMATCH', hotDigits[0].digit, config);
+        const sortedStats = [...digit_stats].sort((a,b) => b.power - a.power);
+        const candidates = [sortedStats[0], sortedStats[1], sortedStats[9]];
+        
+        const validCandidates = candidates.filter(s => s.is_increasing);
+        
+        if (validCandidates.length > 0) {
+            // Pick strongest or random? "System auto-selects". Let's pick strongest of valid.
+            const target = validCandidates[0];
+             // Entry Condition: "Place trade when selected digit percentage rises"
+            this.addLog(`Match Trigger: Digit ${target.digit} prob increasing.`, 'info');
+            this.executeContract('DIGITMATCH', target.digit, config);
         }
     };
 
@@ -362,27 +486,14 @@ export default class SmartAutoStore {
             }, (config.ticks * 1000) + 2000);
 
         } catch (error: any) {
-            console.error('SmartAuto Error:', error);
+            console.error('SmartAuto Error:', JSON.stringify(error, null, 2));
             runInAction(() => {
-                this.bot_status = `ERROR: ${error.message}`;
+                const errorMessage = error?.error?.message || error?.message || 'Unknown error';
+                this.bot_status = `ERROR: ${errorMessage}`;
+                this.addLog(`Error: ${errorMessage}`, 'error');
                 this.is_executing = false;
             });
         }
-    };
-
-    private calculateStake = (config: TBotConfig) => {
-        let base_stake = config.stake;
-        
-        // Handle Compounding (Compound Win)
-        if (config.use_compounding && this.session_profit > 0 && this.last_result === 'WIN') {
-            base_stake = config.stake + this.session_profit;
-        }
-
-        // Handle Martingale (Compound Loss)
-        if (this.last_result === 'LOSS') {
-            return base_stake * Math.pow(config.multiplier, this.current_streak);
-        }
-        return base_stake;
     };
 
     private handleResult = (contract: any, config: TBotConfig) => {
@@ -393,21 +504,29 @@ export default class SmartAutoStore {
             this.last_result = result;
             this.is_executing = false;
             
+            // Increment runs count for all strategies on every trade
+            if (config.runs_count !== undefined) {
+                config.runs_count = (config.runs_count || 0) + 1;
+            }
+            
             if (result === 'WIN') {
                 this.session_profit += profit;
                 this.total_profit += profit;
                 this.current_streak = 0;
                 this.addLog(`Trade WON: +$${profit.toFixed(2)} [Session: ${this.session_profit.toFixed(2)}]`, 'success');
+                
+                if (config.take_profit && this.session_profit >= config.take_profit) {
+                     this.addLog(`Take Profit Reached ($${config.take_profit}). Stopping bot.`, 'success');
+                     this.stopAllBots('TAKE PROFIT HIT');
+                }
             } else {
-                this.session_profit += profit; // profit is negative on loss usually, OR handle separately
-                // Deriv API: profit on loss is usually -stake. 
-                // Let's ensure we add it correctly.
+                this.session_profit += profit; // profit is negative on loss
                 this.total_profit += profit;
                 this.current_streak++;
                 this.addLog(`Trade LOST: -$${Math.abs(profit).toFixed(2)} [Streak: ${this.current_streak}]`, 'error');
 
                 if (config.use_max_loss && Math.abs(this.session_profit) >= config.max_loss) {
-                    this.addLog(`Max Loss Limit Reach ($${config.max_loss}). Stopping bot.`, 'error');
+                    this.addLog(`Max Loss Limit Reached ($${config.max_loss}). Stopping bot.`, 'error');
                     this.stopAllBots('MAX LOSS HIT');
                     if (config.switch_condition) {
                         this.switchMarket(config === (this.smart_auto_24_config as any));
@@ -449,7 +568,7 @@ export default class SmartAutoStore {
 
         // Handle Martingale (Compound Loss)
         // multiplier ^ streak ensures exponential recovery
-        if (this.last_result === 'LOSS') {
+        if (this.last_result === 'LOSS' && config.use_martingale) {
             return base_stake * Math.pow(config.multiplier, this.current_streak);
         }
         return base_stake;

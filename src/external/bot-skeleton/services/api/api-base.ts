@@ -80,6 +80,7 @@ class APIBase {
 
     onsocketopen() {
         setConnectionStatus(CONNECTION_STATUS.OPENED);
+        this.common_store?.setSocketOpened(true);
         this.reconnect_attempts = 0; // Reset on success
         if (this.reconnect_timeout) {
             clearTimeout(this.reconnect_timeout);
@@ -89,6 +90,7 @@ class APIBase {
 
     onsocketclose() {
         setConnectionStatus(CONNECTION_STATUS.CLOSED);
+        this.common_store?.setSocketOpened(false);
         this.reconnectIfNotConnected();
     }
 

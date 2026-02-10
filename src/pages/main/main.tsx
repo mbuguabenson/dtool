@@ -46,6 +46,7 @@ const AnalysisTool = lazy(() => import('../analysis-tool/index'));
 
 const Tutorials = lazy(() => import('../tutorials/tutorials'));
 const SmartAuto24 = lazy(() => import('../circles-analysis/index'));
+const DigitCracker = lazy(() => import('../digit-cracker/index'));
 const Settings = lazy(() => import('../settings/index'));
 // const DTrader = lazy(() => import('../dtrader/index')); // Removed as per request
 
@@ -89,9 +90,9 @@ const AppWrapper = observer(() => {
         'analysis_tool',
         'copy_trading',
         'strategies',
-        'auto_trader',
         'tutorials',
         'smart_auto',
+        'digit_cracker',
         'settings',
     ];
     const { isDesktop } = useDevice();
@@ -508,6 +509,25 @@ const AppWrapper = observer(() => {
                                 <PageContentWrapper>
                                     <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
                                         <SmartAuto24 />
+                                    </Suspense>
+                                </PageContentWrapper>
+                            </div>
+                            <div
+                                label={
+                                    <div className='main__tabs-label'>
+                                        <LabelPairedSlidersCaptionRegularIcon
+                                            height='20px'
+                                            width='20px'
+                                            fill='var(--text-general)'
+                                        />
+                                        <Localize i18n_default_text='Digit Cracker' />
+                                    </div>
+                                }
+                                id='id-digit-cracker'
+                            >
+                                <PageContentWrapper>
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading Digit Cracker...')} />}>
+                                        <DigitCracker />
                                     </Suspense>
                                 </PageContentWrapper>
                             </div>
