@@ -221,8 +221,13 @@ export default class TicksService {
     observe() {
         if (api_base.api && !this.messageSubscription) {
             this.messageSubscription = api_base.api.onMessage().subscribe(({ data }) => {
+                if (data.error) {
+                    console.error('[TicksService] API error:', data.error);
+                    return;
+                }
                 if (data.msg_type === 'tick') {
                     const { tick } = data;
+                    if (!tick) return; // Guard against missing tick
                     const { symbol, id } = tick;
                     if (this.ticks.has(symbol)) {
                         this.subscriptions = this.subscriptions.setIn(['tick', symbol], id);
@@ -232,6 +237,7 @@ export default class TicksService {
 
                 if (data.msg_type === 'ohlc') {
                     const { ohlc } = data;
+                    if (!ohlc) return; // Guard against missing ohlc
                     const { symbol, granularity, id } = ohlc;
                     if (this.candles.hasIn([symbol, Number(granularity)])) {
                         this.subscriptions = this.subscriptions.setIn(['ohlc', symbol, Number(granularity)], id);

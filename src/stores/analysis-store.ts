@@ -95,10 +95,14 @@ export default class AnalysisStore {
         }
     };
 
+    @observable accessor is_subscribing = false;
+
     @action
     subscribeToTicks = async () => {
         if (!this.is_connected || !this.symbol) return;
+        if (this.is_subscribing) return;
         
+        this.is_subscribing = true;
         this.unsubscribeFromTicks();
 
         try {
@@ -144,8 +148,17 @@ export default class AnalysisStore {
                 });
             }
 
-        } catch (e) {
-            console.error('Subscribe error:', e);
+        } catch (e: any) {
+            const errorCode = e?.error?.code || e?.code;
+            if (errorCode === 'AlreadySubscribed') {
+                 console.log(`[AnalysisStore] Already subscribed to ${this.symbol}, using existing stream.`);
+            } else {
+                 console.error('[AnalysisStore] Subscribe error:', e);
+            }
+        } finally {
+            runInAction(() => {
+                this.is_subscribing = false;
+            });
         }
     };
 
