@@ -1,4 +1,3 @@
-```javascript
 import { useState, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import { runInAction, autorun } from 'mobx';
@@ -11,10 +10,10 @@ import {
 import './digit-cracker.scss';
 
 const DigitCracker = observer(() => {
+    const { smart_auto, analysis, client } = useStores();
     const [activeStrategy, setActiveStrategy] = useState<'even_odd' | 'differs' | 'matches' | 'over_under'>('even_odd');
     const [activeLogTab, setActiveLogTab] = useState<'summary' | 'transactions' | 'journal'>('summary');
     const logRef = useRef<HTMLDivElement>(null);
-    const { analysis, smart_auto, client } = useStores();
 
 
     const { digit_stats, last_digit, percentages, even_odd_history, over_under_history, symbol, markets } = analysis;
