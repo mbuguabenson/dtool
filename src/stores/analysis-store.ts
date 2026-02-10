@@ -104,7 +104,7 @@ export default class AnalysisStore {
         try {
             // Setup listener
             this.msg_subscription = api_base.api.onMessage().subscribe((response: any) => {
-                if (response.msg_type === 'tick') {
+                if (response.msg_type === 'tick' && response.tick) {
                     this.handleTick(response.tick);
                 }
             });
