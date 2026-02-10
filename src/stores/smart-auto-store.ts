@@ -422,33 +422,9 @@ export default class SmartAutoStore {
         let contract_type = '';
         const prediction = config.prediction ?? 4;
 
-        if (bot_type === 'even_odd') contract_type = 'DIGITEVEN'; // User selects Even/Odd via prediction? No, Even/Odd usually has buttons for "Even" or "Odd". But if simplified, we'll assume Even if prediction even?
-        // Actually manual trade for Even/Odd usually has two buttons "Buy Even" "Buy Odd". 
-        // Here we just have "Trade Once". Let's assume based on prediction if user sets it? 
-        // Or just default to Even.
-        // Wait, Even/Odd manual trade usually requires direction.
-        // Let's assume user wants to run the strategy ONCE?
-        // Or place a manual trade?
-        // "Trade Once" button usually means run the strategy check once?
-        // If it means "Place Manual Trade", we need direction.
-        // Assuming "Trade Once" runs one iteration of strategy? No, likely manual execution.
-        // Let's defaulting to what Config says?
-        // For Even/Odd, we don't have prediction selector for Even/Odd in UI usually.
-        // Let's use Even as default for test.
         if (bot_type === 'even_odd') contract_type = 'DIGITEVEN'; 
-        else if (bot_type === 'over_under') contract_type = prediction > 4 ? 'DIGITUNDER' : 'DIGITOVER'; // Correct logic: > 4 is Under? No. Under 8 means winning if digit < 8. Over 2 means winning if digit > 2.
-        // Wait. Over/Under logic:
-        // Trade Over X: Win if digit > X.
-        // Trade Under Y: Win if digit < Y.
-        // If user predicts 8 -> likely means Under 8? Or Over 8?
-        // Usually Over/Under UI has distinct buttons.
-        // If single prediction input:
-        // If prediction is 0-4 -> Trade Over?
-        // If prediction is 5-9 -> Trade Under?
-        // Let's assume prediction aligns with strategy.
-        // If manual, let's just use DIGITOVER for now as placeholder unless clear intent.
-        else if (bot_type === 'over_under') contract_type = config.prediction >= 5 ? 'DIGITUNDER' : 'DIGITOVER'; 
-
+        else if (bot_type === 'over_under') contract_type = prediction >= 5 ? 'DIGITUNDER' : 'DIGITOVER'; 
+        else if (bot_type === 'smart_auto_24') contract_type = 'DIGITOVER';
         else if (bot_type === 'differs') contract_type = 'DIGITDIFF';
         else if (bot_type === 'matches') contract_type = 'DIGITMATCH';
         else if (bot_type === 'rise_fall') contract_type = 'CALL'; 
@@ -579,16 +555,16 @@ export default class SmartAutoStore {
         let base_stake = config.stake;
         
         // Handle Compounding (Compound Win)
-        // If we won the last trade and use_compounding is on, add session profit to next stake
         if (config.use_compounding && this.session_profit > 0 && this.last_result === 'WIN') {
             base_stake = config.stake + this.session_profit;
         }
 
         // Handle Martingale (Compound Loss)
-        // multiplier ^ streak ensures exponential recovery
         if (this.last_result === 'LOSS' && config.use_martingale) {
-            return base_stake * Math.pow(config.multiplier, this.current_streak);
+            base_stake = base_stake * Math.pow(config.multiplier, this.current_streak);
         }
-        return base_stake;
+        
+        // Ensure max 2 decimal places to prevent API errors
+        return parseFloat(base_stake.toFixed(2));
     };
 }

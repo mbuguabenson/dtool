@@ -1,8 +1,8 @@
+```javascript
 import { useState, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import { runInAction, autorun } from 'mobx';
-import { useStore } from '@/hooks/useStore';
-import { api_base } from '@/external/bot-skeleton';
+import { useStores } from '@/stores/root-store';
 import { 
     LabelPairedPlayMdFillIcon, 
     LabelPairedSquareMdFillIcon, 
@@ -11,11 +11,11 @@ import {
 import './digit-cracker.scss';
 
 const DigitCracker = observer(() => {
-    const { smart_auto, analysis, client } = useStore();
     const [activeStrategy, setActiveStrategy] = useState<'even_odd' | 'differs' | 'matches' | 'over_under'>('even_odd');
     const [activeLogTab, setActiveLogTab] = useState<'summary' | 'transactions' | 'journal'>('summary');
     const logRef = useRef<HTMLDivElement>(null);
-    const subscriptionRef = useRef<any>(null);
+    const { analysis, smart_auto, client } = useStores();
+
 
     const { digit_stats, last_digit, percentages, even_odd_history, over_under_history, symbol, markets } = analysis;
     const { bot_status, is_executing, session_profit, total_profit, logs } = smart_auto;
@@ -30,9 +30,7 @@ const DigitCracker = observer(() => {
             analysis.unsubscribeFromTicks();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [analysis, analysis.is_connected]);
-
-    // Auto-scroll logs
+    }, [analysis.last_digit, analysis.ticks.length, analysis, analysis.is_connected]);
 
     // Auto-scroll logs
     useEffect(() => {
@@ -333,13 +331,17 @@ const DigitCracker = observer(() => {
                         <span className='label'>Market</span>
                         <span className='value'>{symbol || 'N/A'}</span>
                     </div>
+                    <div className='stat-card price'>
+                        <span className='label'>Spot Price</span>
+                        <span className='value'>{analysis.current_price}</span>
+                    </div>
                     <div className='stat-card live-digit'>
                         <span className='label'>Live Digit</span>
                         <span className='value digit-display'>{last_digit !== null ? last_digit : '-'}</span>
                     </div>
                     <div className='stat-card tick-count'>
                         <span className='label'>Ticks Analyzed</span>
-                        <span className='value'>{analysis.ticks.length}/60</span>
+                        <span className='value'>{analysis.ticks.length}/100</span>
                     </div>
                 </div>
             </div>
