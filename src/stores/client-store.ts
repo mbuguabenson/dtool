@@ -68,29 +68,37 @@ export default class ClientStore {
 
     constructor() {
         this.authDataSubscription = authData$.subscribe(authData => {
-            if (authData?.upgradeable_landing_companies) {
-                this.setUpgradeableLandingCompanies(authData.upgradeable_landing_companies);
+            if (authData) {
+                this.setLoginId(authData.loginid);
+                this.setIsLoggedIn(true);
+                this.setAccountList(authData.account_list);
+                if (authData.balance !== undefined) {
+                    this.setBalance(authData.balance);
+                }
+                if (authData.currency) {
+                    this.setCurrency(authData.currency);
+                }
+                if (authData.upgradeable_landing_companies) {
+                    this.setUpgradeableLandingCompanies(authData.upgradeable_landing_companies);
+                }
+            } else {
+                this.setIsLoggedIn(false);
+                this.setLoginId('');
             }
         });
-
-        // Ensure subscription is read to avoid lint warning
-        if (this.authDataSubscription === null) {
-            console.debug('[ClientStore] AuthData sub initialized');
-        }
 
         reaction(
             () => this.loginid,
             loginid => {
                 if (loginid) {
-                    this.unsubscribeBalance(); // Unsubscribe from previous account if any
-                    this.subscribeToBalance(); // Immediate subscription
+                    this.unsubscribeBalance();
+                    this.subscribeToBalance();
 
-                    // Immediately try to load cached balance for this loginid
                     try {
                         const client_accounts = JSON.parse(localStorage.getItem('clientAccounts') || '{}');
                         const active_account = client_accounts[loginid];
                         if (active_account && active_account.balance !== undefined) {
-                            this.setBalance(active_account.balance);
+                            this.setBalance(String(active_account.balance));
                             this.setCurrency(active_account.currency);
                         }
                     } catch (e) {

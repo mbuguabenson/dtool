@@ -46,16 +46,13 @@ const AppRoot = observer(() => {
         document.body.classList.add(themeClass);
     }, [is_dark_mode_on]);
 
-    // ... existing initialization logic ...
     const api_base_initialized = useRef(false);
     const [is_api_initialized, setIsApiInitialized] = useState(false);
-
-    // ... rest of component ...
     const [is_tmb_check_complete, setIsTmbCheckComplete] = useState(false);
     const [, setIsTmbEnabled] = useState(false);
     const { isTmbEnabled } = useTMB();
 
-    // Effect to check TMB status - independent of API initialization
+    useEffect(() => {
         if (is_tmb_check_complete) return;
 
         const safetyTimeout = setTimeout(() => {
@@ -73,23 +70,20 @@ const AppRoot = observer(() => {
 
                 setIsTmbEnabled(final_status);
                 setIsTmbCheckComplete(true);
-                clearTimeout(safetyTimeout);
             } catch (error) {
                 console.error('[AppRoot] TMB check failed:', error);
                 setIsTmbCheckComplete(true);
+            } finally {
                 clearTimeout(safetyTimeout);
             }
         };
 
         checkTmbStatus();
         return () => clearTimeout(safetyTimeout);
-    }, [isTmbEnabled]); // Removed is_tmb_check_complete from dependencies
+    }, [isTmbEnabled]);
 
-    // Initialize API when TMB check is complete with timeout fallback
     useEffect(() => {
-        if (!is_tmb_check_complete) {
-            return; // Wait until TMB check is complete
-        }
+        if (!is_tmb_check_complete) return;
 
         const timeoutId = setTimeout(() => {
             if (!is_api_initialized) {
@@ -107,7 +101,7 @@ const AppRoot = observer(() => {
                     api_base_initialized.current = false;
                 } finally {
                     setIsApiInitialized(true);
-                    clearTimeout(timeoutId); // Clear timeout if API init completes
+                    clearTimeout(timeoutId);
                 }
             }
         };

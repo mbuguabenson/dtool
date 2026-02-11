@@ -109,23 +109,68 @@ const SmartTrading = observer(() => {
                             </div>
                         </div>
 
-                        <div className='analytics-card distribution-card'>
-                            <h3>First Digit Distribution</h3>
-                            <div className='dist-grid'>
-                                {first_digit_stats
-                                    .filter(s => s.digit > 0)
-                                    .map(stat => (
-                                        <div key={stat.digit} className='dist-item'>
-                                            <span className='digit'>{stat.digit}</span>
-                                            <div className='dist-bar-wrapper'>
-                                                <div
-                                                    className='dist-bar'
-                                                    style={{ height: `${Math.max(5, stat.percentage)}%` }}
-                                                ></div>
-                                            </div>
-                                            <span className='percent'>{stat.percentage.toFixed(0)}%</span>
+                        <div className='analytics-card distribution-card circular-style'>
+                            <h3>Digit Distribution Analysis</h3>
+                            <div className='digit-grid-wrapper'>
+                                {(() => {
+                                    // Calculate ranks
+                                    const statsWithRank = [...first_digit_stats]
+                                        .sort((a, b) => b.percentage - a.percentage)
+                                        .map((s, i) => ({ ...s, rank: i + 1 }));
+                                    
+                                    // Sort back by digit for display
+                                    const displayStats = statsWithRank.sort((a, b) => a.digit - b.digit);
+                                    const group1 = displayStats.slice(0, 5);
+                                    const group2 = displayStats.slice(5, 10);
+
+                                    const renderGroup = (group: typeof displayStats) => (
+                                        <div className='digit-row'>
+                                            {group.map(stat => {
+                                                const isCurrent = stat.digit === last_digit;
+                                                const dashArray = 140;
+                                                const dashOffset = dashArray - (dashArray * stat.percentage) / 100;
+                                                
+                                                let strokeColor = '#6b7280';
+                                                if (stat.rank === 1) strokeColor = '#00ff41';
+                                                else if (stat.rank === 2) strokeColor = '#ffd700';
+                                                else if (stat.rank === 10) strokeColor = '#ff073a';
+                                                
+                                                const finalColor = isCurrent ? '#ff9f00' : strokeColor;
+
+                                                return (
+                                                    <div key={stat.digit} className={`digit-card ${isCurrent ? 'current' : ''}`} data-rank={stat.rank}>
+                                                        <div className='digit-circle' style={{ borderColor: finalColor, boxShadow: `0 0 12px ${finalColor}40` }}>
+                                                            <svg width='50' height='50' viewBox='0 0 50 50'>
+                                                                <circle className='bg-circle' cx='25' cy='25' r='22' />
+                                                                <circle
+                                                                    className='progress-circle'
+                                                                    cx='25'
+                                                                    cy='25'
+                                                                    r='22'
+                                                                    style={{ stroke: finalColor }}
+                                                                    strokeDasharray={dashArray}
+                                                                    strokeDashoffset={dashOffset}
+                                                                />
+                                                            </svg>
+                                                            <span className='digit-number' style={{ color: finalColor }}>{stat.digit}</span>
+                                                        </div>
+                                                        <div className='digit-info'>
+                                                            <div className='percentage'>{stat.percentage.toFixed(1)}%</div>
+                                                            <div className='rank'>#{stat.rank}</div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
-                                    ))}
+                                    );
+
+                                    return (
+                                        <>
+                                            {renderGroup(group1)}
+                                            {renderGroup(group2)}
+                                        </>
+                                    );
+                                })()}
                             </div>
                         </div>
                     </div>

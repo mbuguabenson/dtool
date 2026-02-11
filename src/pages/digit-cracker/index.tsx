@@ -1,35 +1,38 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
-import { runInAction, autorun } from 'mobx';
-import { useStore } from '@/hooks/useStore';
 import { 
-    LabelPairedPlayMdFillIcon, 
-    LabelPairedSquareMdFillIcon, 
-    LabelPairedArrowsRotateMdRegularIcon 
+    LabelPairedArrowsRotateMdRegularIcon,
+    LabelPairedPlayMdFillIcon,
+    LabelPairedSquareMdFillIcon
 } from '@deriv/quill-icons/LabelPaired';
+import { useStore } from '@/hooks/useStore';
+import { TTradeConfig, TTradeLog } from '@/lib/digit-trade-engine';
+import { TAnalysisHistory, TDigitStat } from '@/stores/analysis-store';
 import './digit-cracker.scss';
 
 const DigitCracker = observer(() => {
-    const { smart_auto, analysis, client } = useStore();
+    const { analysis, client } = useStore();
     const [activeStrategy, setActiveStrategy] = useState<'even_odd' | 'differs' | 'matches' | 'over_under'>('even_odd');
     const [activeLogTab, setActiveLogTab] = useState<'summary' | 'transactions' | 'journal'>('summary');
     const logRef = useRef<HTMLDivElement>(null);
 
 
-    const { digit_stats, last_digit, percentages, even_odd_history, over_under_history, symbol, markets } = analysis;
-    const { bot_status, is_executing, session_profit, total_profit, logs } = smart_auto;
+    const { digit_stats, last_digit, percentages, even_odd_history, over_under_history, symbol, markets, trade_engine } = analysis;
+    const { trade_status, is_executing, session_profit, total_profit, logs } = trade_engine;
 
     // Initialize markets and WebSocket feed
     useEffect(() => {
-        // Subscribe to ticks via store
-        analysis.subscribeToTicks();
-
+        // The AnalysisStore handles auto-subscription via reactions to socket connection
+        // We only ensure cleanup happens when this component unmounts if desired,
+        // though typically global stores manage their own lifecycle.
+        
         return () => {
-             // Cleanup subscription via store
-            analysis.unsubscribeFromTicks();
+             // Cleanup subscription via store if we want to stop background analysis
+             // analysis.unsubscribeFromTicks();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [analysis.last_digit, analysis.ticks.length, analysis, analysis.is_connected]);
+    }, [analysis, analysis.is_connected]);
 
     // Auto-scroll logs
     useEffect(() => {
@@ -38,17 +41,7 @@ const DigitCracker = observer(() => {
         }
     }, [logs.length]);
 
-    // Autorun for processing ticks
-    useEffect(() => {
-        const disposer = autorun(() => {
-            // This will run automatically whenever observable dependencies change
-            if (analysis.ticks.length > 0) {
-                smart_auto.processTick();
-            }
-        });
-
-        return () => disposer();
-    }, [smart_auto]);
+    // Autorun removed as AnalysisStore handles tick processing internally
 
     const handleMarketChange = (newSymbol: string) => {
         analysis.setSymbol(newSymbol);
@@ -56,11 +49,11 @@ const DigitCracker = observer(() => {
 
     const renderDigitCircles = () => {
         // Split digits into two groups: 0-4 and 5-9
-        const group1 = digit_stats.filter((s: any) => s.digit >= 0 && s.digit <= 4);
-        const group2 = digit_stats.filter((s: any) => s.digit >= 5 && s.digit <= 9);
+        const group1 = digit_stats.filter((s: TDigitStat) => s.digit >= 0 && s.digit <= 4);
+        const group2 = digit_stats.filter((s: TDigitStat) => s.digit >= 5 && s.digit <= 9);
         
-        const renderDigitGroup = (digits: any[]) => {
-            return digits.map((stat: any) => {
+        const renderDigitGroup = (digits: TDigitStat[]) => {
+            return digits.map((stat: TDigitStat) => {
                 const isCurrent = stat.digit === last_digit;
                 const dashArray = 140;
                 const dashOffset = dashArray - (dashArray * stat.percentage) / 100;
@@ -114,7 +107,10 @@ const DigitCracker = observer(() => {
     };
 
     const renderStrategyControls = () => {
-        const config = (smart_auto as any)[`${activeStrategy}_config`];
+        const configKey = `${activeStrategy}_config` as keyof typeof trade_engine;
+        const config = trade_engine[configKey] as unknown as TTradeConfig; 
+        // Using intermediate cast to avoid complex intersection issues during render
+        
         
         return (
             <div className='strategy-controls'>
@@ -133,27 +129,27 @@ const DigitCracker = observer(() => {
                 <div className='settings-grid'>
                     <div className='input-field'>
                         <label>Stake Amount ($)</label>
-                        <input type='number' step='0.01' value={config.stake} onChange={(e) => smart_auto.updateConfig(activeStrategy, 'stake', parseFloat(e.target.value))} />
+                        <input type='number' step='0.01' value={config.stake} onChange={(e) => trade_engine.updateConfig(activeStrategy, 'stake', parseFloat(e.target.value))} />
                     </div>
                     <div className='input-field'>
                         <label>Take Profit ($)</label>
-                        <input type='number' step='0.01' value={config.take_profit || 10} onChange={(e) => smart_auto.updateConfig(activeStrategy, 'take_profit', parseFloat(e.target.value))} />
+                        <input type='number' step='0.01' value={config.take_profit || 10} onChange={(e) => trade_engine.updateConfig(activeStrategy, 'take_profit', parseFloat(e.target.value))} />
                     </div>
                     <div className='input-field'>
                         <label>Stop Loss ($)</label>
-                        <input type='number' step='0.01' value={config.max_loss} onChange={(e) => smart_auto.updateConfig(activeStrategy, 'max_loss', parseFloat(e.target.value))} />
+                        <input type='number' step='0.01' value={config.max_loss} onChange={(e) => trade_engine.updateConfig(activeStrategy, 'max_loss', parseFloat(e.target.value))} />
                     </div>
                     <div className='input-field'>
                         <label>Martingale Multiplier</label>
-                        <input type='number' step='0.1' value={config.multiplier} onChange={(e) => smart_auto.updateConfig(activeStrategy, 'multiplier', parseFloat(e.target.value))} />
+                        <input type='number' step='0.1' value={config.multiplier} onChange={(e) => trade_engine.updateConfig(activeStrategy, 'multiplier', parseFloat(e.target.value))} />
                     </div>
                     <div className='input-field'>
                         <label>Maximum Runs</label>
-                        <input type='number' value={config.max_runs || 12} onChange={(e) => smart_auto.updateConfig(activeStrategy, 'max_runs' as any, parseInt(e.target.value))} />
+                        <input type='number' value={config.max_runs || 12} onChange={(e) => trade_engine.updateConfig(activeStrategy, 'max_runs', parseInt(e.target.value))} />
                     </div>
                     <div className='input-field'>
                         <label>Tick Duration</label>
-                        <input type='number' value={config.ticks} onChange={(e) => smart_auto.updateConfig(activeStrategy, 'ticks', parseInt(e.target.value))} />
+                        <input type='number' value={config.ticks} onChange={(e) => trade_engine.updateConfig(activeStrategy, 'ticks', parseInt(e.target.value))} />
                     </div>
                     {['over_under', 'matches', 'differs'].includes(activeStrategy) && (
                         <div className='input-field'>
@@ -163,35 +159,35 @@ const DigitCracker = observer(() => {
                                 min='0' 
                                 max='9' 
                                 value={config.prediction} 
-                                onChange={(e) => smart_auto.updateConfig(activeStrategy, 'prediction', parseInt(e.target.value))} 
+                                onChange={(e) => trade_engine.updateConfig(activeStrategy, 'prediction', parseInt(e.target.value))} 
                             />
                         </div>
                     )}
                 </div>
 
                 <div className='toggles-row'>
-                    <button className={`toggle-switch ${config.use_martingale ? 'active' : ''}`} onClick={() => smart_auto.updateConfig(activeStrategy, 'use_martingale', !config.use_martingale)}>
+                    <button className={`toggle-switch ${config.use_martingale ? 'active' : ''}`} onClick={() => trade_engine.updateConfig(activeStrategy, 'use_martingale', !config.use_martingale)}>
                         <span className='toggle-label'>Martingale</span>
                         <span className='toggle-status'>{config.use_martingale ? 'ON' : 'OFF'}</span>
                     </button>
-                    <button className={`toggle-switch ${config.use_max_loss ? 'active' : ''}`} onClick={() => smart_auto.updateConfig(activeStrategy, 'use_max_loss', !config.use_max_loss)}>
+                    <button className={`toggle-switch ${config.use_max_loss ? 'active' : ''}`} onClick={() => trade_engine.updateConfig(activeStrategy, 'use_max_loss', !config.use_max_loss)}>
                         <span className='toggle-label'>Stop Loss</span>
                         <span className='toggle-status'>{config.use_max_loss ? 'ON' : 'OFF'}</span>
                     </button>
-                    <button className={`toggle-switch ${config.use_compounding ? 'active' : ''}`} onClick={() => smart_auto.updateConfig(activeStrategy, 'use_compounding', !config.use_compounding)}>
+                    <button className={`toggle-switch ${config.use_compounding ? 'active' : ''}`} onClick={() => trade_engine.updateConfig(activeStrategy, 'use_compounding', !config.use_compounding)}>
                         <span className='toggle-label'>Compounding</span>
                         <span className='toggle-status'>{config.use_compounding ? 'ON' : 'OFF'}</span>
                     </button>
                 </div>
 
                 <div className='action-row'>
-                    <button className='btn-trade-once' onClick={() => smart_auto.toggleBot(activeStrategy, 'manual')} disabled={config.is_running && config.is_auto}>
+                    <button className='btn-trade-once' onClick={() => trade_engine.toggleStrategy(activeStrategy)} disabled={config.is_running && config.is_auto}>
                         <LabelPairedPlayMdFillIcon />
                         Trade Once
                     </button>
-                    <button className={`btn-auto-trade ${config.is_running && config.is_auto ? 'active glowing' : ''}`} onClick={() => smart_auto.toggleBot(activeStrategy, 'auto')}>
+                    <button className={`btn-auto-trade ${config.is_running ? 'active glowing' : ''}`} onClick={() => trade_engine.toggleStrategy(activeStrategy)}>
                         {config.is_running && config.is_auto ? <LabelPairedSquareMdFillIcon /> : <LabelPairedArrowsRotateMdRegularIcon />}
-                        {config.is_running && config.is_auto ? 'Stop Auto Trading' : 'Start Auto Trading'}
+                        {config.is_running ? 'Stop Auto Trading' : 'Start Auto Trading'}
                     </button>
                 </div>
             </div>
@@ -201,9 +197,9 @@ const DigitCracker = observer(() => {
     const renderLogContent = () => {
         switch (activeLogTab) {
             case 'summary': {
-                const totalTrades = logs.filter((l: any) => l.type === 'trade' || l.type === 'success' || l.type === 'error').length;
-                const wins = logs.filter((l: any) => l.type === 'success').length;
-                const losses = logs.filter((l: any) => l.type === 'error').length;
+                const totalTrades = logs.filter((l: TTradeLog) => l.type === 'trade' || l.type === 'success' || l.type === 'error').length;
+                const wins = logs.filter((l: TTradeLog) => l.type === 'success').length;
+                const losses = logs.filter((l: TTradeLog) => l.type === 'error').length;
                 const winRate = totalTrades > 0 ? ((wins / totalTrades) * 100).toFixed(1) : '0.0';
                 
                 return (
@@ -243,14 +239,14 @@ const DigitCracker = observer(() => {
             }
             
             case 'transactions': {
-                const tradeLogs = logs.filter((l: any) => l.type === 'trade' || l.type === 'success' || l.type === 'error');
+                const tradeLogs = logs.filter((l: TTradeLog) => l.type === 'trade' || l.type === 'success' || l.type === 'error');
                 return (
                     <div className='transactions-content'>
                         {tradeLogs.length === 0 ? (
                             <div className='empty-log'>No transactions yet...</div>
                         ) : (
                             <div className='transaction-list'>
-                                {tradeLogs.map((log: any, i: number) => (
+                                {tradeLogs.map((log: TTradeLog, i: number) => (
                                     <div key={i} className={`transaction-item ${log.type}`}>
                                         <span className='timestamp'>{new Date(log.timestamp).toLocaleTimeString()}</span>
                                         <span className='message'>{log.message}</span>
@@ -268,7 +264,7 @@ const DigitCracker = observer(() => {
                         {logs.length === 0 ? (
                             <div className='empty-log'>No journal entries...</div>
                         ) : (
-                            logs.map((log: any, i: number) => (
+                            logs.map((log: TTradeLog, i: number) => (
                                 <div key={i} className={`log-entry ${log.type}`}>
                                     <span className='timestamp'>[{new Date(log.timestamp).toLocaleTimeString()}]</span>
                                     <span className='message'>{log.message}</span>
@@ -310,6 +306,7 @@ const DigitCracker = observer(() => {
                             className='market-selector' 
                             value={symbol} 
                             onChange={(e) => handleMarketChange(e.target.value)}
+                            disabled={analysis.is_loading}
                         >
                             {availableMarkets.map(opt => (
                                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -319,14 +316,16 @@ const DigitCracker = observer(() => {
                     <div className='stat-card connection'>
                         <span className='label'>WebSocket</span>
                         <span className={`status ${analysis.is_connected ? 'connected' : 'disconnected'}`}>
-                            {analysis.is_connected ? '🟢 Connected' : '🔴 Disconnected'}
+                            {analysis.is_loading ? '⏳ Connecting...' : 
+                             analysis.error_message ? '🔴 Error' : 
+                             analysis.is_connected ? '🟢 Connected' : '🔴 Disconnected'}
                         </span>
                     </div>
                 </div>
                 <div className='header-stats'>
                     <div className='stat-card balance'>
                         <span className='label'>Balance</span>
-                        <span className='value'>${typeof client.balance === 'string' ? parseFloat(client.balance).toFixed(2) : '0.00'}</span>
+                        <span className='value'>${client.balance ? parseFloat(String(client.balance)).toFixed(2) : '0.00'}</span>
                     </div>
                     <div className='stat-card market'>
                         <span className='label'>Market</span>
@@ -334,17 +333,22 @@ const DigitCracker = observer(() => {
                     </div>
                     <div className='stat-card price'>
                         <span className='label'>Spot Price</span>
-                        <span className='value'>{analysis.current_price}</span>
+                        <span className='value'>{analysis.is_loading ? '...' : analysis.current_price}</span>
                     </div>
                     <div className='stat-card live-digit'>
                         <span className='label'>Live Digit</span>
-                        <span className='value digit-display'>{last_digit !== null ? last_digit : '-'}</span>
+                        <span className='value digit-display'>{analysis.is_loading ? '-' : (last_digit !== null && last_digit !== undefined ? last_digit : '-')}</span>
                     </div>
                     <div className='stat-card tick-count'>
                         <span className='label'>Ticks Analyzed</span>
                         <span className='value'>{analysis.ticks.length}/100</span>
                     </div>
                 </div>
+                {analysis.error_message && (
+                    <div className='error-banner'>
+                        {analysis.error_message}
+                    </div>
+                )}
             </div>
 
             <div className='analytics-section'>
@@ -398,10 +402,10 @@ const DigitCracker = observer(() => {
                                         </span>
                                     </div>
                                 </div>
-                                <div className='history-section'>
+                                 <div className='history-section'>
                                     <span className='history-label'>Recent Pattern:</span>
                                     <div className='history-boxes'>
-                                        {even_odd_history.slice(0, 20).map((h: any, i: number) => (
+                                        {even_odd_history.slice(0, 20).map((h: TAnalysisHistory, i: number) => (
                                             <div key={i} className={`history-box ${h.type.toLowerCase()}`}>{h.type === 'E' ? 'E' : 'O'}</div>
                                         ))}
                                     </div>
@@ -432,17 +436,17 @@ const DigitCracker = observer(() => {
                                                 {[6, 7, 8, 9].map(p => (
                                                     <button 
                                                         key={p} 
-                                                        className={`pred-btn ${smart_auto.over_under_config.prediction === p ? 'active' : ''}`}
+                                                        className={`pred-btn ${trade_engine.over_under_config.prediction === p ? 'active' : ''}`}
                                                         style={{
                                                             padding: '0.5rem 1rem',
                                                             borderRadius: '8px',
-                                                            background: smart_auto.over_under_config.prediction === p ? '#10b981' : '#1f2937',
+                                                            background: trade_engine.over_under_config.prediction === p ? '#10b981' : '#1f2937',
                                                             color: '#fff',
                                                             border: 'none',
                                                             cursor: 'pointer',
                                                             fontWeight: 'bold'
                                                         }}
-                                                        onClick={() => smart_auto.updateConfig('over_under', 'prediction', p)}
+                                                        onClick={() => trade_engine.updateConfig('over_under', 'prediction', p)}
                                                     >
                                                         {p}
                                                     </button>
@@ -457,17 +461,17 @@ const DigitCracker = observer(() => {
                                                 {[0, 1, 2, 3].map(p => (
                                                     <button 
                                                         key={p} 
-                                                        className={`pred-btn ${smart_auto.over_under_config.prediction === p ? 'active' : ''}`}
+                                                        className={`pred-btn ${trade_engine.over_under_config.prediction === p ? 'active' : ''}`}
                                                         style={{
                                                             padding: '0.5rem 1rem',
                                                             borderRadius: '8px',
-                                                            background: smart_auto.over_under_config.prediction === p ? '#10b981' : '#1f2937',
+                                                            background: trade_engine.over_under_config.prediction === p ? '#10b981' : '#1f2937',
                                                             color: '#fff',
                                                             border: 'none',
                                                             cursor: 'pointer',
                                                             fontWeight: 'bold'
                                                         }}
-                                                        onClick={() => smart_auto.updateConfig('over_under', 'prediction', p)}
+                                                        onClick={() => trade_engine.updateConfig('over_under', 'prediction', p)}
                                                     >
                                                         {p}
                                                     </button>
@@ -487,7 +491,7 @@ const DigitCracker = observer(() => {
                                 <div className='history-section'>
                                     <span className='history-label'>Recent Pattern:</span>
                                     <div className='history-boxes'>
-                                        {over_under_history.slice(0, 20).map((h: any, i: number) => (
+                                        {over_under_history.slice(0, 20).map((h: TAnalysisHistory, i: number) => (
                                             <div key={i} className={`history-box ${h.type.toLowerCase()}`}>{h.type === 'O' ? 'O' : 'U'}</div>
                                         ))}
                                     </div>
@@ -504,8 +508,8 @@ const DigitCracker = observer(() => {
                                     <p><strong>Dynamic:</strong> Can change prediction automatically</p>
                                 </div>
                                 <div className='digit-rankings'>
-                                    {digit_stats.slice().sort((a: any, b: any) => a.percentage - b.percentage).slice(0, 10).map((s: any) => {
-                                        const sortedStats = [...digit_stats].sort((a: any, b: any) => b.power - a.power);
+                                    {digit_stats.slice().sort((a: TDigitStat, b: TDigitStat) => a.percentage - b.percentage).slice(0, 10).map((s: TDigitStat) => {
+                                        const sortedStats = [...digit_stats].sort((a: TDigitStat, b: TDigitStat) => b.power - a.power);
                                         const highest = sortedStats[0].digit;
                                         const second = sortedStats[1].digit;
                                         const least = sortedStats[9].digit;
@@ -530,17 +534,17 @@ const DigitCracker = observer(() => {
                                     <span className='label'>🎯 Auto-Selected Target:</span>
                                     <span className='value' style={{ color: '#a855f7', fontWeight: 'bold' }}>
                                         {(() => {
-                                            const sortedStats = [...digit_stats].sort((a: any, b: any) => b.power - a.power);
+                                            const sortedStats = [...digit_stats].sort((a: TDigitStat, b: TDigitStat) => b.power - a.power);
                                             const highest = sortedStats[0].digit;
                                             const second = sortedStats[1].digit;
                                             const least = sortedStats[9].digit;
-                                            const eligible = digit_stats.filter((s: any) => 
+                                            const eligible = digit_stats.filter((s: TDigitStat) => 
                                                 s.digit >= 2 && s.digit <= 7 && 
                                                 s.digit !== highest && s.digit !== second && s.digit !== least &&
                                                 s.percentage < 10 && !s.is_increasing
                                             );
                                             return eligible.length > 0 
-                                                ? `Digit ${eligible.sort((a: any, b: any) => a.percentage - b.percentage)[0].digit} (${eligible[0].percentage.toFixed(1)}% ↓)`
+                                                ? `Digit ${eligible.sort((a: TDigitStat, b: TDigitStat) => a.percentage - b.percentage)[0].digit} (${eligible[0].percentage.toFixed(1)}% ↓)`
                                                 : 'Waiting for eligible digit...';
                                         })()}
                                     </span>
@@ -557,8 +561,8 @@ const DigitCracker = observer(() => {
                                     <p><strong>Dynamic:</strong> Can change prediction automatically</p>
                                 </div>
                                 <div className='digit-rankings'>
-                                    {digit_stats.slice().sort((a: any, b: any) => b.power - a.power).slice(0, 10).map((s: any) => {
-                                        const sortedStats = [...digit_stats].sort((a: any, b: any) => b.power - a.power);
+                                    {digit_stats.slice().sort((a: TDigitStat, b: TDigitStat) => b.power - a.power).slice(0, 10).map((s: TDigitStat) => {
+                                        const sortedStats = [...digit_stats].sort((a: TDigitStat, b: TDigitStat) => b.power - a.power);
                                         const candidates = [sortedStats[0], sortedStats[1], sortedStats[9]];
                                         const isCandidate = candidates.some(c => c.digit === s.digit);
                                         const isEligible = isCandidate && s.is_increasing;
@@ -580,7 +584,7 @@ const DigitCracker = observer(() => {
                                     <span className='label'>🎯 Auto-Selected Target:</span>
                                     <span className='value' style={{ color: '#10b981', fontWeight: 'bold' }}>
                                         {(() => {
-                                            const sortedStats = [...digit_stats].sort((a: any, b: any) => b.power - a.power);
+                                            const sortedStats = [...digit_stats].sort((a: TDigitStat, b: TDigitStat) => b.power - a.power);
                                             const candidates = [sortedStats[0], sortedStats[1], sortedStats[9]];
                                             const validCandidates = candidates.filter(s => s.is_increasing);
                                             return validCandidates.length > 0 
@@ -613,7 +617,7 @@ const DigitCracker = observer(() => {
                             Journal
                         </button>
                     </div>
-                    <button className='clear-log' onClick={() => smart_auto.clearLogs()}>Clear</button>
+                    <button className='clear-log' onClick={() => trade_engine.clearLogs()}>Clear</button>
                 </div>
                 <div className='log-content' ref={logRef}>
                     {renderLogContent()}
@@ -623,7 +627,7 @@ const DigitCracker = observer(() => {
             <div className='status-footer'>
                 <div className='status-left'>
                     <div className={`status-indicator ${is_executing ? 'active' : ''}`} />
-                    <span className='status-text'>{bot_status}</span>
+                    <span className='status-text'>{trade_status}</span>
                 </div>
                 <div className='profit-display'>
                     <div className='profit-item session'>
@@ -641,11 +645,11 @@ const DigitCracker = observer(() => {
                 </div>
                 <button className='reset-btn' onClick={() => {
                     runInAction(() => {
-                        smart_auto.session_profit = 0;
-                        smart_auto.total_profit = 0;
-                        smart_auto.last_result = null;
-                        smart_auto.current_streak = 0;
-                        smart_auto.clearLogs();
+                        trade_engine.session_profit = 0;
+                        trade_engine.total_profit = 0;
+                        trade_engine.last_result = null;
+                        trade_engine.current_streak = 0;
+                        trade_engine.clearLogs();
                     });
                 }}>
                     <LabelPairedArrowsRotateMdRegularIcon />

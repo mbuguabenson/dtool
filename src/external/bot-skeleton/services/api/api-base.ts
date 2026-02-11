@@ -116,6 +116,8 @@ class APIBase {
 
             // Initialize subscription manager with API instance
             if (this.api) {
+                // Clear any stale subscriptions from previous connection
+                subscriptionManager.reset();
                 subscriptionManager.setApi(this.api);
 
                 // Add message listener to suppress AlreadySubscribed errors

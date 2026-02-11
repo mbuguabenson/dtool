@@ -71,16 +71,18 @@ const AppContent = observer(() => {
     useEffect(() => {
         if (connectionStatus === CONNECTION_STATUS.OPENED) {
             setIsApiInitialized(true);
-            common.setSocketOpened(true);
+            // Note: setSocketOpened is handled by api-base WebSocket event handlers
+            // Calling it here creates a race condition with onsocketopen/onsocketclose
+            
             // Clear offline timeout if connection is restored
             if (offline_timeout) {
                 clearTimeout(offline_timeout);
                 setOfflineTimeout(null);
             }
-        } else if (connectionStatus !== CONNECTION_STATUS.OPENED) {
-            common.setSocketOpened(false);
         }
-    }, [common, connectionStatus, offline_timeout]);
+        // Note: We don't need an else clause here - the WebSocket close handler
+        // in api-base.ts will call setSocketOpened(false) when needed
+    }, [connectionStatus, offline_timeout]);
 
     // Handle offline scenarios and general loading hangs - don't wait indefinitely for API
     useEffect(() => {

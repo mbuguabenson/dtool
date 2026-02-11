@@ -3,7 +3,7 @@
  * Prevents duplicate subscriptions and manages cleanup when switching tabs
  */
 
-type SubscriptionCallback = (data: any) => void;
+type SubscriptionCallback = (data: unknown) => void;
 
 interface ActiveSubscription {
     symbol: string;
@@ -14,7 +14,15 @@ interface ActiveSubscription {
 
 class SubscriptionManager {
     private activeSubscriptions: Map<string, ActiveSubscription> = new Map();
-    private api: any = null;
+    private api: { 
+        send: (data: unknown) => Promise<unknown>; 
+        onMessage: () => { 
+            subscribe: (callback: (data: unknown) => void) => { 
+                unsubscribe: () => void; 
+            } 
+        };
+        connection: { readyState: number };
+    } | null = null;
 
     setApi(api: any) {
         this.api = api;
@@ -58,6 +66,12 @@ class SubscriptionManager {
                 return () => this.unsubscribe(key);
             }
 
+            if (this.api.connection.readyState !== 1) {
+                console.warn('[SubscriptionManager] WebSocket not in OPEN state (readyState:', this.api.connection.readyState, ')');
+                this.activeSubscriptions.delete(key);
+                throw new Error('Connection not ready. Please wait or refresh.');
+            }
+
             // Subscribe to ticks_history
             let response;
             try {
@@ -68,9 +82,10 @@ class SubscriptionManager {
                     style: 'ticks',
                     subscribe: 1,
                 });
-            } catch (error: any) {
+            } catch (error: unknown) {
                 // If already subscribed error, we can safely ignore and proceed to listen
-                if (error?.error?.code === 'AlreadySubscribed' || error?.code === 'AlreadySubscribed') {
+                const err = error as { error?: { code: string }; code?: string };
+                if (err?.error?.code === 'AlreadySubscribed' || err?.code === 'AlreadySubscribed') {
                     console.log(`[SubscriptionManager] Already subscribed to ${symbol} (ignoring error)`);
                 } else {
                     throw error;
@@ -141,7 +156,7 @@ class SubscriptionManager {
 
         // Forget subscription on server if we have an ID
         if (subscription.id && this.api) {
-            this.api.send({ forget: subscription.id }).catch((err: any) => {
+            this.api.send({ forget: subscription.id }).catch((err: unknown) => {
                 console.warn('[SubscriptionManager] Failed to forget subscription:', err);
             });
         }
@@ -155,6 +170,14 @@ class SubscriptionManager {
     unsubscribeAll() {
         const keys = Array.from(this.activeSubscriptions.keys());
         keys.forEach(key => this.unsubscribe(key));
+    }
+
+    /**
+     * Reset manager state (useful on connection loss/reset)
+     * Clears all subscriptions without attempting to send forget requests
+     */
+    reset() {
+        this.activeSubscriptions.clear();
     }
 
     /**

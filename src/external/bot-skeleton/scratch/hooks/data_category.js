@@ -108,7 +108,7 @@ window.Blockly.DataCategory.addCreateVariable = function (xmlList, workspace) {
         buttonWorkspace.createVariable(el_input.value, '');
         el_input.value = '';
 
-        const { flyout } = DBotStore.instance;
+        const { flyout } = DBotStore.instance || {};
         flyout.refreshCategory();
     };
 

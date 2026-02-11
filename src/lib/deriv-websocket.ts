@@ -1,3 +1,5 @@
+import { getAppId } from '@deriv/shared';
+
 type TCallback = (data: any) => void;
 
 class DerivWebSocket {
@@ -8,13 +10,18 @@ class DerivWebSocket {
     private maxReconnectAttempts = 10;
     private endpoint = 'wss://ws.derivws.com/websockets/v3';
 
-    constructor(appId = '1089') {
-        this.appId = appId;
+    constructor(appId?: string) {
+        this.appId = appId || getAppId();
     }
 
     public connect(): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
+                if (this.ws) {
+                    this.disconnect();
+                }
+
+                console.log(`[DerivWebSocket] Connecting with App ID: ${this.appId}`);
                 this.ws = new WebSocket(`${this.endpoint}?app_id=${this.appId}`);
 
                 this.ws.onopen = () => {
@@ -32,13 +39,18 @@ class DerivWebSocket {
                 };
 
                 this.ws.onerror = error => {
-                    console.error('[DerivWebSocket] Error:', error);
-                    reject(error);
+                    // Only log/reject if we are still active
+                    if (this.ws) {
+                        console.error('[DerivWebSocket] Error:', error);
+                        reject(error);
+                    }
                 };
 
-                this.ws.onclose = () => {
-                    console.log('[DerivWebSocket] Disconnected');
-                    this.handleReconnect();
+                this.ws.onclose = (event) => {
+                    console.log('[DerivWebSocket] Disconnected', event.wasClean ? 'Cleanly' : 'Abruptly');
+                    if (this.ws) {
+                        this.handleReconnect();
+                    }
                 };
             } catch (error) {
                 reject(error);
@@ -57,8 +69,14 @@ class DerivWebSocket {
 
     public disconnect(): void {
         if (this.ws) {
-            this.ws.onclose = null; // Prevent auto-reconnect
-            this.ws.close();
+            this.ws.onclose = null;
+            this.ws.onopen = null;
+            this.ws.onerror = null;
+            this.ws.onmessage = null;
+            
+            if (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING) {
+                this.ws.close();
+            }
             this.ws = null;
         }
     }

@@ -54,7 +54,7 @@ window.Blockly.Flyout.prototype.createBlock = function (event, original_block) {
         this.hide();
     }
 
-    const { flyout } = DBotStore.instance;
+    const { flyout } = DBotStore.instance || {};
     flyout.setIsSearchFlyout(false);
     flyout.setVisibility(false);
 

@@ -1,5 +1,8 @@
 import { action, makeObservable, observable, reaction, runInAction } from 'mobx';
-import { ApiHelpers, api_base } from '@/external/bot-skeleton';
+import { api_base, ApiHelpers } from '@/external/bot-skeleton';
+import { DigitStatsEngine } from '@/lib/digit-stats-engine';
+import { DigitTradeEngine } from '@/lib/digit-trade-engine';
+import subscriptionManager from '@/lib/subscription-manager';
 import RootStore from './root-store';
 
 export type TDigitStat = {
@@ -17,40 +20,64 @@ export type TAnalysisHistory = {
     color: string;
 };
 
+type TTick = {
+    symbol: string;
+    quote: number | string;
+    epoch: number;
+};
+
+type TDerivResponse = {
+    msg_type: string;
+    tick?: TTick;
+    history?: { prices: (number | string)[] };
+    ticks_history?: { prices: (number | string)[] };
+    subscription?: { id: string };
+    error?: { code: string; message: string };
+};
+
 export default class AnalysisStore {
     root_store: RootStore;
+    stats_engine: DigitStatsEngine;
+    trade_engine: DigitTradeEngine;
 
-    @observable accessor digit_stats: TDigitStat[] = Array.from({ length: 10 }, (_, i) => ({
-        digit: i,
-        count: 0,
-        percentage: 0,
-        rank: i + 1,
-        power: 50,
-        is_increasing: false,
-    }));
-
+    @observable accessor digit_stats: TDigitStat[] = [];
     @observable accessor ticks: number[] = [];
     @observable accessor symbol = 'R_100';
     @observable accessor current_price: string | number = '0.00';
     @observable accessor last_digit: number | null = null;
     @observable accessor total_ticks = 1000;
+    
     @observable accessor is_connected = false;
+    @observable accessor is_loading = false;
+    @observable accessor error_message: string | null = null;
+    @observable accessor is_subscribing = false;
+    
+    @observable accessor percentages = { even: 50, odd: 50, over: 50, under: 50, match: 10, differ: 90, rise: 50, fall: 50 };
+    @observable accessor current_streaks = { even_odd: 0, over_under: 0, match_diff: 0, rise_fall: 0 };
 
+    // History (Delegated to engine but observable here for UI)
     @observable accessor even_odd_history: TAnalysisHistory[] = [];
     @observable accessor over_under_history: TAnalysisHistory[] = [];
     @observable accessor matches_differs_history: TAnalysisHistory[] = [];
     @observable accessor rise_fall_history: TAnalysisHistory[] = [];
 
+    // Settings
     @observable accessor over_under_threshold = 5;
     @observable accessor match_diff_digit = 6;
     @observable accessor markets: { group: string; items: { value: string; label: string }[] }[] = [];
     
     @observable accessor subscription_id: string | null = null;
-    private msg_subscription: any = null;
+    
+    private unsubscribe_ticks: (() => Promise<void> | void) | null = null;
 
     constructor(root_store: RootStore) {
         makeObservable(this);
         this.root_store = root_store;
+        this.stats_engine = new DigitStatsEngine();
+        this.trade_engine = new DigitTradeEngine();
+        
+        // Sync engine configs
+        this.updateEngineConfig();
 
         reaction(
             () => this.root_store.common?.is_socket_opened,
@@ -58,7 +85,9 @@ export default class AnalysisStore {
                 this.is_connected = !!is_socket_opened;
                 if (is_socket_opened) {
                     this.fetchMarkets();
-                    this.subscribeToTicks(); // Auto-subscribe if connected
+                    if (!this.unsubscribe_ticks) {
+                        this.subscribeToTicks(); // Auto-subscribe if connected and not already
+                    }
                 } else {
                     this.unsubscribeFromTicks(); // Clean up on disconnect
                 }
@@ -66,9 +95,21 @@ export default class AnalysisStore {
         );
 
         if (this.root_store.common?.is_socket_opened) {
+            this.is_connected = true;
             this.fetchMarkets();
+            this.subscribeToTicks();
         }
     }
+
+    @action
+    updateEngineConfig = () => {
+        this.stats_engine.setConfig({
+            over_under_threshold: this.over_under_threshold,
+            match_diff_digit: this.match_diff_digit,
+            total_samples: this.total_ticks
+        });
+        this.refreshStats(); // Update observables from engine
+    };
 
     @action
     init = async () => {
@@ -78,82 +119,127 @@ export default class AnalysisStore {
     };
 
     @action
-    handleTick = (tick: any) => {
+    handleTick = (tick: TTick) => {
         if (tick.symbol !== this.symbol) return;
         
-        const price = tick.quote;
-        const price_str = String(price);
+        const price = Number(tick.quote);
+        const price_str = String(tick.quote);
         const last_char = price_str[price_str.length - 1];
         const new_digit = parseInt(last_char);
 
         if (!isNaN(new_digit)) {
-            const current_ticks = [...this.ticks];
-            current_ticks.push(new_digit);
-            if (current_ticks.length > 1000) current_ticks.shift();
+            const current_ticks = [...this.ticks, new_digit];
+            if (current_ticks.length > this.total_ticks) current_ticks.shift();
             
-            this.updateDigitStats(current_ticks, price);
+            this.ticks = current_ticks;
+            this.last_digit = new_digit;
+            this.current_price = price;
+
+            // Push to engine
+            this.stats_engine.updateWithHistory(this.ticks, price);
+            this.refreshStats();
+
+            // Push to trade engine
+            this.trade_engine.processTick(
+                new_digit, 
+                { percentages: this.stats_engine.getPercentages(), digit_stats: this.stats_engine.digit_stats },
+                this.symbol,
+                this.root_store.client.currency || 'USD'
+            );
         }
     };
 
-    @observable accessor is_subscribing = false;
+    @action
+    updateDigitStats = (digits: number[], quote: string | number) => {
+        this.ticks = digits;
+        this.current_price = Number(quote);
+        const last = digits[digits.length - 1];
+        if (last !== undefined) this.last_digit = last;
+        
+        this.stats_engine.update(digits, Number(quote));
+        this.refreshStats();
+    };
 
     @action
-    subscribeToTicks = async () => {
-        if (!this.is_connected || !this.symbol) return;
-        if (this.is_subscribing) return;
-        
+    subscribeToTicks = async (retry_count = 0) => {
+        if (!this.is_connected || !this.symbol) {
+            return;
+        }
+
+        // Prevent duplicate subscription attempts
+        if (this.is_subscribing || this.unsubscribe_ticks) {
+            return;
+        }
+
         this.is_subscribing = true;
-        this.unsubscribeFromTicks();
+        this.is_loading = true;
+        this.error_message = null;
 
         try {
-            // Setup listener
-            this.msg_subscription = api_base.api.onMessage().subscribe((response: any) => {
+            // Unsubscribe existing if any (safety check)
+            const unsubscribe = this.unsubscribe_ticks;
+            if (unsubscribe && typeof unsubscribe === 'function') {
+                (unsubscribe as () => void)();
+                this.unsubscribe_ticks = null;
+            }
+
+            console.log(`[AnalysisStore] Subscribing to ${this.symbol} (attempt ${retry_count + 1})`);
+
+            this.unsubscribe_ticks = await subscriptionManager.subscribeToTicks(this.symbol, action((data: unknown) => {
+                const response = data as TDerivResponse;
                 if (response.msg_type === 'tick' && response.tick) {
-                    this.handleTick(response.tick);
+                    if (response.tick.symbol === this.symbol) {
+                        this.handleTick(response.tick);
+                        runInAction(() => {
+                            this.is_loading = false;
+                            this.error_message = null;
+                        });
+                    }
+                } else if (response.msg_type === 'history' && response.history) {
+                    const prices = response.history.prices;
+                    if (prices && prices.length > 0) {
+                        runInAction(() => {
+                            const last_digits = prices.map((p: number | string) => {
+                                const s = String(p);
+                                const digit = parseInt(s[s.length - 1]);
+                                return isNaN(digit) ? 0 : digit;
+                            });
+                            
+                            const last_price = Number(prices[prices.length - 1]);
+                            this.current_price = last_price;
+                            this.ticks = last_digits;
+                            
+                            // Hydrate engine
+                            this.stats_engine.update(last_digits, last_price);
+                            this.refreshStats();
+                            this.is_loading = false;
+                            this.error_message = null;
+                        });
+                    }
                 }
-            });
-
-            // Get history
-            const history = await api_base.api.send({
-                ticks_history: this.symbol,
-                adjust_start_time: 1,
-                count: 100,
-                end: 'latest',
-                style: 'ticks',
-            });
-
-            if (history.ticks_history) {
-                const prices = history.ticks_history.prices || [];
-                const last_digits = prices.map((p: any) => {
-                     const s = String(p);
-                     return parseInt(s[s.length-1]);
-                }).filter((d: any) => !isNaN(d));
-                
-                runInAction(() => {
-                    this.ticks = last_digits;
-                    this.current_price = prices[prices.length - 1];
-                    this.updateStats();
-                });
-            }
-
-            // Subscribe
-            const sub = await api_base.api.send({
-                ticks: this.symbol,
-                subscribe: 1
-            });
+            }));
             
-            if (sub.subscription) {
-                runInAction(() => {
-                    this.subscription_id = sub.subscription.id;
-                });
-            }
+            console.log('[AnalysisStore] Subscription successful');
 
-        } catch (e: any) {
-            const errorCode = e?.error?.code || e?.code;
-            if (errorCode === 'AlreadySubscribed') {
-                 console.log(`[AnalysisStore] Already subscribed to ${this.symbol}, using existing stream.`);
-            } else {
-                 console.error('[AnalysisStore] Subscribe error:', e);
+        } catch (e: unknown) {
+            console.error('[AnalysisStore] Subscribe error:', e);
+            const message = (e as Error)?.message || 'Failed to subscribe';
+            
+            runInAction(() => {
+                this.error_message = message;
+                this.is_loading = false;
+                this.unsubscribe_ticks = null;
+            });
+
+            // Auto-retry logic: Max 3 retries with 2s delay
+            if (retry_count < 3) {
+                console.log(`[AnalysisStore] Retrying subscription in 2s... (${retry_count + 1}/3)`);
+                setTimeout(() => {
+                    runInAction(() => {
+                        this.is_subscribing = false; // Reset so retry can proceed
+                        this.subscribeToTicks(retry_count + 1);
+                    });
+                }, 2000);
             }
         } finally {
             runInAction(() => {
@@ -164,128 +250,58 @@ export default class AnalysisStore {
 
     @action
     unsubscribeFromTicks = () => {
-        if (this.subscription_id) {
-            api_base.api.send({ forget: this.subscription_id }).catch(() => {});
-            runInAction(() => {
-                this.subscription_id = null;
-            });
+        if (this.unsubscribe_ticks) {
+            this.unsubscribe_ticks();
+            this.unsubscribe_ticks = null;
         }
-        if (this.msg_subscription) {
-            this.msg_subscription.unsubscribe();
-            this.msg_subscription = null;
-        }
-    };
-
-    @action
-    updateDigitStats = (last_digits: number[], price: string | number) => {
+        
         runInAction(() => {
-            this.current_price = price;
-            const price_str = String(price);
-            const last_char = price_str[price_str.length - 1];
-            const current_digit = parseInt(last_char);
+            this.subscription_id = null;
+            this.is_loading = false;
+            this.error_message = null;
+            this.stats_engine.reset();
+            this.refreshStats();
+            this.ticks = [];
+        });
+    };
 
-            if (!isNaN(current_digit)) {
-                this.last_digit = current_digit;
+    @action
+    refreshStats = () => {
+        // Sync observables from engine state
+        this.digit_stats = this.stats_engine.digit_stats;
+        this.even_odd_history = this.stats_engine.even_odd_history;
+        this.over_under_history = this.stats_engine.over_under_history;
+        this.matches_differs_history = this.stats_engine.matches_differs_history;
+        this.rise_fall_history = this.stats_engine.rise_fall_history;
+
+        this.percentages = this.stats_engine.getPercentages();
+
+        const getStreak = (history: TAnalysisHistory[]) => {
+            if (history.length === 0) return 0;
+            const type = history[0].type;
+            let count = 0;
+            for (const h of history) {
+                if (h.type === type) count++;
+                else break;
             }
+            return count;
+        };
 
-            this.ticks = last_digits;
-            this.updateStats();
-            this.updateHistory(this.last_digit || 0, Number(price));
-            this.root_store.smart_auto.processTick();
-        });
-    };
-
-    @action
-    updateStats = () => {
-        const counts = Array(10).fill(0);
-        this.ticks.forEach(d => counts[d]++);
-
-        const total = this.ticks.length || 1;
-        
-        // Calculate powers/trend for each digit
-        const last_50_ticks = this.ticks.slice(-50);
-        const last_10_ticks = this.ticks.slice(-10);
-        
-        // Rank digits by frequency
-        const sorted_indices = counts
-            .map((c, i) => ({ count: c, index: i }))
-            .sort((a, b) => b.count - a.count);
-
-        this.digit_stats = counts.map((count, digit) => {
-            const percentage = (count / total) * 100;
-            
-            // Calculate rank (1=most, 10=least)
-            const rank = sorted_indices.findIndex(s => s.index === digit) + 1;
-            
-            // Calculate power movement (trend)
-            const recent_count = last_10_ticks.filter(d => d === digit).length;
-            const mid_count = last_50_ticks.filter(d => d === digit).length / 5;
-            const is_increasing = recent_count > mid_count;
-            const power = 50 + (recent_count - mid_count) * 10;
-
-            return {
-                digit,
-                count,
-                percentage,
-                rank,
-                power: Math.min(100, Math.max(0, power)),
-                is_increasing,
-            };
-        });
-    };
-
-    @action
-    updateHistory = (digit: number, price: number) => {
-        // Even/Odd
-        const is_even = digit % 2 === 0;
-        this.even_odd_history.unshift({
-            type: is_even ? 'E' : 'O',
-            value: is_even ? 'Even' : 'Odd',
-            color: is_even ? '#10b981' : '#ef4444',
-        });
-        if (this.even_odd_history.length > 50) this.even_odd_history.pop();
-
-        // Over/Under
-        const is_over = digit > this.over_under_threshold;
-        this.over_under_history.unshift({
-            type: is_over ? 'O' : 'U',
-            value: is_over ? 'Over' : 'Under',
-            color: is_over ? '#10b981' : '#ef4444',
-        });
-        if (this.over_under_history.length > 50) this.over_under_history.pop();
-
-        // Matches/Differs
-        const is_match = digit === this.match_diff_digit;
-        this.matches_differs_history.unshift({
-            type: is_match ? 'M' : 'D',
-            value: is_match ? 'Match' : 'Differ',
-            color: is_match ? '#3b82f6' : '#f59e0b',
-        });
-        if (this.matches_differs_history.length > 50) this.matches_differs_history.pop();
-
-        // Rise/Fall (simplified, based on previous tick)
-        const prev_price = this.current_price;
-        const is_rise = price > Number(prev_price);
-        this.rise_fall_history.unshift({
-            type: is_rise ? 'R' : 'F',
-            value: is_rise ? 'Rise' : 'Fall',
-            color: is_rise ? '#10b981' : '#ef4444',
-        });
-        if (this.rise_fall_history.length > 50) this.rise_fall_history.pop();
+        this.current_streaks = {
+            even_odd: getStreak(this.even_odd_history),
+            over_under: getStreak(this.over_under_history),
+            match_diff: getStreak(this.matches_differs_history),
+            rise_fall: getStreak(this.rise_fall_history),
+        };
     };
 
     @action
     setSymbol = (symbol: string) => {
         if (this.symbol === symbol) return;
 
+        this.unsubscribeFromTicks();
         this.symbol = symbol;
-        this.ticks = [];
-        this.even_odd_history = [];
-        this.over_under_history = [];
-        this.matches_differs_history = [];
-        this.rise_fall_history = [];
-        
-        this.subscribeToTicks(); // Resubscribe to new symbol
+        this.subscribeToTicks();
     };
 
     @action
@@ -301,10 +317,26 @@ export default class AnalysisStore {
             }
         }
         try {
-            const symbols = await (ApiHelpers.instance as any).active_symbols.retrieveActiveSymbols();
+            const symbols = await (
+                ApiHelpers.instance as unknown as {
+                    active_symbols: {
+                        retrieveActiveSymbols: () => Promise<
+                            Array<{
+                                is_trading_suspended: number | boolean;
+                                market_display_name?: string;
+                                market: string;
+                                symbol: string;
+                                display_name: string;
+                                pip: number;
+                            }>
+                        >;
+                    };
+                }
+            ).active_symbols.retrieveActiveSymbols();
+
             runInAction(() => {
                 if (symbols && Array.isArray(symbols)) {
-                    const groups: Record<string, any> = {};
+                    const groups: Record<string, { group: string; items: { value: string; label: string }[] }> = {};
                     symbols.forEach(s => {
                         if (s.is_trading_suspended) return;
                         const market_name = s.market_display_name || s.market;
@@ -322,56 +354,20 @@ export default class AnalysisStore {
     @action
     setTotalTicks = (count: number) => {
         this.total_ticks = count;
+        this.updateEngineConfig();
     };
 
     @action
     setMatchDiffDigit = (digit: number) => {
         this.match_diff_digit = digit;
-        this.updateStats(); // Refresh percentages for new digit
+        this.updateEngineConfig();
     };
 
     @action
     setOverUnderThreshold = (threshold: number) => {
         this.over_under_threshold = threshold;
-        this.updateStats();
+        this.updateEngineConfig();
     };
 
-    get current_streaks() {
-        return {
-            even_odd: this.calculateStreak(this.even_odd_history),
-            over_under: this.calculateStreak(this.over_under_history),
-            match_diff: this.calculateStreak(this.matches_differs_history),
-            rise_fall: this.calculateStreak(this.rise_fall_history),
-        };
-    }
 
-    calculateStreak(history: TAnalysisHistory[]) {
-        if (history.length === 0) return { count: 0, type: '' };
-        const first = history[0];
-        let count = 0;
-        for (const item of history) {
-            if (item.type === first.type) count++;
-            else break;
-        }
-        return { count, type: String(first.value) };
-    }
-
-    get percentages() {
-        const total = this.ticks.length || 1;
-        const evens = this.ticks.filter(d => d % 2 === 0).length;
-        const overs = this.ticks.filter(d => d > this.over_under_threshold).length;
-        const matches = this.ticks.filter(d => d === this.match_diff_digit).length;
-        const rises = this.rise_fall_history.filter(h => h.type === 'R').length;
-
-        return {
-            even: (evens / total) * 100,
-            odd: ((total - evens) / total) * 100,
-            over: (overs / total) * 100,
-            under: ((total - overs) / total) * 100,
-            match: (matches / total) * 100,
-            differ: ((total - matches) / total) * 100,
-            rise: (rises / (this.rise_fall_history.length || 1)) * 100,
-            fall: 100 - (rises / (this.rise_fall_history.length || 1)) * 100,
-        };
-    }
 }

@@ -253,47 +253,93 @@
         }
     }
 
-    .dist-grid {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        height: 150px;
-        padding-top: 1rem;
+    &.distribution-card.circular-style {
+        grid-column: span 2;
+        
+        @media (max-width: 1024px) {
+            grid-column: span 1;
+        }
 
-        .dist-item {
+        .digit-grid-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            
+            .digit-row {
+                display: grid;
+                grid-template-columns: repeat(5, 1fr);
+                gap: 1rem;
+                justify-content: center;
+            }
+        }
+
+        .digit-card {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 0.5rem;
-            width: 100%;
+            padding: 0.75rem;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            transition: all 0.3s ease;
 
-            .digit {
-                font-size: 0.8rem;
-                font-weight: 800;
-                color: #fff;
+            &.current {
+                background: rgba(255, 159, 0, 0.1);
+                border-color: #ff9f00;
+                box-shadow: 0 0 15px rgba(255, 159, 0, 0.2);
+                transform: scale(1.05);
             }
 
-            .percent {
-                font-size: 0.7rem;
-                color: #94a3b8;
-            }
-
-            .dist-bar-wrapper {
-                height: 100px;
-                width: 14px;
-                background: rgba(0, 0, 0, 0.3);
-                border-radius: 7px;
+            .digit-circle {
+                position: relative;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                border: 2px solid transparent;
                 display: flex;
-                align-items: flex-end;
-                overflow: hidden;
-                border: 1px solid rgba(255, 255, 255, 0.05);
+                align-items: center;
+                justify-content: center;
 
-                .dist-bar {
-                    width: 100%;
-                    background: linear-gradient(to top, #00c6ff, #0072ff);
-                    border-radius: 7px;
-                    transition: height 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                    box-shadow: 0 0 15px rgba(0, 198, 255, 0.5);
+                svg {
+                    position: absolute;
+                    transform: rotate(-90deg);
+                    
+                    .bg-circle {
+                        fill: none;
+                        stroke: rgba(255, 255, 255, 0.05);
+                        stroke-width: 3;
+                    }
+                    
+                    .progress-circle {
+                        fill: none;
+                        stroke-width: 3;
+                        stroke-linecap: round;
+                        transition: all 0.5s ease;
+                    }
+                }
+
+                .digit-number {
+                    font-size: 1.1rem;
+                    font-weight: 800;
+                    z-index: 1;
+                }
+            }
+
+            .digit-info {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                
+                .percentage {
+                    font-size: 0.8rem;
+                    font-weight: 700;
+                }
+
+                .rank {
+                    font-size: 0.6rem;
+                    color: rgba(255, 255, 255, 0.4);
                 }
             }
         }

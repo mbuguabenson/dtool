@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import TechBackground from '../shared_ui/tech-background/tech-background';
 import './initial-loader.scss';
 
 const LOADING_MESSAGES = [
@@ -25,6 +26,7 @@ export default function InitialLoader() {
 
     return (
         <div className='initial-loader-overlay'>
+            <TechBackground />
             <div className='loader-background-glow' />
 
             <motion.div
