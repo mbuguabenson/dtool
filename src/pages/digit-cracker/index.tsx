@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
+import { useStore } from '@/hooks/useStore';
+import { TTradeConfig, TTradeLog } from '@/lib/digit-trade-engine';
+import { TAnalysisHistory, TDigitStat } from '@/stores/analysis-store';
 import { 
     LabelPairedArrowsRotateMdRegularIcon,
     LabelPairedPlayMdFillIcon,
     LabelPairedSquareMdFillIcon
 } from '@deriv/quill-icons/LabelPaired';
-import { useStore } from '@/hooks/useStore';
-import { TTradeConfig, TTradeLog } from '@/lib/digit-trade-engine';
-import { TAnalysisHistory, TDigitStat } from '@/stores/analysis-store';
 import './digit-cracker.scss';
 
 const DigitCracker = observer(() => {
