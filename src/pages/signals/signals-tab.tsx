@@ -143,6 +143,11 @@ const SignalsTab = () => {
         }
     }, [activeView, availableSymbols]);
 
+    // Debug: Log view changes
+    useEffect(() => {
+        console.log('Active view changed to:', activeView);
+    }, [activeView]);
+
     if (!analysis) {
         return (
             <div className='signals-tab signals-tab--loading'>
@@ -161,14 +166,20 @@ const SignalsTab = () => {
             <div className='signals-nav'>
                 <button
                     className={`nav-btn ${activeView === 'signals' ? 'active' : ''}`}
-                    onClick={() => setActiveView('signals')}
+                    onClick={() => {
+                        console.log('Signals button clicked');
+                        setActiveView('signals');
+                    }}
                 >
                     <Zap size={18} />
                     Signals
                 </button>
                 <button
                     className={`nav-btn ${activeView === 'multi' ? 'active' : ''}`}
-                    onClick={() => setActiveView('multi')}
+                    onClick={() => {
+                        console.log('Multi button clicked, changing view to multi');
+                        setActiveView('multi');
+                    }}
                 >
                     <Activity size={18} />
                     Multi
