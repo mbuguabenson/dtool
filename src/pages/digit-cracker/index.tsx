@@ -63,64 +63,68 @@ const DigitCracker = observer(() => {
         const renderDigitGroup = (digits: TDigitStat[]) => {
             return digits.map((stat: TDigitStat) => {
                 const isCurrent = stat.digit === last_digit;
-                const dashArray = 140;
-                const dashOffset = dashArray - (dashArray * stat.percentage) / 100;
+                // Circumference for a circle with radius 35
+                const radius = 35;
+                const circumference = 2 * Math.PI * radius;
+                const progressOffset = circumference - (circumference * stat.percentage) / 100;
 
-                // Stroke colors: Green for 1st, Yellow for 2nd, Red for least, Orange for current
-                let strokeColor = '#6b7280';
-                if (stat.rank === 1) strokeColor = '#00ff41';
-                else if (stat.rank === 2) strokeColor = '#ffd700';
-                else if (stat.rank === 10) strokeColor = '#ff073a';
+                // Determine stroke color based on percentage
+                let strokeColor = '#3b82f6'; // Default blue
+                if (stat.percentage >= 20) {
+                    strokeColor = '#f59e0b'; // Orange/yellow for high percentages
+                } else if (stat.percentage >= 15) {
+                    strokeColor = '#10b981'; // Green for medium-high
+                }
 
-                const finalColor = isCurrent ? '#ff9f00' : strokeColor;
+                // Override with custom color if it's the current digit
+                if (isCurrent) {
+                    strokeColor = '#f59e0b'; // Orange for NOW
+                }
 
                 return (
-                    <div key={stat.digit} className={`digit-card ${isCurrent ? 'current' : ''}`} data-rank={stat.rank}>
-                        {isCurrent && <div className='live-indicator'>LIVE</div>}
-                        <div
-                            className='digit-circle'
-                            style={{ borderColor: finalColor, boxShadow: `0 0 12px ${finalColor}40` }}
-                        >
-                            <svg width='50' height='50' viewBox='0 0 50 50'>
-                                <circle className='bg-circle' cx='25' cy='25' r='22' />
+                    <div key={stat.digit} className={`digit-card-minimal ${isCurrent ? 'current' : ''}`}>
+                        {isCurrent && <div className='now-badge'>NOW</div>}
+                        <div className='digit-circle-minimal'>
+                            <svg width='80' height='80' viewBox='0 0 80 80'>
+                                {/* Background circle */}
                                 <circle
-                                    className='progress-circle'
-                                    cx='25'
-                                    cy='25'
-                                    r='22'
-                                    style={{ stroke: finalColor }}
-                                    strokeDasharray={dashArray}
-                                    strokeDashoffset={dashOffset}
+                                    cx='40'
+                                    cy='40'
+                                    r={radius}
+                                    fill='none'
+                                    stroke='rgba(255, 255, 255, 0.1)'
+                                    strokeWidth='3'
+                                />
+                                {/* Progress circle */}
+                                <circle
+                                    cx='40'
+                                    cy='40'
+                                    r={radius}
+                                    fill='none'
+                                    stroke={strokeColor}
+                                    strokeWidth='3'
+                                    strokeLinecap='round'
+                                    strokeDasharray={circumference}
+                                    strokeDashoffset={progressOffset}
+                                    transform='rotate(-90 40 40)'
+                                    style={{
+                                        transition: 'stroke-dashoffset 0.5s ease',
+                                        filter: `drop-shadow(0 0 4px ${strokeColor})`,
+                                    }}
                                 />
                             </svg>
-                            <span
-                                className='digit-number'
-                                style={{ color: finalColor, textShadow: `0 0 12px ${finalColor}` }}
-                            >
-                                {stat.digit}
-                            </span>
+                            <span className='digit-number-minimal'>{stat.digit}</span>
                         </div>
-                        <div className='digit-info'>
-                            <div className='percentage'>{stat.percentage.toFixed(1)}%</div>
-                            <div
-                                className='power-bar'
-                                style={{
-                                    width: `${stat.power}%`,
-                                    backgroundColor: finalColor,
-                                    boxShadow: `0 0 6px ${finalColor}`,
-                                }}
-                            />
-                            <div className='rank'>#{stat.rank}</div>
-                        </div>
+                        <div className='digit-percentage-minimal'>{stat.percentage.toFixed(1)}%</div>
                     </div>
                 );
             });
         };
 
         return (
-            <div className='digit-grid-wrapper'>
-                <div className='digit-row'>{renderDigitGroup(group1)}</div>
-                <div className='digit-row'>{renderDigitGroup(group2)}</div>
+            <div className='digit-grid-minimal'>
+                <div className='digit-row-minimal'>{renderDigitGroup(group1)}</div>
+                <div className='digit-row-minimal'>{renderDigitGroup(group2)}</div>
             </div>
         );
     };
