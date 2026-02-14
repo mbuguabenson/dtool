@@ -76,6 +76,36 @@ const SignalCard = ({ signal, isPro = false }: { signal: any; isPro?: boolean })
     );
 };
 
+const MultiSignalCard = ({ marketData }: { marketData: any }) => {
+    const getSignalClass = () => {
+        if (marketData.signal === 'TRADE') return 'signal-trade';
+        if (marketData.signal === 'WAIT') return 'signal-wait';
+        return 'signal-neutral';
+    };
+
+    return (
+        <div className='multi-signal-card'>
+            <div className='card-header'>
+                <h3>{marketData.display_name}</h3>
+                <span className='price'>{marketData.price}</span>
+            </div>
+            <div className='card-content'>
+                <div className='digit-display'>
+                    <span className='label'>Last Digit</span>
+                    <span className='value'>{marketData.digit}</span>
+                </div>
+                <div className={`signal-badge ${getSignalClass()}`}>
+                    {marketData.signal || 'ANALYZING'}
+                </div>
+            </div>
+            <div className='card-footer'>
+                <Timer size={16} />
+                <span>Live • {marketData.tickCount} ticks</span>
+            </div>
+        </div>
+    );
+};
+
 const SignalsTab = () => {
     const {
         connectionStatus,
@@ -94,6 +124,24 @@ const SignalsTab = () => {
     } = useDeriv('R_100', 100);
 
     const [showLogs, setShowLogs] = useState(false);
+    const [activeView, setActiveView] = useState<'signals' | 'multi'>('signals');
+    const [multiMarketData, setMultiMarketData] = useState<any[]>([]);
+
+    // Fetch data for all markets when in multi view
+    useEffect(() => {
+        if (activeView === 'multi' && availableSymbols.length > 0) {
+            //Initialize multi-market data with available symbols
+            const initialData = availableSymbols.slice(0, 12).map(sym => ({
+                symbol: sym.symbol,
+                display_name: sym.display_name,
+                price: '0.00',
+                digit: 0,
+                signal: 'LOADING',
+                tickCount: 0,
+            }));
+            setMultiMarketData(initialData);
+        }
+    }, [activeView, availableSymbols]);
 
     if (!analysis) {
         return (
@@ -108,8 +156,29 @@ const SignalsTab = () => {
     }
 
     return (
-        <div className='signals-tab'>
-            <div className='signals-tab__header'>
+        <div className='signals-tab-container'>
+            {/* Navigation */}
+            <div className='signals-nav'>
+                <button
+                    className={`nav-btn ${activeView === 'signals' ? 'active' : ''}`}
+                    onClick={() => setActiveView('signals')}
+                >
+                    <Zap size={18} />
+                    Signals
+                </button>
+                <button
+                    className={`nav-btn ${activeView === 'multi' ? 'active' : ''}`}
+                    onClick={() => setActiveView('multi')}
+                >
+                    <Activity size={18} />
+                    Multi
+                </button>
+            </div>
+
+            {/* Single Market View */}
+            {activeView === 'signals' && (
+                <div className='signals-tab'>
+                    <div className='signals-tab__header'>
                 <div className='header-left'>
                     <h2>Signals Pro</h2>
                     <div className='market-selector'>
@@ -253,6 +322,23 @@ const SignalsTab = () => {
                             <div key={i} className='log-entry'>
                                 {log}
                             </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+                </div>
+            )}
+
+            {/* Multi-Market View */}
+            {activeView === 'multi' && (
+                <div className='multi-signals-view'>
+                    <div className='performance-note'>
+                        <Activity size={16} />
+                        <span>Monitoring {multiMarketData.length} markets in real-time</span>
+                    </div>
+                    <div className='multi-signals-grid'>
+                        {multiMarketData.map(market => (
+                            <MultiSignalCard key={market.symbol} marketData={market} />
                         ))}
                     </div>
                 </div>
