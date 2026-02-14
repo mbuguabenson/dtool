@@ -130,8 +130,14 @@ const SignalsTab = () => {
     // Fetch data for all markets when in multi view
     useEffect(() => {
         if (activeView === 'multi' && availableSymbols && availableSymbols.length > 0) {
-            // Initialize multi-market data with available symbols
-            const initialData = availableSymbols.slice(0, 12).map(sym => ({
+            // Filter for volatility markets only (R_ and HZ symbols)
+            const volatilityMarkets = availableSymbols.filter(sym => {
+                const symbol = sym.symbol || '';
+                return symbol.startsWith('R_') || symbol.includes('HZ');
+            });
+
+            // Initialize multi-market data with volatility symbols only
+            const initialData = volatilityMarkets.slice(0, 12).map(sym => ({
                 symbol: sym.symbol || 'UNKNOWN',
                 display_name: sym.display_name || 'Unknown Market',
                 price: '0.00',
