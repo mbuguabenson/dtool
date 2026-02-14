@@ -755,6 +755,45 @@
             </next>
           </block>
         </next>
+          <block type="controls_if" id="analyze_trend">
+            <mutation xmlns="http://www.w3.org/1999/xhtml" else="1"></mutation>
+            <value name="IF0">
+              <block type="logic_compare" id="compare_last_digit">
+                <field name="OP">LT</field>
+                <value name="A">
+                  <block type="variables_get" id="get_tick1">
+                    <field name="VAR" id="o!-=j_eJZCfW(+iV7;MS">Tick 1</field>
+                  </block>
+                </value>
+                <value name="B">
+                  <block type="math_number" id="mid_point">
+                    <field name="NUM">5</field>
+                  </block>
+                </value>
+              </block>
+            </value>
+            <statement name="DO0">
+              <block type="variables_set" id="set_pred_over">
+                <field name="VAR" id="^ZmwS_gzK3eAlvzYE4gg">Prediction</field>
+                <value name="VALUE">
+                   <block type="variables_get" id="val_over">
+                    <field name="VAR" id="O%:U+;QDsX$]{]rSf}F5">Over Prediction</field>
+                  </block>
+                </value>
+              </block>
+            </statement>
+            <statement name="ELSE">
+              <block type="variables_set" id="set_pred_under">
+                <field name="VAR" id="^ZmwS_gzK3eAlvzYE4gg">Prediction</field>
+                <value name="VALUE">
+                   <block type="variables_get" id="val_under">
+                    <field name="VAR" id="O)PRE6Ok@%Fp:~T@|bDE">Under Prediction</field>
+                  </block>
+                </value>
+              </block>
+            </statement>
+          </block>
+        </next>
       </block>
     </statement>
   </block>

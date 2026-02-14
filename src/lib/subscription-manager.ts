@@ -92,20 +92,21 @@ class SubscriptionManager {
                 }
             }
 
-            if (response && response.error) {
+            if (response && (response as any).error) {
+                const error = (response as any).error;
                 // If already subscribed error, we can safely ignore and use existing subscription
-                if (response.error.code === 'AlreadySubscribed') {
+                if (error.code === 'AlreadySubscribed') {
                     console.log(`[SubscriptionManager] Using existing subscription for ${symbol}`);
                     // The subscription already exists on the server, so we just track it locally
                 } else {
-                    console.error('[SubscriptionManager] Subscription error:', response.error);
+                    console.error('[SubscriptionManager] Subscription error:', error);
                     this.activeSubscriptions.delete(key);
-                    throw new Error(response.error.message);
+                    throw new Error(error.message);
                 }
             }
 
-            if (response.subscription) {
-                subscription.id = response.subscription.id;
+            if (response && (response as any).subscription) {
+                subscription.id = (response as any).subscription.id;
             }
 
             // Set up message listener

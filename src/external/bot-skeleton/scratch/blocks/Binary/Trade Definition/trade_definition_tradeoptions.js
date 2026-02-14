@@ -248,7 +248,9 @@ window.Blockly.Blocks.trade_definition_tradeoptions = {
     updateAmountLimits() {
         const { account_limits } = ApiHelpers?.instance ?? {};
         if (!account_limits) return;
-        const { currency, landing_company_shortcode } = DBotStore.instance.client;
+        const { client } = DBotStore?.instance || {};
+        if (!client) return;
+        const { currency, landing_company_shortcode } = client;
         if (isAuthorizing$.getValue()) return;
         account_limits.getStakePayoutLimits(currency, landing_company_shortcode, this.selected_market).then(limits => {
             const unsupported_trade_types = ['multiplier', 'accumulator'];
@@ -612,7 +614,8 @@ window.Blockly.JavaScript.javascriptGenerator.forBlock.trade_definition_tradeopt
             'AMOUNT',
             window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC
         ) || '0';
-    const { currency } = DBotStore.instance.client;
+    const { client } = DBotStore?.instance || {};
+    const { currency } = client || { currency: 'USD' };
     const duration_type = block.getFieldValue('DURATIONTYPE_LIST') || '0';
     const duration_value =
         window.Blockly.JavaScript.javascriptGenerator.valueToCode(

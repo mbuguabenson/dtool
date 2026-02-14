@@ -1,7 +1,10 @@
+@import '../../components/shared/styles/mixins';
+
 .easy-tool {
-    padding: 24px;
+    padding: 1rem;
     height: 100%;
     overflow-y: auto;
+    background: var(--general-main-1);
     font-family: 'Inter', sans-serif;
     transition:
         background 0.3s ease,
@@ -24,91 +27,146 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 24px;
-        padding: 8px 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 16px 24px;
+        background: rgba(30, 41, 59, 0.7); // Darker blue-grey base
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 
+            0 10px 30px -5px rgba(0, 0, 0, 0.3),
+            inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+        position: relative;
+        overflow: hidden;
+
+        // Vibrant background accent
+        &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #f43f5e, #8b5cf6, #3b82f6, #10b981, #f59e0b);
+            opacity: 0.8;
+        }
     }
 
     &__title {
-        font-size: 24px;
-        font-weight: 800;
-        background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+        font-size: 28px;
+        font-weight: 900;
+        letter-spacing: -0.5px;
+        background: linear-gradient(135deg, #60a5fa 0%, #c084fc 50%, #f472b6 100%);
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+        padding-right: 20px;
+        display: flex;
+        align-items: center;
+        
+        // Add a small icon/dot
+        &::before {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: #f472b6;
+            border-radius: 50%;
+            margin-right: 12px;
+            box-shadow: 0 0 15px #f472b6;
+        }
     }
 
     &__vitals-row {
         display: flex;
-        gap: 60px;
+        gap: 16px;
         align-items: center;
         flex: 1;
-        justify-content: center;
-
+        justify-content: flex-end; // Align to the right
+        
         .v-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
+            justify-content: center;
+            gap: 4px;
+            padding: 8px 20px;
+            border-radius: 16px;
+            min-width: 100px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            overflow: hidden;
+
+            &:hover {
+                transform: translateY(-2px);
+                background: rgba(255, 255, 255, 0.05);
+            }
+
+            // Price Item
+            &:nth-child(1) {
+                border-color: rgba(59, 130, 246, 0.3);
+                .l { color: #93c5fd; }
+                .v { color: #fff; text-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
+                &::before { background: linear-gradient(180deg, rgba(59, 130, 246, 0.1), transparent); }
+            }
+
+            // Digit Item
+            &:nth-child(2) {
+                border-color: rgba(245, 158, 11, 0.4);
+                background: rgba(245, 158, 11, 0.05);
+                .l { color: #fcd34d; }
+                .v.digit { 
+                    font-size: 24px; // Much larger
+                    color: #fbbf24;
+                    text-shadow: 0 0 15px rgba(251, 191, 36, 0.6);
+                }
+            }
+
+            // Balance Item
+            &:nth-child(3) {
+                border-color: rgba(16, 185, 129, 0.3);
+                .l { color: #6ee7b7; }
+                .v.balance { 
+                    color: #34d399; 
+                    text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+                }
+            }
+             
+             // Ping Item
+            &:nth-child(4) {
+                 border-color: rgba(168, 85, 247, 0.3);
+                 .l { color: #d8b4fe; }
+                 .v { color: #e9d5ff; }
+            }
+            
+            // Common internal styles
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 40%;
+                background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+                pointer-events: none;
+            }
 
             .l {
-                font-size: 9px;
+                font-size: 10px;
                 font-weight: 800;
-                color: rgba(255, 255, 255, 0.2);
-                letter-spacing: 1px;
+                letter-spacing: 1.5px;
                 text-transform: uppercase;
+                opacity: 0.9;
             }
 
             .v {
-                font-size: 18px;
-                font-weight: 900;
-                font-family: 'JetBrains Mono', monospace;
-                color: #fff;
-
-                &.digit {
-                    color: #fbbf24;
-                    text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
-                }
-
-                &.balance {
-                    color: #10b981;
-                }
-            }
-
-            .v-status {
-                font-size: 11px;
+                font-size: 16px;
                 font-weight: 800;
-                padding: 2px 10px;
-                border-radius: 20px;
-                display: flex;
-                align-items: center;
-                gap: 6px;
-
-                &::before {
-                    content: '';
-                    width: 6px;
-                    height: 6px;
-                    border-radius: 50%;
-                }
-
-                &.online {
-                    color: #10b981;
-                    background: rgba(16, 185, 129, 0.1);
-
-                    &::before {
-                        background: #10b981;
-                        box-shadow: 0 0 10px #10b981;
-                    }
-                }
-
-                &.offline {
-                    color: #ef4444;
-                    background: rgba(239, 68, 68, 0.1);
-
-                    &::before {
-                        background: #ef4444;
-                        box-shadow: 0 0 10px #ef4444;
-                    }
-                }
+                font-family: 'JetBrains Mono', monospace;
+                z-index: 1;
             }
         }
     }

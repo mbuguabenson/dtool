@@ -511,8 +511,26 @@
           <block type="controls_if" id="i8}ato^9G3JTL/1Wg[UG">
             <mutation xmlns="http://www.w3.org/1999/xhtml" elseif="1"></mutation>
             <value name="IF0">
-              <block type="check_direction" id="]7!io8[@NxzO/kor.vky">
-                <field name="CHECK_DIRECTION">rise</field>
+              <block type="logic_compare" id="compare_rise">
+                <field name="OP">GT</field>
+                <value name="A">
+                  <block type="tick" id="tick_last"></block>
+                </value>
+                <value name="B">
+                   <block type="lists_getIndex" id="get_prev_tick">
+                    <mutation xmlns="http://www.w3.org/1999/xhtml" statement="false" at="true"></mutation>
+                    <field name="MODE">GET</field>
+                    <field name="WHERE">FROM_END</field>
+                    <value name="VALUE">
+                      <block type="ticks" id="ticks_list"></block>
+                    </value>
+                    <value name="AT">
+                      <block type="math_number" id="tick_index_2">
+                        <field name="NUM">2</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
               </block>
             </value>
             <statement name="DO0">
@@ -526,8 +544,26 @@
               </block>
             </statement>
             <value name="IF1">
-              <block type="check_direction" id="`@G^JvpYXt^{m3-CgrKB">
-                <field name="CHECK_DIRECTION">fall</field>
+              <block type="logic_compare" id="compare_fall">
+                <field name="OP">LT</field>
+                <value name="A">
+                  <block type="tick" id="tick_last_fall"></block>
+                </value>
+                <value name="B">
+                   <block type="lists_getIndex" id="get_prev_tick_fall">
+                    <mutation xmlns="http://www.w3.org/1999/xhtml" statement="false" at="true"></mutation>
+                    <field name="MODE">GET</field>
+                    <field name="WHERE">FROM_END</field>
+                    <value name="VALUE">
+                      <block type="ticks" id="ticks_list_fall"></block>
+                    </value>
+                    <value name="AT">
+                      <block type="math_number" id="tick_index_2_fall">
+                        <field name="NUM">2</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
               </block>
             </value>
             <statement name="DO1">

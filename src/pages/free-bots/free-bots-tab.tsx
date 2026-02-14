@@ -1,9 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
+import classNames from 'classnames';
 import { useFreeBots } from '@/hooks/use-free-bots';
 import { useStore } from '@/hooks/useStore';
 import TechBackground from '@/components/shared_ui/tech-background/tech-background';
 import './free-bots-tab.scss';
+
+const RequestBotCard = () => {
+    const [request, setRequest] = useState('');
+    const [isSent, setIsSent] = useState(false);
+
+    const handleSend = () => {
+        if (!request.trim()) return;
+        setIsSent(true);
+        setTimeout(() => {
+            setIsSent(false);
+            setRequest('');
+            // TODO: Actually send the request to backend/email
+        }, 2000);
+    };
+
+    return (
+        <div className='request-bot-card'>
+            <h3>Request a Custom Bot</h3>
+            <textarea
+                placeholder="Describe the bot strategy you need..."
+                value={request}
+                onChange={(e) => setRequest(e.target.value)}
+                disabled={isSent}
+            />
+            <button onClick={handleSend} disabled={isSent}>
+                {isSent ? 'Request Sent!' : 'Send Request'}
+            </button>
+        </div>
+    );
+};
 
 const BotCard = ({ bot, onLoad }: { bot: any; onLoad: (bot: any) => void }) => {
     // Convert hex to rgb for CSS variable
@@ -18,7 +49,10 @@ const BotCard = ({ bot, onLoad }: { bot: any; onLoad: (bot: any) => void }) => {
 
     return (
         <div 
-            className='bot-card' 
+            className={classNames('bot-card', {
+                'automatic': bot.category === 'Automatic',
+                'hybrid': bot.category === 'Hybrid'
+            })}
             style={{ 
                 '--bot-color': bot.color,
                 '--bot-color-rgb': rgbColor
@@ -88,6 +122,11 @@ const FreeBotsTab = observer(() => {
                 {filteredBots.map(bot => (
                     <BotCard key={bot.id} bot={bot} onLoad={loadBotToBuilder} />
                 ))}
+                <RequestBotCard />
+            </div>
+            
+            <div className='free-bots-tab__coming-soon' style={{ textAlign: 'center', marginTop: '4rem', opacity: 0.5 }}>
+                <h3>More Strategies Coming Soon...</h3>
             </div>
 
             {isLoading && (

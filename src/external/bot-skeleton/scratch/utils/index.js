@@ -777,6 +777,8 @@ export const appendCollapsedProcedureBlocksFields = instance => {
 
 export const setCurrency = block_instance => {
     const currency_field = block_instance.getField('CURRENCY_LIST');
-    const { currency } = DBotStore.instance.client;
+    const { client } = DBotStore?.instance || {};
+    if (!client) return;
+    const { currency } = client;
     currency_field?.setValue(getCurrencyDisplayCode(currency));
 };

@@ -8,7 +8,7 @@ import {
     LabelPairedPuzzlePieceTwoCaptionBoldIcon,
     LabelPairedLightbulbCaptionRegularIcon,
     LabelPairedCopyCaptionRegularIcon,
-    LabelPairedSlidersCaptionRegularIcon,
+
     LabelPairedFolderOpenCaptionRegularIcon,
     LabelPairedChartLineCaptionRegularIcon,
     LabelPairedCircleDotCaptionRegularIcon,
@@ -54,15 +54,7 @@ const Cards = observer(({ search_query, handleTabChange }: TCardProps) => {
             tag: localize('Trending'),
             tagType: 'trending',
         },
-        {
-            id: 'auto-trader',
-            title: localize('Auto Trader'),
-            icon: LabelPairedSlidersCaptionRegularIcon,
-            description: localize('Automate your trades with advanced strategies'),
-            tabIndex: DBOT_TABS.AUTO_TRADER,
-            tag: localize('Hot'),
-            tagType: 'hot',
-        },
+
         {
             id: 'copy-trading',
             title: localize('Copy Trading'),

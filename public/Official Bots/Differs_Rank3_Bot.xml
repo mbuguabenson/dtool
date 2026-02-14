@@ -116,7 +116,7 @@
             <statement name="DO0">
               <block type="math_change" id="inc_count">
                 <field name="VAR" id="appearance_count">Appearance Count</field>
-                <value name="DELTA"><block type="math_number"><field name="NUM">1</Field></block></value>
+                <value name="DELTA"><block type="math_number"><field name="NUM">1</field></block></value>
               </block>
             </statement>
             <next>
@@ -125,7 +125,7 @@
                   <block type="logic_compare">
                     <field name="OP">GTE</field>
                     <value name="A"><block type="variables_get"><field name="VAR" id="appearance_count">Appearance Count</field></block></value>
-                    <value name="B"><block type="math_number"><field name="NUM">3</Field></block></value>
+                    <value name="B"><block type="math_number"><field name="NUM">3</field></block></value>
                   </block>
                 </value>
                 <statement name="DO0">

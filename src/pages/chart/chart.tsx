@@ -15,26 +15,19 @@ import { useDevice } from '@deriv-com/ui';
 import ToolbarWidgets from './toolbar-widgets';
 import '@deriv/deriv-charts/dist/smartcharts.css';
 
-type TSubscription = {
-    [key: string]: null | {
-        unsubscribe?: () => void;
-    };
-};
-
-type TError = null | {
-    error?: {
-        code?: string;
-        message?: string;
-    };
-};
-
-const subscriptions: TSubscription = {};
-
 const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) => {
     const barriers: [] = [];
     const { common, ui } = useStore();
     const { chart_store, run_panel, dashboard } = useStore();
     const [isSafari, setIsSafari] = useState(false);
+    const [tickHistory, setTickHistory] = useState<number[]>([]);
+    
+    // Derived stats
+    const lastDigits = tickHistory.map(t => parseInt(t.toString().slice(-1)));
+    const digitStats = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(d => ({
+        digit: d,
+        percentage: (lastDigits.filter(x => x === d).length / lastDigits.length) * 100 || 0
+    }));
 
     const {
         chart_type,
@@ -50,6 +43,7 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
         chart_subscription_id,
     } = chart_store;
     const chartSubscriptionIdRef = useRef(chart_subscription_id);
+    const subscriptions = useRef<Record<string, any>>({});
     const { isDesktop, isMobile } = useDevice();
     const { is_drawer_open } = run_panel;
     const { is_chart_modal_visible } = dashboard;
@@ -93,24 +87,31 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
         subscription_id && chart_api.api.forget(subscription_id);
     };
 
-    const requestSubscribe = async (req: TicksStreamRequest, callback: (data: any) => void) => {
-        try {
-            requestForgetStream(chartSubscriptionIdRef.current);
-            const history = await chart_api.api.send(req);
-            setChartSubscriptionId(history?.subscription.id);
-            if (history) callback(history);
-            if (req.subscribe === 1) {
-                subscriptions[history?.subscription.id] = chart_api.api
-                    .onMessage()
-                    ?.subscribe(({ data }: { data: TicksHistoryResponse }) => {
-                        callback(data);
-                    });
-            }
-        } catch (e) {
-            // eslint-disable-next-line no-console
-            (e as TError)?.error?.code === 'MarketIsClosed' && callback([]); //if market is closed sending a empty array  to resolve
-            console.log((e as TError)?.error?.message);
+    const requestSubscribe = (req: TicksStreamRequest, callback: (data: any) => void) => {
+        const subId = chartSubscriptionIdRef.current;
+        if (subId && subscriptions.current[subId]) {
+            subscriptions.current[subId].unsubscribe();
+            delete subscriptions.current[subId];
         }
+
+        chart_api.api.send(req).then((history: any) => {
+            setChartSubscriptionId(history?.subscription?.id);
+            
+            if (history) {
+                callback(history);
+            }
+
+            if (req.subscribe === 1 && history?.subscription?.id) {
+                const subscription = chart_api.api.onMessage().subscribe(({ data }: any) => {
+                    callback(data);
+                });
+                subscriptions.current[history.subscription.id] = subscription;
+            }
+        }).catch((e: any) => {
+            // eslint-disable-next-line no-console
+            e?.error?.code === 'MarketIsClosed' && callback([]); 
+            console.log(e?.error?.message);
+        });
     };
 
     if (!symbol) return null;
