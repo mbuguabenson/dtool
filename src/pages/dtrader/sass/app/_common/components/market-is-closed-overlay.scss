@@ -16,25 +16,30 @@
     &--loading {
         display: none;
     }
+
     &__main-heading {
         margin-bottom: 2rem;
     }
+
     &__open-date,
     &__main-message {
         margin-bottom: 2rem;
     }
+
     &__open-at,
     &__come-back {
         &--main-page {
             margin-bottom: 1rem;
         }
     }
+
     &__separator {
         margin-top: 1rem;
         border: 2px solid var(--general-section-1);
         width: 19.2rem;
         margin-bottom: 2rem;
     }
+
     &__button {
         min-height: 40px;
         max-width: 24rem;

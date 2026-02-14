@@ -111,7 +111,7 @@
             }
 
             &__active {
-                background: rgba(124, 58, 237, 0.1) !important;
+                background: rgb(124 58 237 / 10%) !important;
                 color: #7c3aed !important;
                 border-bottom: none !important;
                 border: none !important;
@@ -147,15 +147,15 @@
                 }
 
                 &::-webkit-scrollbar-track {
-                    background: rgba(255, 255, 255, 0.05);
+                    background: rgb(255 255 255 / 5%);
                 }
 
                 &::-webkit-scrollbar-thumb {
-                    background: rgba(255, 255, 255, 0.2);
+                    background: rgb(255 255 255 / 20%);
                     border-radius: 2px;
 
                     &:hover {
-                        background: rgba(255, 255, 255, 0.3);
+                        background: rgb(255 255 255 / 30%);
                     }
                 }
 
@@ -165,7 +165,6 @@
                     &--main {
                         &__tabs {
                             width: 100% !important;
-
                             width: 100%;
                             overflow-x: auto;
                             overflow-y: hidden; // Disable vertical scroll
@@ -201,15 +200,15 @@
             }
 
             &::-webkit-scrollbar-track {
-                background: rgba(255, 255, 255, 0.05);
+                background: rgb(255 255 255 / 5%);
             }
 
             &::-webkit-scrollbar-thumb {
-                background: rgba(255, 255, 255, 0.2);
+                background: rgb(255 255 255 / 20%);
                 border-radius: 4px;
 
                 &:hover {
-                    background: rgba(255, 255, 255, 0.3);
+                    background: rgb(255 255 255 / 30%);
                 }
             }
 
@@ -257,7 +256,9 @@
             height: 4rem;
             padding: 0 1.6rem;
             width: auto;
+
             @include flex-center;
+
             color: var(--text-prominent); // Use theme variable
             transition: background 0.2s ease;
 
@@ -298,7 +299,7 @@
         &__button#db-animation {
             &__run-button {
                 background: linear-gradient(90deg, #ffa500 0%, #ff444f 100%) !important;
-                color: #ffffff !important;
+                color: #fff !important;
                 border: none !important;
             }
 
@@ -329,7 +330,7 @@
         &__button#db-animation {
             &__run-button {
                 background: linear-gradient(90deg, #ffa500 0%, #ff444f 100%) !important;
-                color: #ffffff !important;
+                color: #fff !important;
                 border: none !important;
             }
 
@@ -428,7 +429,9 @@
         .db-toolbox {
             &__item {
                 height: 4rem;
+
                 @include flex-center;
+
                 gap: 0.8rem;
                 padding: 0 1.6rem;
                 cursor: pointer;
@@ -893,14 +896,14 @@
             &__list {
                 background: #f8f9fa; // Light gray background for light mode
                 border-bottom: 2px solid #e9ecef;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+                box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
             }
 
             &__item {
                 color: #495057; // Darker text for better contrast in light mode
 
                 &:hover:not(.dc-tabs__active) {
-                    background: rgba(0, 0, 0, 0.04);
+                    background: rgb(0 0 0 / 4%);
                 }
 
                 svg {
@@ -909,17 +912,17 @@
             }
 
             &__active {
-                background: rgba(0, 198, 255, 0.12) !important;
-                color: #0099cc !important; // Slightly darker cyan for better contrast
-                box-shadow: 0 2px 8px rgba(0, 198, 255, 0.15);
+                background: rgb(0 198 255 / 12%) !important;
+                color: #09c !important; // Slightly darker cyan for better contrast
+                box-shadow: 0 2px 8px rgb(0 198 255 / 15%);
 
                 svg {
-                    fill: #0099cc !important;
+                    fill: #09c !important;
                 }
             }
 
             &__active-line {
-                background-color: #0099cc; // Darker cyan for active line in light mode
+                background-color: #09c; // Darker cyan for active line in light mode
             }
         }
 
@@ -932,28 +935,28 @@
     .main__container {
         .dc-tabs__list {
             &::-webkit-scrollbar-track {
-                background: rgba(0, 0, 0, 0.05);
+                background: rgb(0 0 0 / 5%);
             }
 
             &::-webkit-scrollbar-thumb {
-                background: rgba(0, 0, 0, 0.15);
+                background: rgb(0 0 0 / 15%);
 
                 &:hover {
-                    background: rgba(0, 0, 0, 0.25);
+                    background: rgb(0 0 0 / 25%);
                 }
             }
         }
 
         &__content {
             &::-webkit-scrollbar-track {
-                background: rgba(0, 0, 0, 0.05);
+                background: rgb(0 0 0 / 5%);
             }
 
             &::-webkit-scrollbar-thumb {
-                background: rgba(0, 0, 0, 0.15);
+                background: rgb(0 0 0 / 15%);
 
                 &:hover {
-                    background: rgba(0, 0, 0, 0.25);
+                    background: rgb(0 0 0 / 25%);
                 }
             }
         }

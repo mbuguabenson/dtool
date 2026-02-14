@@ -1,7 +1,7 @@
 .market-selector {
     &__select {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgb(255 255 255 / 5%);
+        border: 1px solid rgb(255 255 255 / 10%);
         color: #fff;
         padding: 8px 16px;
         border-radius: 8px;
@@ -13,18 +13,18 @@
         min-width: 180px;
 
         &:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.2);
+            background: rgb(255 255 255 / 8%);
+            border-color: rgb(255 255 255 / 20%);
         }
 
         &:focus {
             border-color: #00c6ff;
-            box-shadow: 0 0 0 2px rgba(0, 198, 255, 0.2);
+            box-shadow: 0 0 0 2px rgb(0 198 255 / 20%);
         }
 
         optgroup {
             background: #1a1a1a;
-            color: rgba(255, 255, 255, 0.5);
+            color: rgb(255 255 255 / 50%);
             font-weight: 700;
             padding: 8px;
         }

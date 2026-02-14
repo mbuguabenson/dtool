@@ -17,6 +17,7 @@
         border: none;
         padding: 0;
     }
+
     &__digit {
         border-radius: $BORDER_RADIUS;
         padding: 1rem 0.8rem;
@@ -28,18 +29,25 @@
         align-items: center;
         min-width: 8.8rem;
     }
+
     &__amount {
         @include typeface(--paragraph-center-bold-black);
+
         color: var(--text-prominent);
     }
+
     &__duration {
         @include typeface(--paragraph-center-normal-black);
+
         color: var(--text-prominent);
     }
+
     &__type {
         @include typeface(--paragraph-center-normal-black);
+
         color: var(--text-less-prominent);
     }
+
     &__item {
         color: var(--text-prominent);
         line-height: 1.4rem;
@@ -52,6 +60,7 @@
             font-weight: bold;
             font-size: 1.2rem;
         }
+
         &-tooltip {
             position: absolute;
             top: 0;
@@ -63,6 +72,7 @@
             align-items: center;
         }
     }
+
     &__multiplier {
         display: flex;
         flex-direction: column;
@@ -80,12 +90,14 @@
                 margin-right: 0.4rem;
             }
         }
+
         &-expiration {
             min-width: 7.2rem;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+
         &-options {
             flex: none;
             flex-direction: column;
@@ -94,6 +106,7 @@
             margin-left: 0.8rem;
             justify-content: center;
             min-width: 11.9rem;
+
             &:has(.mobile-widget__item-tooltip) {
                 min-width: 9.9rem;
             }
@@ -102,6 +115,7 @@
                 color: var(--text-general);
             }
         }
+
         &-risk-management {
             display: flex;
             flex-direction: column;
@@ -117,15 +131,18 @@
                 justify-content: space-between;
                 align-items: center;
             }
+
             .mobile-widget__item-label {
                 color: var(--text-general);
             }
+
             .mobile-widget__item-label,
             .mobile-widget__item-value {
                 font-size: 1.4rem;
                 line-height: 1.8rem;
             }
         }
+
         &-trade-info {
             display: flex;
             justify-content: space-evenly;
@@ -137,6 +154,7 @@
                 justify-content: flex-end;
                 margin-right: 1.6rem;
             }
+
             &-tooltip-text {
                 display: flex;
                 flex-direction: row;
@@ -145,15 +163,18 @@
                 span:before {
                     content: ': ';
                 }
+
                 &:first-child {
                     margin-right: 0.8rem;
                 }
-                @media only screen and (max-width: 340px) {
+
+                @media only screen and (width <= 340px) {
                     font-size: 0.8rem;
                 }
             }
         }
     }
+
     &__wrapper {
         display: flex;
 
@@ -162,9 +183,11 @@
             flex: unset;
         }
     }
+
     &:is(.take-profit) {
         height: auto;
     }
+
     .trade-container__fieldset:is(.take-profit *) {
         width: 100%;
         margin-bottom: 0;
@@ -182,18 +205,22 @@
     &__amount {
         grid-area: c;
     }
+
     &__barrier1 {
         grid-area: b;
     }
+
     &__barrier2 {
         grid-area: d;
     }
+
     &__currency:before {
         margin-right: 0.1em;
         position: static;
         display: inline;
         font-size: 1em;
     }
+
     &__basis {
         font-weight: bold;
         color: var(--text-prominent);
@@ -210,9 +237,11 @@
             flex: 1 1 auto;
             text-align: left;
         }
+
         &__amount {
             flex: 1 1 auto;
         }
+
         &__type {
             flex: 1 1 auto;
             text-align: right;

@@ -14,7 +14,7 @@
         .pattern-title {
             font-size: 24px;
             font-weight: 800;
-            color: rgba(255, 255, 255, 0.7);
+            color: rgb(255 255 255 / 70%);
             margin: 0;
             letter-spacing: 0.5px;
         }
@@ -39,8 +39,8 @@
         animation: slideIn 0.3s ease-out;
 
         &.status-wait {
-            background: rgba(255, 159, 67, 0.15);
-            border: 1px solid rgba(255, 159, 67, 0.3);
+            background: rgb(255 159 67 / 15%);
+            border: 1px solid rgb(255 159 67 / 30%);
 
             .status-text {
                 color: #ff9f43;
@@ -48,9 +48,9 @@
         }
 
         &.status-trade {
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+            background: rgb(16 185 129 / 15%);
+            border: 1px solid rgb(16 185 129 / 30%);
+            box-shadow: 0 0 15px rgb(16 185 129 / 20%);
 
             .status-text {
                 color: #10b981;
@@ -58,8 +58,8 @@
         }
 
         &.status-unstable {
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            background: rgb(239 68 68 / 15%);
+            border: 1px solid rgb(239 68 68 / 30%);
 
             .status-text {
                 color: #ef4444;
@@ -87,14 +87,14 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            background: rgba(0, 0, 0, 0.2);
+            background: rgb(0 0 0 / 20%);
             padding: 4px 12px;
             border-radius: 8px;
 
             .label {
                 font-size: 10px;
                 font-weight: 700;
-                color: rgba(255, 255, 255, 0.5);
+                color: rgb(255 255 255 / 50%);
             }
 
             .value {
@@ -120,14 +120,14 @@
     .pattern-progress-wrapper {
         width: 100%;
         margin-bottom: 32px;
-        background: rgba(255, 255, 255, 0.02);
+        background: rgb(255 255 255 / 2%);
         padding: 20px;
         border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        border: 1px solid rgb(255 255 255 / 5%);
 
         .pattern-progress-bar {
             height: 12px;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgb(255 255 255 / 5%);
             border-radius: 6px;
             display: flex;
             overflow: hidden;
@@ -152,7 +152,7 @@
             justify-content: space-between;
             font-size: 11px;
             font-weight: 800;
-            color: rgba(255, 255, 255, 0.4);
+            color: rgb(255 255 255 / 40%);
             letter-spacing: 1px;
             text-transform: uppercase;
         }
@@ -166,7 +166,7 @@
         margin-bottom: 32px;
 
         .summary-card {
-            background: rgba(255, 255, 255, 0.02);
+            background: rgb(255 255 255 / 2%);
             border-radius: 16px;
             padding: 24px;
             display: flex;
@@ -174,7 +174,7 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgb(255 255 255 / 5%);
             transition: transform 0.2s ease;
 
             &:hover {
@@ -190,12 +190,12 @@
             .label {
                 font-size: 11px;
                 font-weight: 800;
-                color: rgba(255, 255, 255, 0.4);
+                color: rgb(255 255 255 / 40%);
                 letter-spacing: 1px;
             }
 
             &.signal-active {
-                box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+                box-shadow: 0 0 20px rgb(255 255 255 / 10%);
                 border-width: 2px;
             }
 
@@ -212,11 +212,11 @@
                 display: flex;
                 align-items: center;
                 gap: 8px;
-                background: rgba(0, 0, 0, 0.3);
+                background: rgb(0 0 0 / 30%);
                 padding: 4px 12px;
                 border-radius: 20px;
                 font-size: 11px;
-                color: rgba(255, 255, 255, 0.6);
+                color: rgb(255 255 255 / 60%);
 
                 .digit {
                     font-size: 14px;
@@ -236,30 +236,30 @@
             }
 
             &.over {
-                border-color: rgba(245, 158, 11, 0.2);
+                border-color: rgb(245 158 11 / 20%);
 
                 &.signal-active {
                     border-color: #f59e0b;
-                    box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+                    box-shadow: 0 0 20px rgb(245 158 11 / 20%);
                 }
 
                 .percentage {
                     color: #f59e0b;
-                    text-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+                    text-shadow: 0 0 15px rgb(245 158 11 / 30%);
                 }
             }
 
             &.under {
-                border-color: rgba(99, 102, 241, 0.2);
+                border-color: rgb(99 102 241 / 20%);
 
                 &.signal-active {
                     border-color: #6366f1;
-                    box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+                    box-shadow: 0 0 20px rgb(99 102 241 / 20%);
                 }
 
                 .percentage {
                     color: #6366f1;
-                    text-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+                    text-shadow: 0 0 15px rgb(99 102 241 / 30%);
                 }
             }
         }
@@ -291,7 +291,7 @@
         .section-label {
             font-size: 13px;
             font-weight: 700;
-            color: rgba(255, 255, 255, 0.5);
+            color: rgb(255 255 255 / 50%);
             margin-left: 4px;
         }
 
@@ -300,9 +300,9 @@
             flex-wrap: wrap;
             gap: 8px;
             padding: 16px;
-            background: rgba(0, 0, 0, 0.2);
+            background: rgb(0 0 0 / 20%);
             border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
+            border: 1px solid rgb(255 255 255 / 3%);
 
             .pattern-circle {
                 width: 24px;
@@ -320,14 +320,14 @@
                 }
 
                 &.over {
-                    background: rgba(245, 158, 11, 0.15);
-                    border: 1px solid rgba(245, 158, 11, 0.4);
+                    background: rgb(245 158 11 / 15%);
+                    border: 1px solid rgb(245 158 11 / 40%);
                     color: #f59e0b;
                 }
 
                 &.under {
-                    background: rgba(99, 102, 241, 0.15);
-                    border: 1px solid rgba(99, 102, 241, 0.4);
+                    background: rgb(99 102 241 / 15%);
+                    border: 1px solid rgb(99 102 241 / 40%);
                     color: #6366f1;
                 }
             }

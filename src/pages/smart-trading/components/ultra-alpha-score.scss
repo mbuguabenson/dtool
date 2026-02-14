@@ -6,7 +6,7 @@
 
     .score-label {
         font-size: 1.2rem;
-        color: rgba(255, 255, 255, 0.6);
+        color: rgb(255 255 255 / 60%);
         text-transform: uppercase;
         letter-spacing: 0.1em;
         font-weight: 600;
@@ -17,7 +17,7 @@
         height: 160px;
 
         .score-circle {
-            filter: drop-shadow(0 0 8px currentColor);
+            filter: drop-shadow(0 0 8px currentcolor);
             transition:
                 stroke-dashoffset 0.5s ease,
                 stroke 0.3s ease;
@@ -27,7 +27,7 @@
             font-size: 3.2rem;
             font-weight: 900;
             font-family: 'JetBrains Mono', monospace;
-            filter: drop-shadow(0 0 10px currentColor);
+            filter: drop-shadow(0 0 10px currentcolor);
         }
 
         .score-max {
@@ -41,6 +41,6 @@
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.15em;
-        text-shadow: 0 0 10px currentColor;
+        text-shadow: 0 0 10px currentcolor;
     }
 }

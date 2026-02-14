@@ -202,7 +202,7 @@ export default Engine =>
 
         // Advanced Analysis Methods
         digitFrequency(digit, tickCount = 50) {
-            return new Promise(resolve => 
+            return new Promise(resolve =>
                 this.getTicks().then(ticks => {
                     const digits = this.getLastDigitsFromList(ticks.slice(-tickCount));
                     const count = digits.filter(d => d === Number(digit)).length;
@@ -213,12 +213,12 @@ export default Engine =>
         }
 
         detectStreak(patternType, valueType, tickCount = 10) {
-            return new Promise(resolve => 
+            return new Promise(resolve =>
                 this.getTicks().then(ticks => {
                     const digits = this.getLastDigitsFromList(ticks.slice(-tickCount));
                     let streakLength = 0;
-                    
-                    const checkCondition = (digit) => {
+
+                    const checkCondition = digit => {
                         switch (valueType) {
                             case 'even':
                                 return digit % 2 === 0;
@@ -260,7 +260,7 @@ export default Engine =>
         }
 
         countDigitsInRange(minDigit, maxDigit, tickCount = 50) {
-            return new Promise(resolve => 
+            return new Promise(resolve =>
                 this.getTicks().then(ticks => {
                     const digits = this.getLastDigitsFromList(ticks.slice(-tickCount));
                     const count = digits.filter(d => d >= minDigit && d <= maxDigit).length;
@@ -270,19 +270,19 @@ export default Engine =>
         }
 
         calculateVolatility(tickCount = 50) {
-            return new Promise(resolve => 
+            return new Promise(resolve =>
                 this.getTicks().then(ticks => {
                     const digits = this.getLastDigitsFromList(ticks.slice(-tickCount));
-                    
+
                     // Calculate frequency distribution
                     const distribution = Array(10).fill(0);
                     digits.forEach(d => distribution[d]++);
-                    
+
                     // Calculate standard deviation
                     const mean = digits.reduce((a, b) => a + b, 0) / digits.length;
                     const variance = digits.reduce((sum, d) => sum + Math.pow(d - mean, 2), 0) / digits.length;
                     const stdDev = Math.sqrt(variance);
-                    
+
                     // Calculate entropy (disorder)
                     let entropy = 0;
                     distribution.forEach(count => {
@@ -291,28 +291,30 @@ export default Engine =>
                             entropy -= p * Math.log2(p);
                         }
                     });
-                    
+
                     // Normalize to 0-100 scale
                     const maxEntropy = Math.log2(10); // Maximum entropy for 10 digits
                     const volatilityScore = ((stdDev / 3) * 0.5 + (entropy / maxEntropy) * 0.5) * 100;
-                    
+
                     resolve(Math.min(100, Math.round(volatilityScore * 100) / 100));
                 })
             );
         }
 
         getDigitByRank(rank = 1, tickCount = 100) {
-            return new Promise(resolve => 
+            return new Promise(resolve =>
                 this.getTicks().then(ticks => {
                     const digits = this.getLastDigitsFromList(ticks.slice(-tickCount));
-                    const frequency = Array(10).fill(0).map((_, i) => ({
-                        digit: i,
-                        count: digits.filter(d => d === i).length
-                    }));
-                    
+                    const frequency = Array(10)
+                        .fill(0)
+                        .map((_, i) => ({
+                            digit: i,
+                            count: digits.filter(d => d === i).length,
+                        }));
+
                     // Sort by count ascending
                     frequency.sort((a, b) => a.count - b.count);
-                    
+
                     // rank 1 = least, rank 2 = 2nd least, etc.
                     const target = frequency[Math.min(9, Math.max(0, rank - 1))];
                     resolve(target.digit);
@@ -321,7 +323,7 @@ export default Engine =>
         }
 
         identifyCandlePattern(tickCount = 3) {
-            return new Promise(resolve => 
+            return new Promise(resolve =>
                 this.getTicks().then(ticks => {
                     // Logic to detect Hammer, Shooting Star, etc based on OHLC
                     // For now, let's use a simpler logic for "reversal"
@@ -332,13 +334,13 @@ export default Engine =>
                     // Let's assume we use the getOhlc method
                     this.getOhlc({ granularity: 60, count: tickCount }).then(ohlc => {
                         const last = ohlc[ohlc.length - 1];
-                        
+
                         const isGreen = last.close > last.open;
                         const isRed = last.close < last.open;
                         const bodySize = Math.abs(last.close - last.open);
                         const upperShadow = last.high - Math.max(last.open, last.close);
                         const lowerShadow = Math.min(last.open, last.close) - last.low;
-                        
+
                         if (upperShadow > bodySize * 2 && isRed) resolve('shooting_star');
                         else if (lowerShadow > bodySize * 2 && isGreen) resolve('hammer');
                         else if (bodySize < (last.high - last.low) * 0.1) resolve('doji');
@@ -349,14 +351,14 @@ export default Engine =>
         }
 
         analyzeMomentum(tickCount = 10) {
-            return new Promise(resolve => 
+            return new Promise(resolve =>
                 this.getTicks().then(ticks => {
                     const lastTicks = ticks.slice(-tickCount);
                     const prices = lastTicks.map(t => t.quote);
                     const diffs = [];
-                    for(let i=1; i<prices.length; i++) diffs.push(prices[i] - prices[i-1]);
-                    
-                    const avgDiff = diffs.reduce((a,b) => a+b, 0) / diffs.length;
+                    for (let i = 1; i < prices.length; i++) diffs.push(prices[i] - prices[i - 1]);
+
+                    const avgDiff = diffs.reduce((a, b) => a + b, 0) / diffs.length;
                     if (avgDiff > 0.01) resolve('strong_bullish');
                     else if (avgDiff > 0) resolve('mild_bullish');
                     else if (avgDiff < -0.01) resolve('strong_bearish');
@@ -367,16 +369,16 @@ export default Engine =>
         }
 
         checkVolumeHealth(tickCount = 20) {
-            return new Promise(resolve => 
+            return new Promise(resolve =>
                 this.getTicks().then(ticks => {
                     // In Binary.com/Deriv, 'volume' in ticks is often count of price changes
                     // High volatility usually correlates with high 'active volume'
                     const lastTicks = ticks.slice(-tickCount);
                     const movement = lastTicks.reduce((acc, t, i) => {
                         if (i === 0) return 0;
-                        return acc + Math.abs(t.quote - lastTicks[i-1].quote);
+                        return acc + Math.abs(t.quote - lastTicks[i - 1].quote);
                     }, 0);
-                    
+
                     const avgMovement = movement / tickCount;
                     resolve(avgMovement > 0.05 ? 'high' : 'low');
                 })
@@ -384,15 +386,15 @@ export default Engine =>
         }
 
         analyzeTrend(trendType, tickCount = 20) {
-            return new Promise(resolve => 
+            return new Promise(resolve =>
                 this.getTicks().then(ticks => {
                     const digits = this.getLastDigitsFromList(ticks.slice(-tickCount));
                     const halfPoint = Math.floor(digits.length / 2);
                     const firstHalf = digits.slice(0, halfPoint);
                     const secondHalf = digits.slice(halfPoint);
-                    
+
                     let firstValue, secondValue;
-                    
+
                     switch (trendType) {
                         case 'sum':
                             firstValue = firstHalf.reduce((a, b) => a + b, 0) / firstHalf.length;
@@ -410,7 +412,7 @@ export default Engine =>
                             resolve('neutral');
                             return;
                     }
-                    
+
                     const threshold = 0.1; // 10% threshold
                     if (secondValue > firstValue + threshold) {
                         resolve('rising');

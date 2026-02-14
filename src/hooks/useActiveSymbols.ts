@@ -17,13 +17,14 @@ export const useActiveSymbols = () => {
         setIsLoading(true);
         setError(null);
 
-        derivApiService.sendRequest({ active_symbols: 'brief', product_type: 'basic' })
-            .then((data) => {
+        derivApiService
+            .sendRequest({ active_symbols: 'brief', product_type: 'basic' })
+            .then(data => {
                 if (data.active_symbols) {
                     setSymbols(data.active_symbols);
                 }
             })
-            .catch((err) => {
+            .catch(err => {
                 setError(err.message || 'Failed to fetch active symbols');
             })
             .finally(() => {

@@ -24,17 +24,17 @@
     .spinner-ring {
         position: absolute;
         inset: 0;
-        border: 3px solid rgba(0, 198, 255, 0.1);
+        border: 3px solid rgb(0 198 255 / 10%);
         border-top-color: #00c6ff;
         border-right-color: #38ef7d;
         border-radius: 50%;
-        filter: drop-shadow(0 0 8px rgba(0, 198, 255, 0.4));
+        filter: drop-shadow(0 0 8px rgb(0 198 255 / 40%));
     }
 
     .spinner-core {
         position: absolute;
         inset: 15px;
-        background: radial-gradient(circle at 50% 50%, #ffffff 0%, #94a3b8 100%);
+        background: radial-gradient(circle at 50% 50%, #fff 0%, #94a3b8 100%);
         border-radius: 50%;
         opacity: 0.2;
         animation: pulse-core 2s ease-in-out infinite;

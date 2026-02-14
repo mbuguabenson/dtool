@@ -5,7 +5,7 @@
     gap: 2rem;
     padding: 2rem;
     background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-    color: #ffffff;
+    color: #fff;
     font-family: 'JetBrains Mono', monospace;
     overflow-y: auto;
 
@@ -15,16 +15,16 @@
     }
 
     &::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.05);
+        background: rgb(255 255 255 / 5%);
         border-radius: 4px;
     }
 
     &::-webkit-scrollbar-thumb {
-        background: rgba(0, 198, 255, 0.3);
+        background: rgb(0 198 255 / 30%);
         border-radius: 4px;
 
         &:hover {
-            background: rgba(0, 198, 255, 0.5);
+            background: rgb(0 198 255 / 50%);
         }
     }
 }
@@ -35,28 +35,28 @@
     justify-content: space-between;
     align-items: center;
     padding: 2rem;
-    background: rgba(255, 255, 255, 0.02);
+    background: rgb(255 255 255 / 2%);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(0, 198, 255, 0.2);
+    border: 1px solid rgb(0 198 255 / 20%);
     border-radius: 1.6rem;
-    box-shadow: 0 8px 32px rgba(0, 114, 255, 0.1);
+    box-shadow: 0 8px 32px rgb(0 114 255 / 10%);
 }
 
 .title-section {
     .ultra-title {
         font-size: 3.2rem;
         font-weight: 900;
-        margin: 0 0 0.5rem 0;
+        margin: 0 0 0.5rem;
         display: flex;
         align-items: center;
         gap: 1rem;
 
         .neon-text {
             background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
-            -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            text-shadow: 0 0 30px rgba(0, 198, 255, 0.5);
+            text-shadow: 0 0 30px rgb(0 198 255 / 50%);
         }
 
         .ultra-badge {
@@ -64,14 +64,14 @@
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
             border-radius: 0.8rem;
             font-size: 1.4rem;
-            color: #ffffff;
-            box-shadow: 0 0 20px rgba(17, 153, 142, 0.5);
+            color: #fff;
+            box-shadow: 0 0 20px rgb(17 153 142 / 50%);
         }
     }
 
     .ultra-subtitle {
         font-size: 1.4rem;
-        color: rgba(255, 255, 255, 0.6);
+        color: rgb(255 255 255 / 60%);
         margin: 0;
         font-weight: 400;
     }
@@ -86,15 +86,15 @@
         width: 48px;
         height: 48px;
         border-radius: 50%;
-        background: rgba(56, 239, 125, 0.2);
+        background: rgb(56 239 125 / 20%);
         border: 2px solid #38ef7d;
         position: relative;
-        box-shadow: 0 0 15px rgba(56, 239, 125, 0.3);
+        box-shadow: 0 0 15px rgb(56 239 125 / 30%);
 
         &.active {
             animation: pulse-green 1s ease-in-out infinite;
 
-            &::after {
+            &:after {
                 content: '';
                 position: absolute;
                 inset: -8px;
@@ -109,7 +109,7 @@
         font-size: 2.4rem;
         font-weight: 700;
         color: #38ef7d;
-        text-shadow: 0 0 10px rgba(56, 239, 125, 0.5);
+        text-shadow: 0 0 10px rgb(56 239 125 / 50%);
     }
 }
 
@@ -119,18 +119,18 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
 
-    @media (max-width: 1200px) {
+    @media (width <= 1200px) {
         grid-template-columns: 1fr;
     }
 }
 
 .ultra-panel {
-    background: rgba(255, 255, 255, 0.02);
+    background: rgb(255 255 255 / 2%);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(0, 198, 255, 0.2);
+    border: 1px solid rgb(0 198 255 / 20%);
     border-radius: 1.6rem;
     padding: 2rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 32px rgb(0 0 0 / 20%);
 
     .panel-header {
         display: flex;
@@ -138,7 +138,7 @@
         align-items: center;
         margin-bottom: 2rem;
         padding-bottom: 1rem;
-        border-bottom: 1px solid rgba(0, 198, 255, 0.2);
+        border-bottom: 1px solid rgb(0 198 255 / 20%);
 
         h3 {
             margin: 0;
@@ -167,13 +167,13 @@
     flex-direction: column;
     gap: 0.5rem;
     padding: 1.5rem;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(0, 198, 255, 0.2);
+    background: rgb(0 0 0 / 30%);
+    border: 1px solid rgb(0 198 255 / 20%);
     border-radius: 1.2rem;
 
     .metric-label {
         font-size: 1.2rem;
-        color: rgba(255, 255, 255, 0.6);
+        color: rgb(255 255 255 / 60%);
         text-transform: uppercase;
         letter-spacing: 0.1em;
     }
@@ -181,11 +181,11 @@
     .metric-value {
         font-size: 2rem;
         font-weight: 700;
-        color: #ffffff;
+        color: #fff;
 
         &.neon-cyan {
             color: #00c6ff;
-            text-shadow: 0 0 10px rgba(0, 198, 255, 0.5);
+            text-shadow: 0 0 10px rgb(0 198 255 / 50%);
         }
     }
 }
@@ -200,8 +200,8 @@
 
 .strategy-card {
     padding: 1.5rem;
-    background: rgba(0, 0, 0, 0.3);
-    border: 2px solid rgba(255, 255, 255, 0.1);
+    background: rgb(0 0 0 / 30%);
+    border: 2px solid rgb(255 255 255 / 10%);
     border-radius: 1.2rem;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -210,14 +210,14 @@
     gap: 1.5rem;
 
     &:hover {
-        border-color: rgba(0, 198, 255, 0.5);
+        border-color: rgb(0 198 255 / 50%);
         transform: translateX(4px);
     }
 
     &.active {
-        background: linear-gradient(135deg, rgba(0, 198, 255, 0.2) 0%, rgba(17, 153, 142, 0.2) 100%);
+        background: linear-gradient(135deg, rgb(0 198 255 / 20%) 0%, rgb(17 153 142 / 20%) 100%);
         border-color: #00c6ff;
-        box-shadow: 0 0 20px rgba(0, 198, 255, 0.3);
+        box-shadow: 0 0 20px rgb(0 198 255 / 30%);
     }
 
     .strategy-icon {
@@ -232,7 +232,7 @@
 
     .strategy-desc {
         font-size: 1.2rem;
-        color: rgba(255, 255, 255, 0.6);
+        color: rgb(255 255 255 / 60%);
     }
 }
 
@@ -249,7 +249,7 @@
     font-size: 1.6rem;
     font-weight: 700;
     font-family: 'JetBrains Mono', monospace;
-    color: #ffffff;
+    color: #fff;
     background: transparent;
     border: 2px solid #06b6d4;
     border-radius: 1.2rem;
@@ -265,7 +265,7 @@
         }
 
         &:hover {
-            box-shadow: 0 0 30px rgba(56, 239, 125, 0.6);
+            box-shadow: 0 0 30px rgb(56 239 125 / 60%);
             transform: translateY(-2px);
         }
     }
@@ -278,7 +278,7 @@
         }
 
         &:hover {
-            box-shadow: 0 0 30px rgba(56, 239, 125, 0.5);
+            box-shadow: 0 0 30px rgb(56 239 125 / 50%);
             transform: translateY(-2px);
         }
     }
@@ -297,7 +297,7 @@
     &:disabled {
         opacity: 0.5;
         cursor: not-allowed;
-        border-color: rgba(255, 255, 255, 0.2);
+        border-color: rgb(255 255 255 / 20%);
     }
 }
 
@@ -307,7 +307,7 @@
     align-items: center;
     gap: 1rem;
     padding: 1.5rem;
-    background: rgba(17, 153, 142, 0.1);
+    background: rgb(17 153 142 / 10%);
     border: 1px solid #11998e;
     border-radius: 1.2rem;
     margin-top: 1rem;
@@ -336,13 +336,13 @@
     flex-direction: column;
     gap: 0.5rem;
     padding: 1.5rem;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(0, 198, 255, 0.2);
+    background: rgb(0 0 0 / 30%);
+    border: 1px solid rgb(0 198 255 / 20%);
     border-radius: 1.2rem;
 
     .stat-label {
         font-size: 1.2rem;
-        color: rgba(255, 255, 255, 0.6);
+        color: rgb(255 255 255 / 60%);
         text-transform: uppercase;
         letter-spacing: 0.1em;
     }
@@ -353,12 +353,12 @@
 
         &.profit {
             color: #10b981;
-            text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+            text-shadow: 0 0 10px rgb(16 185 129 / 50%);
         }
 
         &.loss {
             color: #ef4444;
-            text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+            text-shadow: 0 0 10px rgb(239 68 68 / 50%);
         }
 
         &.success {
@@ -377,7 +377,7 @@
 
     .console-badge {
         padding: 0.4rem 1.2rem;
-        background: rgba(17, 153, 142, 0.2);
+        background: rgb(17 153 142 / 20%);
         border: 1px solid #11998e;
         border-radius: 0.6rem;
         font-size: 1.2rem;
@@ -392,13 +392,13 @@
     100% {
         opacity: 1;
         transform: scale(1);
-        box-shadow: 0 0 15px rgba(56, 239, 125, 0.3);
+        box-shadow: 0 0 15px rgb(56 239 125 / 30%);
     }
 
     50% {
         opacity: 0.8;
         transform: scale(1.05);
-        box-shadow: 0 0 25px rgba(56, 239, 125, 0.6);
+        box-shadow: 0 0 25px rgb(56 239 125 / 60%);
     }
 }
 

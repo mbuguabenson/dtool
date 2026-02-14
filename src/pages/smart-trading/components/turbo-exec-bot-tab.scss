@@ -8,12 +8,12 @@
     margin: 0 auto;
 
     .card {
-        background: rgba(15, 23, 42, 0.6);
+        background: rgb(15 23 42 / 60%);
         backdrop-filter: blur(12px);
-        border: 1px solid rgba(148, 163, 184, 0.1);
+        border: 1px solid rgb(148 163 184 / 10%);
         border-radius: 1.25rem;
         padding: 1.5rem;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 10px 30px rgb(0 0 0 / 30%);
     }
 
     /* Status Header & States */
@@ -21,7 +21,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-bottom: 2px solid rgba(139, 92, 246, 0.3);
+        border-bottom: 2px solid rgb(139 92 246 / 30%);
         padding-bottom: 1.5rem;
 
         .state-monitor {
@@ -40,40 +40,45 @@
                 position: relative;
                 transition: all 0.3s ease;
 
-                &::after {
+                &:after {
                     content: '';
                     position: absolute;
                     inset: -5px;
                     border-radius: 50%;
-                    border: 2px solid currentColor;
+                    border: 2px solid currentcolor;
                     opacity: 0.3;
                     animation: pulse-ring 2s infinite;
                 }
 
                 &.STOPPED {
                     color: #94a3b8;
-                    background: rgba(148, 163, 184, 0.1);
+                    background: rgb(148 163 184 / 10%);
                 }
+
                 &.LISTENING {
                     color: #10b981;
-                    background: rgba(16, 185, 129, 0.1);
+                    background: rgb(16 185 129 / 10%);
                 }
+
                 &.SETUP {
                     color: #f59e0b;
-                    background: rgba(245, 158, 11, 0.1);
+                    background: rgb(245 158 11 / 10%);
                 }
+
                 &.CONFIRMING {
                     color: #6366f1;
-                    background: rgba(99, 102, 241, 0.1);
+                    background: rgb(99 102 241 / 10%);
                 }
+
                 &.EXECUTING {
                     color: #ec4899;
-                    background: rgba(236, 72, 153, 0.1);
+                    background: rgb(236 72 153 / 10%);
                     animation: glitch 0.5s infinite;
                 }
+
                 &.COOLDOWN {
                     color: #3b82f6;
-                    background: rgba(59, 130, 246, 0.1);
+                    background: rgb(59 130 246 / 10%);
                 }
             }
 
@@ -84,11 +89,12 @@
                     text-transform: uppercase;
                     letter-spacing: 0.1em;
                 }
+
                 .value {
                     font-size: 1.5rem;
                     font-weight: 800;
                     color: #fff;
-                    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+                    text-shadow: 0 0 10px rgb(255 255 255 / 30%);
                 }
             }
         }
@@ -112,20 +118,22 @@
                 &.start {
                     background: linear-gradient(135deg, #10b981, #059669);
                     color: white;
-                    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+                    box-shadow: 0 0 20px rgb(16 185 129 / 40%);
+
                     &:hover {
                         transform: scale(1.05);
-                        box-shadow: 0 0 30px rgba(16, 185, 129, 0.6);
+                        box-shadow: 0 0 30px rgb(16 185 129 / 60%);
                     }
                 }
 
                 &.stop {
                     background: linear-gradient(135deg, #ef4444, #dc2626);
                     color: white;
-                    box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+                    box-shadow: 0 0 20px rgb(239 68 68 / 40%);
+
                     &:hover {
                         transform: scale(1.05);
-                        box-shadow: 0 0 30px rgba(239, 68, 68, 0.6);
+                        box-shadow: 0 0 30px rgb(239 68 68 / 60%);
                     }
                 }
 
@@ -144,7 +152,7 @@
         grid-template-columns: 1fr 350px;
         gap: 1.5rem;
 
-        @media (max-width: 1024px) {
+        @media (width <= 1024px) {
             grid-template-columns: 1fr;
         }
     }
@@ -163,19 +171,20 @@
                 margin: 0;
                 color: #f8fafc;
             }
+
             .v-sense-tag {
-                background: rgba(139, 92, 246, 0.15);
+                background: rgb(139 92 246 / 15%);
                 color: #a78bfa;
                 padding: 0.25rem 0.75rem;
                 border-radius: 9999px;
                 font-size: 0.75rem;
                 font-weight: 600;
-                border: 1px solid rgba(139, 92, 246, 0.3);
+                border: 1px solid rgb(139 92 246 / 30%);
             }
         }
 
         .signal-scooter {
-            background: rgba(14, 21, 31, 1);
+            background: rgb(14 21 31 / 100%);
             border-radius: 1rem;
             padding: 1rem;
             margin-bottom: 1rem;
@@ -187,6 +196,7 @@
                 color: #818cf8;
                 margin-bottom: 0.5rem;
             }
+
             .event-value {
                 font-size: 1.125rem;
                 font-weight: 600;
@@ -201,15 +211,16 @@
 
             .intel-stat {
                 padding: 1rem;
-                background: rgba(30, 41, 59, 0.5);
+                background: rgb(30 41 59 / 50%);
                 border-radius: 0.75rem;
-                border: 1px solid rgba(255, 255, 255, 0.05);
+                border: 1px solid rgb(255 255 255 / 5%);
 
                 .label {
                     font-size: 0.7rem;
                     color: #94a3b8;
                     margin-bottom: 0.25rem;
                 }
+
                 .value {
                     font-size: 1.125rem;
                     font-weight: 700;
@@ -217,9 +228,11 @@
                     &.SAFE {
                         color: #10b981;
                     }
+
                     &.AVOID {
                         color: #f59e0b;
                     }
+
                     &.STOP {
                         color: #ef4444;
                     }
@@ -236,6 +249,7 @@
 
         .setting-group {
             margin-bottom: 1rem;
+
             label {
                 display: block;
                 font-size: 0.8rem;
@@ -247,7 +261,7 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                background: rgba(30, 41, 59, 0.4);
+                background: rgb(30 41 59 / 40%);
                 padding: 0.75rem 1rem;
                 border-radius: 0.75rem;
 
@@ -264,8 +278,8 @@
 
                 .risk-btn {
                     padding: 0.75rem;
-                    background: rgba(30, 41, 59, 1);
-                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    background: rgb(30 41 59 / 100%);
+                    border: 1px solid rgb(255 255 255 / 10%);
                     color: #94a3b8;
                     border-radius: 0.5rem;
                     cursor: pointer;
@@ -273,10 +287,10 @@
                     font-weight: 600;
 
                     &.active {
-                        background: rgba(139, 92, 246, 0.2);
+                        background: rgb(139 92 246 / 20%);
                         border-color: #8b5cf6;
                         color: #ddd6fe;
-                        box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+                        box-shadow: 0 0 15px rgb(139 92 246 / 20%);
                     }
                 }
             }
@@ -299,9 +313,11 @@
                 .val {
                     font-weight: 700;
                 }
+
                 .profit {
                     color: #10b981;
                 }
+
                 .loss {
                     color: #ef4444;
                 }
@@ -315,10 +331,12 @@
         transform: scale(0.95);
         opacity: 0.5;
     }
+
     50% {
         transform: scale(1.1);
         opacity: 0.1;
     }
+
     100% {
         transform: scale(0.95);
         opacity: 0.5;
@@ -329,18 +347,23 @@
     0% {
         transform: translate(0);
     }
+
     20% {
         transform: translate(-2px, 2px);
     }
+
     40% {
         transform: translate(-2px, -2px);
     }
+
     60% {
         transform: translate(2px, 2px);
     }
+
     80% {
         transform: translate(2px, -2px);
     }
+
     100% {
         transform: translate(0);
     }

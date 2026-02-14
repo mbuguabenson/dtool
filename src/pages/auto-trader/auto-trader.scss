@@ -34,7 +34,7 @@
         font-weight: 900;
         margin-bottom: 4rem;
         background: linear-gradient(to right, #ffad00, #ff5722);
-        -webkit-background-clip: text;
+        background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
         text-align: center;
@@ -833,12 +833,12 @@
         font-size: 3.6rem;
         font-weight: 900;
         background: linear-gradient(to right, #ffad00, #ff5722);
-        -webkit-background-clip: text;
+        background-clip: text;
         -webkit-text-fill-color: transparent;
         text-transform: uppercase;
         letter-spacing: 4px;
         margin-bottom: 8px;
-        filter: drop-shadow(0 0 15px rgba(255, 152, 0, 0.4));
+        filter: drop-shadow(0 0 15px rgb(255 152 0 / 40%));
     }
 
     .subtitle {
@@ -886,8 +886,8 @@
     background: var(--general-section-1);
     border-radius: 24px;
     padding: 32px;
-    border: 1px solid rgba(255, 152, 0, 0.15);
-    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgb(255 152 0 / 15%);
+    box-shadow: 0 12px 48px rgb(0 0 0 / 30%);
     backdrop-filter: blur(12px);
 
     .panel-title {
@@ -919,25 +919,25 @@
         font-size: 1.6rem;
         background: var(--general-main-1);
         color: var(--text-prominent);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgb(255 255 255 / 10%);
         transition: all 0.3s;
 
         &.even {
             color: #4caf50;
-            border-color: rgba(76, 175, 80, 0.3);
-            background: rgba(76, 175, 80, 0.1);
+            border-color: rgb(76 175 80 / 30%);
+            background: rgb(76 175 80 / 10%);
         }
 
         &.odd {
             color: #f44336;
-            border-color: rgba(244, 67, 54, 0.3);
-            background: rgba(244, 67, 54, 0.1);
+            border-color: rgb(244 67 54 / 30%);
+            background: rgb(244 67 54 / 10%);
         }
 
         &.pulse {
             animation: pulse-scale 1s infinite;
             border-color: #ffeb3b;
-            box-shadow: 0 0 10px rgba(255, 235, 59, 0.5);
+            box-shadow: 0 0 10px rgb(255 235 59 / 50%);
         }
     }
 
@@ -954,7 +954,7 @@
             color: var(--text-prominent);
             font-family: 'Outfit', sans-serif;
             background: linear-gradient(to bottom, #fff, #999);
-            -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
     }
@@ -971,7 +971,7 @@
         background: var(--general-main-1);
         padding: 20px;
         border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        border: 1px solid rgb(255 255 255 / 5%);
 
         .title {
             font-size: 1.4rem;
@@ -982,7 +982,7 @@
 
         .bar-container {
             height: 12px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgb(255 255 255 / 10%);
             border-radius: 6px;
             overflow: hidden;
             display: flex;

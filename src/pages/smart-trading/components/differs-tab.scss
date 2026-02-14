@@ -1,9 +1,9 @@
 .differs-tab {
     padding: 1.5rem;
-    background: linear-gradient(135deg, rgba(10, 10, 30, 0.95) 0%, rgba(20, 20, 40, 0.98) 100%);
+    background: linear-gradient(135deg, rgb(10 10 30 / 95%) 0%, rgb(20 20 40 / 98%) 100%);
     min-height: 100vh;
     color: #fff;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', "Roboto", sans-serif;
 
     // Premium Market Header
     .premium-market-header {
@@ -12,11 +12,11 @@
         gap: 1rem;
         margin-bottom: 1.5rem;
         padding: 1rem;
-        background: rgba(255, 255, 255, 0.03);
+        background: rgb(255 255 255 / 3%);
         border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgb(255 255 255 / 10%);
 
-        @media (max-width: 768px) {
+        @media (width <= 768px) {
             grid-template-columns: 1fr;
         }
 
@@ -27,7 +27,7 @@
             align-items: center;
             gap: 0.75rem;
             padding: 0.75rem 1rem;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgb(255 255 255 / 5%);
             border-radius: 8px;
 
             label,
@@ -66,9 +66,9 @@
                 border-radius: 8px;
                 font-size: 1.3rem;
                 font-weight: 700;
-                background: rgba(239, 68, 68, 0.2);
-                border: 2px solid rgba(239, 68, 68, 0.5);
-                box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+                background: rgb(239 68 68 / 20%);
+                border: 2px solid rgb(239 68 68 / 50%);
+                box-shadow: 0 0 15px rgb(239 68 68 / 30%);
             }
         }
     }
@@ -92,7 +92,7 @@
         gap: 1rem;
         margin-bottom: 1.5rem;
 
-        @media (max-width: 768px) {
+        @media (width <= 768px) {
             grid-template-columns: 1fr;
         }
 
@@ -105,27 +105,27 @@
             transition: all 0.3s ease;
 
             &:nth-child(1) {
-                background: rgba(244, 63, 94, 0.1);
-                border-color: rgba(244, 63, 94, 0.5);
+                background: rgb(244 63 94 / 10%);
+                border-color: rgb(244 63 94 / 50%);
 
                 &.strong {
-                    box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+                    box-shadow: 0 0 20px rgb(244 63 94 / 40%);
                 }
             }
 
             &:nth-child(2) {
-                background: rgba(249, 115, 22, 0.1);
-                border-color: rgba(249, 115, 22, 0.5);
+                background: rgb(249 115 22 / 10%);
+                border-color: rgb(249 115 22 / 50%);
             }
 
             &:nth-child(3) {
-                background: rgba(234, 179, 8, 0.1);
-                border-color: rgba(234, 179, 8, 0.5);
+                background: rgb(234 179 8 / 10%);
+                border-color: rgb(234 179 8 / 50%);
             }
 
             &.active {
                 transform: scale(1.05);
-                box-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
+                box-shadow: 0 0 30px rgb(168 85 247 / 50%);
             }
 
             &:hover {
@@ -163,9 +163,9 @@
     // Trade Signal Section
     .trade-signal-section {
         padding: 1.5rem;
-        background: rgba(14, 165, 233, 0.1);
+        background: rgb(14 165 233 / 10%);
         border-radius: 12px;
-        border: 1px solid rgba(14, 165, 233, 0.3);
+        border: 1px solid rgb(14 165 233 / 30%);
         margin-bottom: 1.5rem;
 
         .action-buttons-row {
@@ -174,14 +174,14 @@
             gap: 1rem;
             margin-bottom: 1rem;
 
-            @media (max-width: 768px) {
+            @media (width <= 768px) {
                 grid-template-columns: 1fr;
             }
         }
 
         .trade-now-btn {
             padding: 1rem 2rem;
-            background: linear-gradient(90deg, rgb(34, 197, 94), rgb(22, 163, 74));
+            background: linear-gradient(90deg, rgb(34 197 94), rgb(22 163 74));
             border: none;
             border-radius: 8px;
             color: #fff;
@@ -192,7 +192,7 @@
 
             &:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 4px 20px rgba(34, 197, 94, 0.5);
+                box-shadow: 0 4px 20px rgb(34 197 94 / 50%);
             }
         }
 
@@ -209,7 +209,7 @@
 
             &:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 4px 20px rgba(59, 130, 246, 0.5);
+                box-shadow: 0 4px 20px rgb(59 130 246 / 50%);
             }
 
             &.executing {
@@ -217,14 +217,14 @@
                 pointer-events: none;
                 position: relative;
 
-                &::after {
+                &:after {
                     content: '';
                     position: absolute;
                     width: 20px;
                     height: 20px;
                     top: calc(50% - 10px);
                     right: 20px;
-                    border: 2px solid rgba(255, 255, 255, 0.3);
+                    border: 2px solid rgb(255 255 255 / 30%);
                     border-top-color: #fff;
                     border-radius: 50%;
                     animation: spin 1s linear infinite;
@@ -257,15 +257,15 @@
             grid-template-columns: repeat(5, 1fr);
             gap: 1rem;
 
-            @media (max-width: 768px) {
+            @media (width <= 768px) {
                 grid-template-columns: repeat(2, 1fr);
             }
 
             .digit-card {
                 padding: 1rem;
                 border-radius: 10px;
-                background: rgba(255, 255, 255, 0.05);
-                border: 2px solid rgba(255, 255, 255, 0.1);
+                background: rgb(255 255 255 / 5%);
+                border: 2px solid rgb(255 255 255 / 10%);
                 text-align: center;
                 cursor: pointer;
                 transition: all 0.3s ease;
@@ -273,38 +273,38 @@
 
                 &:hover {
                     transform: scale(1.05);
-                    background: rgba(255, 255, 255, 0.08);
+                    background: rgb(255 255 255 / 8%);
                 }
 
                 &.active {
-                    border-color: rgb(168, 85, 247);
-                    box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+                    border-color: rgb(168 85 247);
+                    box-shadow: 0 0 15px rgb(168 85 247 / 40%);
                 }
 
                 &.zero-gap {
-                    background: rgba(239, 68, 68, 0.2);
-                    border-color: rgb(239, 68, 68);
+                    background: rgb(239 68 68 / 20%);
+                    border-color: rgb(239 68 68);
 
                     .digit-number {
-                        color: rgb(239, 68, 68);
+                        color: rgb(239 68 68);
                     }
                 }
 
                 &.hot {
-                    background: rgba(249, 115, 22, 0.15);
-                    border-color: rgba(249, 115, 22, 0.5);
+                    background: rgb(249 115 22 / 15%);
+                    border-color: rgb(249 115 22 / 50%);
 
                     .digit-number {
-                        color: rgb(249, 115, 22);
+                        color: rgb(249 115 22);
                     }
                 }
 
                 &.cold {
-                    background: rgba(59, 130, 246, 0.15);
-                    border-color: rgba(59, 130, 246, 0.5);
+                    background: rgb(59 130 246 / 15%);
+                    border-color: rgb(59 130 246 / 50%);
 
                     .digit-number {
-                        color: rgb(59, 130, 246);
+                        color: rgb(59 130 246);
                     }
                 }
 
@@ -332,7 +332,7 @@
                     border-radius: 4px;
                     font-size: 0.7rem;
                     font-weight: 600;
-                    background: rgba(255, 255, 255, 0.1);
+                    background: rgb(255 255 255 / 10%);
                     margin-bottom: 0.25rem;
                 }
 
@@ -340,7 +340,7 @@
                     position: absolute;
                     top: 0.5rem;
                     right: 0.5rem;
-                    background: rgb(239, 68, 68);
+                    background: rgb(239 68 68);
                     color: #fff;
                     padding: 0.2rem 0.4rem;
                     border-radius: 4px;
@@ -360,9 +360,9 @@
     .visual-timeline {
         margin-top: 1.5rem;
         padding: 1.5rem;
-        background: rgba(255, 255, 255, 0.03);
+        background: rgb(255 255 255 / 3%);
         border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgb(255 255 255 / 10%);
 
         .timeline-title {
             text-align: center;
@@ -377,7 +377,7 @@
             grid-template-columns: repeat(10, 1fr);
             gap: 0.5rem;
 
-            @media (max-width: 768px) {
+            @media (width <= 768px) {
                 grid-template-columns: repeat(8, 1fr);
             }
 
@@ -389,21 +389,21 @@
                 border-radius: 6px;
                 font-size: 0.9rem;
                 font-weight: 700;
-                background: rgba(255, 255, 255, 0.05);
-                border: 2px solid rgba(139, 155, 180, 0.3);
+                background: rgb(255 255 255 / 5%);
+                border: 2px solid rgb(139 155 180 / 30%);
                 transition: all 0.3s ease;
 
                 &.target {
-                    background: rgba(168, 85, 247, 0.2);
-                    border-color: rgb(168, 85, 247);
-                    color: rgb(168, 85, 247);
-                    box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+                    background: rgb(168 85 247 / 20%);
+                    border-color: rgb(168 85 247);
+                    color: rgb(168 85 247);
+                    box-shadow: 0 0 10px rgb(168 85 247 / 40%);
                 }
 
                 &.latest {
                     animation: pulse 1.5s ease-in-out infinite;
                     border-color: #0ea5e9;
-                    box-shadow: 0 0 15px rgba(14, 165, 233, 0.4);
+                    box-shadow: 0 0 15px rgb(14 165 233 / 40%);
                 }
             }
         }
@@ -416,6 +416,7 @@
         transform: scale(1);
         opacity: 1;
     }
+
     50% {
         transform: scale(1.05);
         opacity: 0.8;

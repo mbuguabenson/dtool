@@ -5,11 +5,11 @@
     padding: 1rem;
 
     &__analysis {
-        background: rgba(255, 255, 255, 0.05);
+        background: rgb(255 255 255 / 5%);
         backdrop-filter: blur(10px);
         border-radius: 12px;
         padding: 1.5rem;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgb(255 255 255 / 10%);
 
         .analysis-header {
             display: flex;
@@ -52,12 +52,12 @@
 
                 &.even {
                     background: #26a69a;
-                    box-shadow: 0 0 10px rgba(38, 166, 154, 0.3);
+                    box-shadow: 0 0 10px rgb(38 166 154 / 30%);
                 }
 
                 &.odd {
                     background: #ef5350;
-                    box-shadow: 0 0 10px rgba(239, 83, 80, 0.3);
+                    box-shadow: 0 0 10px rgb(239 83 80 / 30%);
                 }
             }
         }
@@ -72,12 +72,12 @@
                 position: relative;
                 border-radius: 8px;
                 overflow: hidden;
-                background: rgba(0, 0, 0, 0.2);
+                background: rgb(0 0 0 / 20%);
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 padding: 0 1.5rem;
-                border: 1px solid rgba(255, 255, 255, 0.05);
+                border: 1px solid rgb(255 255 255 / 5%);
 
                 .bar-label,
                 .bar-value {
@@ -110,11 +110,11 @@
 
     &__bot-section {
         .bot-card {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgb(255 255 255 / 3%);
             backdrop-filter: blur(15px);
             border-radius: 16px;
             padding: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgb(255 255 255 / 8%);
 
             h2 {
                 font-size: 1.4rem;
@@ -144,8 +144,8 @@
 
                 input,
                 select {
-                    background: rgba(0, 0, 0, 0.2);
-                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    background: rgb(0 0 0 / 20%);
+                    border: 1px solid rgb(255 255 255 / 10%);
                     padding: 0.7rem 1rem;
                     border-radius: 8px;
                     color: #fff;
@@ -161,7 +161,7 @@
             .bot-action {
                 grid-column: span 1;
 
-                @media (min-width: 768px) {
+                @media (width >= 768px) {
                     grid-row: span 2;
                 }
 
@@ -177,11 +177,11 @@
                     font-size: 1rem;
                     cursor: pointer;
                     transition: all 0.3s ease;
-                    box-shadow: 0 5px 15px rgba(38, 166, 154, 0.3);
+                    box-shadow: 0 5px 15px rgb(38 166 154 / 30%);
 
                     &.running {
                         background: #ef5350;
-                        box-shadow: 0 5px 15px rgba(239, 83, 80, 0.3);
+                        box-shadow: 0 5px 15px rgb(239 83 80 / 30%);
                     }
 
                     &:hover {
@@ -208,10 +208,10 @@
                 display: flex;
                 align-items: center;
                 gap: 0.8rem;
-                background: rgba(0, 0, 0, 0.2);
+                background: rgb(0 0 0 / 20%);
                 padding: 0.7rem 1.2rem;
                 border-radius: 8px;
-                border: 1px solid rgba(255, 255, 255, 0.05);
+                border: 1px solid rgb(255 255 255 / 5%);
 
                 .label {
                     font-size: 0.85rem;
@@ -236,7 +236,7 @@
             .bot-footer {
                 margin-top: 2rem;
                 padding-top: 1.5rem;
-                border-top: 1px solid rgba(255, 255, 255, 0.05);
+                border-top: 1px solid rgb(255 255 255 / 5%);
                 font-size: 0.85rem;
                 color: #64748b;
                 font-style: italic;

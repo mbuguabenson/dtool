@@ -3,7 +3,7 @@ import { TDigitStat, TAnalysisHistory } from '../stores/analysis-store';
 export class DigitStatsEngine {
     ticks: number[] = [];
     current_price: number = 0;
-    
+
     // Configuration
     over_under_threshold = 5;
     match_diff_digit = 6;
@@ -47,7 +47,7 @@ export class DigitStatsEngine {
         this.ticks = new_ticks;
         this.current_price = price;
         this.updateStats();
-        
+
         const last_digit = new_ticks.length > 0 ? new_ticks[new_ticks.length - 1] : null;
         if (last_digit !== null) {
             this.updateHistory(last_digit, price);
@@ -58,7 +58,7 @@ export class DigitStatsEngine {
         if (config.over_under_threshold !== undefined) this.over_under_threshold = config.over_under_threshold;
         if (config.match_diff_digit !== undefined) this.match_diff_digit = config.match_diff_digit;
         if (config.total_samples !== undefined) this.total_samples = config.total_samples;
-        
+
         // Re-calculate stats with new config if needed
         this.updateStats();
     }
@@ -68,22 +68,20 @@ export class DigitStatsEngine {
         this.ticks.forEach(d => counts[d]++);
 
         const total = this.ticks.length || 1;
-        
+
         // Calculate powers/trend for each digit
         const last_50_ticks = this.ticks.slice(-50);
         const last_10_ticks = this.ticks.slice(-10);
-        
+
         // Rank digits by frequency
-        const sorted_indices = counts
-            .map((c, i) => ({ count: c, index: i }))
-            .sort((a, b) => b.count - a.count);
+        const sorted_indices = counts.map((c, i) => ({ count: c, index: i })).sort((a, b) => b.count - a.count);
 
         this.digit_stats = counts.map((count, digit) => {
             const percentage = (count / total) * 100;
-            
+
             // Calculate rank (1=most, 10=least)
             const rank = sorted_indices.findIndex(s => s.index === digit) + 1;
-            
+
             // Calculate power movement (trend)
             const recent_count = last_10_ticks.filter(d => d === digit).length;
             const mid_count = last_50_ticks.filter(d => d === digit).length / 5;
@@ -130,14 +128,14 @@ export class DigitStatsEngine {
         if (this.matches_differs_history.length > 50) this.matches_differs_history.pop();
 
         // Rise/Fall
-        // We need previous price, which is tricky since we only store current. 
+        // We need previous price, which is tricky since we only store current.
         // Logic in store used `this.current_price` BEFORE updating it with new price.
         // For now, let's assume price change logic is handled externally or we store prev_price
         // Simplified: Rise/Fall history needs context of previous tick, which we lose if we just pass `price`.
         // However, `update` is called with new price. The `current_price` member holds the OLD price *before* we update it in `update` method?
         // Wait, `update` sets `this.current_price = price`. So we need to capture prev before setting.
     }
-    
+
     // Override update to handle price history correctly
     updateWithHistory(new_ticks: number[], new_price: number) {
         const prev_price = this.current_price;

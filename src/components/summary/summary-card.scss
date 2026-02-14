@@ -94,7 +94,7 @@
         &-icon {
             font-size: 4rem;
             animation: bounce-rocket 2s infinite ease-in-out;
-            filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.5));
+            filter: drop-shadow(0 0 8px rgb(124 58 237 / 50%));
         }
     }
 }
@@ -104,6 +104,7 @@
     100% {
         transform: translateY(0) scale(1);
     }
+
     50% {
         transform: translateY(-15px) scale(1.05);
     }

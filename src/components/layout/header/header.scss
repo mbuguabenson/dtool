@@ -12,16 +12,16 @@
     &__menu {
         svg > path,
         svg > g > path {
-            fill: #ffffff !important; // Enforce white visibility
+            fill: #fff !important; // Enforce white visibility
         }
     }
 
     position: sticky;
     top: 0;
     z-index: 999;
-    background: rgba(2, 6, 23, 0.95) !important; // Darker and more opaque for better contrast
+    background: rgb(2 6 23 / 95%) !important; // Darker and more opaque for better contrast
     backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
     border-bottom: 1px solid rgb(255 255 255 / 5%);
     height: 6rem;
     padding: 0 1.6rem;
@@ -60,7 +60,7 @@
             transform: translateY(-1px);
 
             .brand-logo {
-                box-shadow: 0 6px 20px rgba(255, 68, 79, 0.4);
+                box-shadow: 0 6px 20px rgb(255 68 79 / 40%);
 
                 .logo-glow {
                     opacity: 1;
@@ -72,12 +72,12 @@
             width: 48px;
             height: 48px;
             object-fit: contain;
-            filter: drop-shadow(0 0 15px rgba(124, 58, 237, 0.5));
+            filter: drop-shadow(0 0 15px rgb(124 58 237 / 50%));
             transition: all 0.3s ease;
 
             &:hover {
                 transform: scale(1.05);
-                filter: drop-shadow(0 0 20px rgba(124, 58, 237, 0.7));
+                filter: drop-shadow(0 0 20px rgb(124 58 237 / 70%));
             }
         }
     }
@@ -365,8 +365,8 @@
     align-items: center;
     padding: 0.6rem 2rem;
     margin-right: 1.6rem;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgb(255 255 255 / 3%);
+    border: 1px solid rgb(255 255 255 / 8%);
     border-radius: 12px;
     font-family: 'Outfit', sans-serif;
     transition: all 0.3s ease;
@@ -374,8 +374,8 @@
     z-index: 1002;
 
     &:hover {
-        background: rgba(255, 255, 255, 0.05);
-        border-color: rgba(255, 255, 255, 0.15);
+        background: rgb(255 255 255 / 5%);
+        border-color: rgb(255 255 255 / 15%);
         transform: translateY(-1px);
 
         .header-balance__glow {
@@ -413,7 +413,7 @@
         left: -50%;
         width: 200%;
         height: 200%;
-        background: radial-gradient(circle at center, rgba(255, 68, 79, 0.1) 0%, transparent 70%);
+        background: radial-gradient(circle at center, rgb(255 68 79 / 10%) 0%, transparent 70%);
         opacity: 0.3;
         pointer-events: none;
         transition: opacity 0.5s ease;
@@ -434,6 +434,7 @@
         transform: scale(0.95);
         opacity: 0.4;
     }
+
     to {
         transform: scale(1.1);
         opacity: 0.7;

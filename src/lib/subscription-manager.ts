@@ -122,15 +122,15 @@ class SubscriptionManager {
 
             // If we got history or tick in the first response, trigger callbacks and store it
             if (response && ((response as any).msg_type === 'history' || (response as any).msg_type === 'tick')) {
+                console.log(`[SubscriptionManager] Initial data for ${symbol}:`, (response as any).msg_type);
                 subscription.lastMessage = response;
                 subscription.callbacks.forEach(cb => cb(response));
             }
 
             // Set up message listener
-            const messageHandler = (data: any) => {
-                // DEBUG: log incoming message
-                // console.log(`[SubscriptionManager] Incoming ${data.msg_type} for ${symbol}`);
-
+            const messageHandler = (envelope: any) => {
+                const data = envelope.data || envelope;
+                
                 // Basic filtering to ensure we only process messages for this symbol
                 const msgSymbol = data.tick?.symbol || data.echo_req?.ticks_history || data.echo_req?.ticks;
                 if (msgSymbol && msgSymbol !== symbol) return;
@@ -139,7 +139,7 @@ class SubscriptionManager {
                     const sub = this.activeSubscriptions.get(key);
                     if (sub) {
                         sub.lastMessage = data;
-                        // console.log(`[SubscriptionManager] Dispatching ${data.msg_type} to ${sub.callbacks.size} callbacks for ${symbol}`);
+                        console.log(`[SubscriptionManager] Dispatching ${data.msg_type} for ${symbol}`);
                         sub.callbacks.forEach(cb => cb(data));
                     }
                 }

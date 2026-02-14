@@ -19,22 +19,23 @@ type TStatRowProps = {
 const DigitStatsWidget = observer(({ ticks }: TDigitStatsProps) => {
     const stats = useMemo(() => {
         if (!ticks || !Array.isArray(ticks) || ticks.length < 2) return null;
-        
+
         const total = ticks.length;
 
-        
         // Even/Odd
         const even = ticks.filter(d => d % 2 === 0).length;
         const odd = ticks.length - even;
-        
+
         // Over/Under 4.5 (Standard split)
         const over = ticks.filter(d => d > 4).length;
         const under = ticks.length - over;
 
         // Matches (Highest Frequency Digit) & Differs (Lowest Frequency Digit)
         const counts = Array(10).fill(0);
-        ticks.forEach(t => { if (t >= 0 && t <= 9) counts[t]++; });
-        
+        ticks.forEach(t => {
+            if (t >= 0 && t <= 9) counts[t]++;
+        });
+
         let highestDigit = 0;
         let highestCount = -1;
         let lowestDigit = 0;
@@ -70,7 +71,7 @@ const DigitStatsWidget = observer(({ ticks }: TDigitStatsProps) => {
             matchesPct: ((highestCount / total) * 100).toFixed(1),
             differsPct: ((lowestCount / total) * 100).toFixed(1),
             highestDigit,
-            lowestDigit
+            lowestDigit,
         };
     }, [ticks]); // Removed selected_digit dependency as it's no longer key for calculation
 
@@ -95,64 +96,91 @@ const DigitStatsWidget = observer(({ ticks }: TDigitStatsProps) => {
         gray: 'none',
     };
 
-    const StatRow = ({ label1, val1, label2, val2, color1, color2, shadow1, shadow2 }: TStatRowProps & { shadow1: string; shadow2: string }) => (
-        <div className="stat-row" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
-             <div className="stat-labels-container">
-                <span style={{ color: '#fff', textShadow: shadow1 }}>{label1} <span style={{ opacity: 0.8, fontSize: '0.85em' }}>{val1}%</span></span>
-                <span style={{ color: '#fff', textShadow: shadow2 }}><span style={{ opacity: 0.8, fontSize: '0.85em' }}>{val2}%</span> {label2}</span>
-             </div>
-             <div className="stat-progress-container">
-                <div 
-                    className="progress-bar" 
-                    style={{ 
-                        width: `${val1}%`, 
+    const StatRow = ({
+        label1,
+        val1,
+        label2,
+        val2,
+        color1,
+        color2,
+        shadow1,
+        shadow2,
+    }: TStatRowProps & { shadow1: string; shadow2: string }) => (
+        <div className='stat-row' style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+            <div className='stat-labels-container'>
+                <span style={{ color: '#fff', textShadow: shadow1 }}>
+                    {label1} <span style={{ opacity: 0.8, fontSize: '0.85em' }}>{val1}%</span>
+                </span>
+                <span style={{ color: '#fff', textShadow: shadow2 }}>
+                    <span style={{ opacity: 0.8, fontSize: '0.85em' }}>{val2}%</span> {label2}
+                </span>
+            </div>
+            <div className='stat-progress-container'>
+                <div
+                    className='progress-bar'
+                    style={{
+                        width: `${val1}%`,
                         background: color1,
                         boxShadow: shadow1,
                         borderRadius: '6px 0 0 6px',
-                        zIndex: 2
+                        zIndex: 2,
                     }}
                 ></div>
-                <div 
-                    className="progress-bar" 
-                    style={{ 
-                        width: `${val2}%`, 
+                <div
+                    className='progress-bar'
+                    style={{
+                        width: `${val2}%`,
                         background: color2,
                         boxShadow: shadow2,
                         borderRadius: '0 6px 6px 0',
-                        zIndex: 1
+                        zIndex: 1,
                     }}
                 ></div>
-             </div>
+            </div>
         </div>
     );
 
     return (
         <div className='digit-stats-widget summary-mode'>
-            <StatRow 
-                label1="Even" val1={stats.evenPct} 
-                label2="Odd" val2={stats.oddPct} 
-                color1={gradients.blue} color2={gradients.red} 
-                shadow1={shadows.blue} shadow2={shadows.red}
+            <StatRow
+                label1='Even'
+                val1={stats.evenPct}
+                label2='Odd'
+                val2={stats.oddPct}
+                color1={gradients.blue}
+                color2={gradients.red}
+                shadow1={shadows.blue}
+                shadow2={shadows.red}
             />
-            <StatRow 
-                label1="Over" val1={stats.overPct} 
-                label2="Under" val2={stats.underPct} 
-                color1={gradients.green} color2={gradients.red} 
-                shadow1={shadows.green} shadow2={shadows.red}
+            <StatRow
+                label1='Over'
+                val1={stats.overPct}
+                label2='Under'
+                val2={stats.underPct}
+                color1={gradients.green}
+                color2={gradients.red}
+                shadow1={shadows.green}
+                shadow2={shadows.red}
             />
-            <StatRow 
-                label1={`Matches (${stats.highestDigit})`} 
-                val1={stats.matchesPct} 
-                label2={`Differs (${stats.lowestDigit})`} 
-                val2={stats.differsPct} 
-                color1={gradients.purple} color2={gradients.gray} 
-                shadow1={shadows.purple} shadow2={shadows.gray}
+            <StatRow
+                label1={`Matches (${stats.highestDigit})`}
+                val1={stats.matchesPct}
+                label2={`Differs (${stats.lowestDigit})`}
+                val2={stats.differsPct}
+                color1={gradients.purple}
+                color2={gradients.gray}
+                shadow1={shadows.purple}
+                shadow2={shadows.gray}
             />
-            <StatRow 
-                label1="Rise" val1={stats.risePct} 
-                label2="Fall" val2={stats.fallPct} 
-                color1={gradients.green} color2={gradients.orange} 
-                shadow1={shadows.green} shadow2={shadows.orange}
+            <StatRow
+                label1='Rise'
+                val1={stats.risePct}
+                label2='Fall'
+                val2={stats.fallPct}
+                color1={gradients.green}
+                color2={gradients.orange}
+                shadow1={shadows.green}
+                shadow2={shadows.orange}
             />
         </div>
     );

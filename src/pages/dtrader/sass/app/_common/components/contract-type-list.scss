@@ -5,20 +5,26 @@
     @include mobile {
         padding: 1.6rem;
     }
+
     &__label {
         @include typeface(--paragraph-left-bold-black);
+
         color: var(--text-prominent);
     }
+
     &:last-child {
         border-bottom: none;
     }
+
     &__contracts-wrapper {
         margin-bottom: 1.4rem;
     }
+
     &--unavailable-category {
         opacity: 0.32;
         pointer-events: none;
     }
+
     &--no-top-padding {
         padding-top: 0;
     }
@@ -60,6 +66,7 @@
 
     &__icon {
         margin-left: auto;
+
         @include mobile {
             display: block;
         }
@@ -72,6 +79,7 @@
         .dc-icon {
             pointer-events: none;
         }
+
         &:hover {
             /* postcss-bem-linter: ignore */
             .dc-icon {
@@ -79,6 +87,7 @@
             }
         }
     }
+
     &--selected {
         background: var(--state-active);
         color: var(--text-prominent);
@@ -86,15 +95,18 @@
         &:hover {
             background: var(--state-active);
         }
+
         .contract-type-item__title {
             font-weight: bold;
             color: var(--text-prominent);
         }
+
         .contract-type-item__icon {
             /* postcss-bem-linter: ignore */
             .dc-icon {
                 pointer-events: none;
             }
+
             &:hover {
                 /* postcss-bem-linter: ignore */
                 .dc-icon {
@@ -103,6 +115,7 @@
             }
         }
     }
+
     &__icon-wrapper {
         display: inline-flex;
         align-items: center;

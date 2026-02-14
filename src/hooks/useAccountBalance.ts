@@ -17,7 +17,7 @@ export const useAccountBalance = (subscribe: boolean = true) => {
         setError(null);
 
         const request = { balance: 1, subscribe: subscribe ? 1 : 0 };
-        
+
         const unsubscribe = derivApiService.subscribe(request, (data: TDerivResponse) => {
             if (data.error) {
                 setError(data.error.message);
@@ -25,7 +25,7 @@ export const useAccountBalance = (subscribe: boolean = true) => {
                 setBalance({
                     amount: data.balance.balance,
                     currency: data.balance.currency,
-                    loginid: data.balance.loginid
+                    loginid: data.balance.loginid,
                 });
             }
             setIsLoading(false);

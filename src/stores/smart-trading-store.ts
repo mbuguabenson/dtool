@@ -493,8 +493,10 @@ export default class SmartTradingStore {
         reaction(
             () => this.root_store.common?.is_socket_opened,
             is_socket_opened => {
+                console.log(`[SmartTradingStore] Socket status changed: ${is_socket_opened}`);
                 this.is_connected = !!is_socket_opened;
                 if (is_socket_opened) {
+                    console.log(`[SmartTradingStore] Initializing markets and subscription...`);
                     this.fetchMarkets();
                     this.subscribeToActiveSymbol();
                 }
@@ -516,7 +518,7 @@ export default class SmartTradingStore {
 
     @action
     updateDigitStats = (last_digits: number[], price?: string | number) => {
-        console.log(`[SmartTradingStore] updateDigitStats for ${this.symbol}: price=${price}`);
+        console.log(`[SmartTradingStore] updateDigitStats called for ${this.symbol} with ${last_digits.length} ticks and price: ${price}`);
         if (!last_digits || last_digits.length === 0) return;
 
         const stats = Array.from({ length: 10 }, (_, i) => ({
@@ -733,6 +735,7 @@ export default class SmartTradingStore {
                     );
                     this.markets = Object.values(groups).sort((a, b) => a.group.localeCompare(b.group));
                     this.active_symbols_data = symbolData;
+                    console.log(`[SmartTradingStore] Fetched ${this.markets.length} market groups.`);
                 }
             });
         } catch (error) {

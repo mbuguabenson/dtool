@@ -31,10 +31,10 @@
             display: block;
             width: 100%;
             height: 3px;
-            background-color: #ffffff;
+            background-color: #fff;
             border-radius: 4px;
             transition: all 0.2s ease-in-out;
-            box-shadow: 0 0 8px rgba(124, 58, 237, 0.4);
+            box-shadow: 0 0 8px rgb(124 58 237 / 40%);
         }
 
         &:hover span {
@@ -55,7 +55,7 @@
         align-items: center;
         width: 100%;
         height: 6rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgb(255 255 255 / 10%);
 
         &__language {
             display: flex;
@@ -73,7 +73,7 @@
         h4,
         h5,
         h6 {
-            color: #ffffff !important;
+            color: #fff !important;
         }
     }
 
@@ -120,7 +120,7 @@
                 }
 
                 .deriv-text {
-                    color: #ffffff !important; // Enforce white text
+                    color: #fff !important; // Enforce white text
                 }
 
                 &--active {
@@ -138,8 +138,9 @@
             &--chevron {
                 position: absolute;
                 right: 1.5rem;
+
                 path {
-                    fill: #ffffff !important; // Enforce white chevron
+                    fill: #fff !important; // Enforce white chevron
                 }
             }
 
@@ -155,7 +156,7 @@
                 path,
                 rect,
                 circle {
-                    fill: #ffffff !important;
+                    fill: #fff !important;
                     stroke: transparent;
                 }
             }
@@ -205,7 +206,7 @@
     &__back-btn {
         button > svg > path,
         svg > path {
-            fill: #ffffff !important; // Enforce white
+            fill: #fff !important; // Enforce white
         }
     }
 
@@ -222,7 +223,7 @@
 
         .mobile-menu__hamburger {
             span {
-                background-color: #ffffff !important; // Enforce white hamburger
+                background-color: #fff !important; // Enforce white hamburger
             }
         }
     }
@@ -240,18 +241,18 @@
         top: 0 !important;
         left: 0 !important;
         height: 100vh !important;
-        background: rgba(15, 20, 30, 0.98) !important; // Almost opaque
+        background: rgb(15 20 30 / 98%) !important; // Almost opaque
         backdrop-filter: blur(24px) !important;
         z-index: 99999 !important; // Nuclear Z-Index
         max-width: 85vw;
-        box-shadow: 0 0 50px rgba(0, 0, 0, 0.8) !important;
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 0 50px rgb(0 0 0 / 80%) !important;
+        border-right: 1px solid rgb(255 255 255 / 10%);
     }
 }
 
 .deriv-drawer__header__close-btn {
     button > svg > path,
     svg > path {
-        fill: #ffffff !important; // Enforce white close button
+        fill: #fff !important; // Enforce white close button
     }
 }

@@ -32,8 +32,16 @@ class DerivApiService {
     private minReconnectDelay: number = 2000;
     private reconnectTimeout: NodeJS.Timeout | null = null;
     private pingInterval: NodeJS.Timeout | null = null;
-    private subscriptions: Map<string, { request: Record<string, unknown>; callback: TSubscriptionCallback }> = new Map();
-    private pendingRequests: Map<number, { resolve: (data: TDerivResponse) => void; reject: (error: TDerivResponse['error']) => void; timeout: NodeJS.Timeout }> = new Map();
+    private subscriptions: Map<string, { request: Record<string, unknown>; callback: TSubscriptionCallback }> =
+        new Map();
+    private pendingRequests: Map<
+        number,
+        {
+            resolve: (data: TDerivResponse) => void;
+            reject: (error: TDerivResponse['error']) => void;
+            timeout: NodeJS.Timeout;
+        }
+    > = new Map();
     private onStateChangeCallbacks: Set<(state: ConnectionState) => void> = new Set();
     private lastReqId: number = 0;
     private latency: number = 0;
@@ -69,7 +77,7 @@ class DerivApiService {
                 this.setState(ConnectionState.CONNECTED);
                 this.reconnectAttempts = 0;
                 this.startPing();
-                
+
                 if (this.apiToken) {
                     console.log('[DerivApiService] Re-authorizing with stored token...');
                     this.authorize(this.apiToken);
@@ -78,12 +86,12 @@ class DerivApiService {
                 }
             };
 
-            this.ws.onmessage = (event) => {
+            this.ws.onmessage = event => {
                 const data = JSON.parse(event.data);
                 this.handleMessage(data);
             };
 
-            this.ws.onerror = (error) => {
+            this.ws.onerror = error => {
                 console.error('[DerivApiService] WebSocket error:', error);
                 this.setState(ConnectionState.ERROR);
             };
@@ -174,7 +182,7 @@ class DerivApiService {
 
     public subscribe(request: Record<string, unknown>, callback: TSubscriptionCallback): () => void {
         const subscriptionKey = this.getSubscriptionKey(request);
-        
+
         // Tracking the subscription even if disconnected
         this.subscriptions.set(subscriptionKey, { request, callback });
 
@@ -238,7 +246,7 @@ class DerivApiService {
         }
 
         // Dispatch to subscribers
-        this.subscriptions.forEach((sub) => {
+        this.subscriptions.forEach(sub => {
             // Simple match logic, could be refined based on echo_req or msg_type
             if (this.isMatchingResponse(sub.request, data)) {
                 sub.callback(data);
@@ -265,7 +273,7 @@ class DerivApiService {
 
     private restoreSubscriptions(): void {
         console.log('[DerivApiService] Restoring subscriptions:', this.subscriptions.size);
-        this.subscriptions.forEach((sub) => {
+        this.subscriptions.forEach(sub => {
             this.send(sub.request);
         });
     }
@@ -273,11 +281,11 @@ class DerivApiService {
     private attemptReconnect(): void {
         if (this.isManuallyDisconnected) return;
 
-        const delay = Math.min(this.minReconnectDelay + (this.reconnectAttempts * 1000), this.maxReconnectDelay);
+        const delay = Math.min(this.minReconnectDelay + this.reconnectAttempts * 1000, this.maxReconnectDelay);
         console.log(`[DerivApiService] Reconnecting in ${delay}ms (Attempt ${this.reconnectAttempts + 1})`);
 
         if (this.reconnectTimeout) clearTimeout(this.reconnectTimeout);
-        
+
         this.reconnectTimeout = setTimeout(() => {
             this.reconnectAttempts++;
             this.connect();

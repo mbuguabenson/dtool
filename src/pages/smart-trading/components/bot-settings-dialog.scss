@@ -1,15 +1,15 @@
 .bot-settings-dialog {
     .dc-dialog__content {
-        background: rgba(18, 18, 30, 0.95);
+        background: rgb(18 18 30 / 95%);
         backdrop-filter: blur(15px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgb(255 255 255 / 10%);
         border-radius: 20px;
         color: #fff;
         padding: 0;
     }
 
     .dc-dialog__header {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgb(255 255 255 / 10%);
         padding: 1.5rem;
 
         .dc-dialog__header-title {
@@ -36,7 +36,7 @@
             align-items: center;
             gap: 0.8rem;
             padding-bottom: 0.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgb(255 255 255 / 5%);
 
             .icon {
                 font-size: 1.2rem;
@@ -64,8 +64,8 @@
             }
 
             .setting-input {
-                background: rgba(0, 0, 0, 0.3);
-                border: 1px solid rgba(255, 255, 255, 0.1);
+                background: rgb(0 0 0 / 30%);
+                border: 1px solid rgb(255 255 255 / 10%);
                 color: #fff;
                 padding: 0.5rem 0.8rem;
                 border-radius: 8px;

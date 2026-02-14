@@ -22,20 +22,24 @@
             padding: 0.8rem;
             flex: 1;
         }
+
         /* postcss-bem-linter: ignore */
         span[data-name='contract_type'] {
             @include typeface(--paragraph-left-normal-black);
+
             color: var(--text-prominent);
             font-weight: bold;
             vertical-align: middle;
             padding-left: 0.4em;
             overflow-wrap: anywhere;
         }
+
         &:hover,
         &:focus {
             border-color: var(--border-hover);
             outline: none;
         }
+
         &--clicked {
             border-color: var(--border-active);
 
@@ -44,13 +48,14 @@
             }
         }
     }
+
     &__select-arrow {
         display: inline-block;
         font-style: normal;
         vertical-align: baseline;
         text-align: center;
         text-transform: none;
-        text-rendering: optimizeLegibility;
+        text-rendering: optimizelegibility;
         position: absolute;
         pointer-events: none;
         top: 37%;
@@ -60,6 +65,7 @@
         transform: rotate(90deg);
         transform-origin: 45% 45;
         color: var(--text-prominent);
+
         @extend %inline-icon;
 
         &--right {
@@ -68,6 +74,7 @@
             margin-right: 0.2rem;
         }
     }
+
     &__icon-wrapper {
         display: inline-flex;
         align-items: center;
@@ -77,6 +84,7 @@
         @include mobile-screen {
             padding-left: 0;
         }
+
         /* postcss-bem-linter: ignore */
         .category-wrapper {
             margin: 0 0.2em;
@@ -88,10 +96,12 @@
                 .transparent {
                     fill: var(--general-section-1);
                 }
+
                 /* postcss-bem-linter: ignore */
                 .color1-fill {
                     fill: var(--brand-red-coral);
                 }
+
                 /* postcss-bem-linter: ignore */
                 .color2-fill {
                     fill: var(--brand-secondary);
@@ -99,9 +109,11 @@
             }
         }
     }
+
     &:hover {
         border-color: var(--border-hover);
     }
+
     &:active,
     &:focus,
     &--show {
@@ -109,6 +121,7 @@
         border-radius: 4px;
         border-color: var(--border-active);
     }
+
     @include mobile-screen {
         margin-bottom: 0.8rem;
         height: 4rem;
@@ -116,11 +129,13 @@
         &--multiplier {
             margin-bottom: 0.6rem;
         }
+
         &--turbosshort,
         &--turboslong {
             top: 0.2rem;
             margin-right: 0.7rem;
         }
+
         &--vanillalongcall,
         &--vanillalongput {
             margin-right: 0.4rem;

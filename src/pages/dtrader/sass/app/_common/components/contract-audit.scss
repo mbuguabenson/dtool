@@ -18,21 +18,25 @@ $HEIGHT: calc(100vh - 34em);
             width: 100%;
             display: flex;
             flex-direction: column;
+
             /* postcss-bem-linter: ignore */
             &__content {
                 display: flex;
                 height: calc(100% - 4rem);
+
                 /* postcss-bem-linter: ignore */
                 .dc-themed-scrollbars {
                     flex: 1;
                 }
             }
         }
+
         /* postcss-bem-linter: ignore */
         .dc-themed-scrollbars {
             width: 100%;
         }
     }
+
     &__grid {
         display: flex;
         padding: 0.8rem 0;
@@ -41,6 +45,7 @@ $HEIGHT: calc(100vh - 34em);
             border-top: 1px solid var(--general-section-2);
         }
     }
+
     &__icon {
         display: flex;
         align-items: flex-start;
@@ -68,23 +73,28 @@ $HEIGHT: calc(100vh - 34em);
             }
         }
     }
+
     &__item {
         display: flex;
         flex-direction: column;
         margin: 0 4px;
     }
+
     &__label {
         white-space: nowrap;
         max-width: 90px;
     }
+
     &__value-wrapper {
         display: flex;
         flex-direction: column;
     }
+
     &__value,
     &__value2 {
         padding-top: 2px;
     }
+
     &__timestamp {
         align-self: center;
         margin-left: auto;
@@ -93,6 +103,7 @@ $HEIGHT: calc(100vh - 34em);
             display: block;
         }
     }
+
     &__empty {
         display: flex;
         height: 100%;
@@ -110,6 +121,7 @@ $HEIGHT: calc(100vh - 34em);
             padding: 8px;
         }
     }
+
     &__tabs {
         &-content {
             padding: 0.8rem 1.6rem;
@@ -120,6 +132,7 @@ $HEIGHT: calc(100vh - 34em);
             }
         }
     }
+
     &__selected-tick {
         align-items: center;
         background-color: var(--general-section-1);

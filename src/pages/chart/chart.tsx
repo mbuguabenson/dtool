@@ -21,12 +21,12 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
     const { chart_store, run_panel, dashboard } = useStore();
     const [isSafari, setIsSafari] = useState(false);
     const [tickHistory, setTickHistory] = useState<number[]>([]);
-    
+
     // Derived stats
     const lastDigits = tickHistory.map(t => parseInt(t.toString().slice(-1)));
     const digitStats = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(d => ({
         digit: d,
-        percentage: (lastDigits.filter(x => x === d).length / lastDigits.length) * 100 || 0
+        percentage: (lastDigits.filter(x => x === d).length / lastDigits.length) * 100 || 0,
     }));
 
     const {
@@ -94,24 +94,27 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
             delete subscriptions.current[subId];
         }
 
-        chart_api.api.send(req).then((history: any) => {
-            setChartSubscriptionId(history?.subscription?.id);
-            
-            if (history) {
-                callback(history);
-            }
+        chart_api.api
+            .send(req)
+            .then((history: any) => {
+                setChartSubscriptionId(history?.subscription?.id);
 
-            if (req.subscribe === 1 && history?.subscription?.id) {
-                const subscription = chart_api.api.onMessage().subscribe(({ data }: any) => {
-                    callback(data);
-                });
-                subscriptions.current[history.subscription.id] = subscription;
-            }
-        }).catch((e: any) => {
-            // eslint-disable-next-line no-console
-            e?.error?.code === 'MarketIsClosed' && callback([]); 
-            console.log(e?.error?.message);
-        });
+                if (history) {
+                    callback(history);
+                }
+
+                if (req.subscribe === 1 && history?.subscription?.id) {
+                    const subscription = chart_api.api.onMessage().subscribe(({ data }: any) => {
+                        callback(data);
+                    });
+                    subscriptions.current[history.subscription.id] = subscription;
+                }
+            })
+            .catch((e: any) => {
+                // eslint-disable-next-line no-console
+                e?.error?.code === 'MarketIsClosed' && callback([]);
+                console.log(e?.error?.message);
+            });
     };
 
     if (!symbol) return null;

@@ -15,9 +15,11 @@
         &__spot {
             grid-area: spot;
         }
+
         &__amount {
             grid-area: amount;
         }
+
         &__type {
             grid-area: unit;
             justify-self: end;

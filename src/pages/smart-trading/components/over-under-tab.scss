@@ -1,9 +1,9 @@
 .over-under-tab {
     padding: 1.5rem;
-    background: linear-gradient(135deg, rgba(10, 10, 30, 0.95) 0%, rgba(20, 20, 40, 0.98) 100%);
+    background: linear-gradient(135deg, rgb(10 10 30 / 95%) 0%, rgb(20 20 40 / 98%) 100%);
     min-height: 100vh;
     color: #fff;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', "Roboto", sans-serif;
 
     // Premium Market Header
     .premium-market-header {
@@ -12,11 +12,11 @@
         gap: 1rem;
         margin-bottom: 1.5rem;
         padding: 1rem;
-        background: rgba(255, 255, 255, 0.03);
+        background: rgb(255 255 255 / 3%);
         border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgb(255 255 255 / 10%);
 
-        @media (max-width: 768px) {
+        @media (width <= 768px) {
             grid-template-columns: 1fr;
         }
 
@@ -27,7 +27,7 @@
             align-items: center;
             gap: 0.75rem;
             padding: 0.75rem 1rem;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgb(255 255 255 / 5%);
             border-radius: 8px;
             backdrop-filter: blur(10px);
 
@@ -70,28 +70,28 @@
                 border-radius: 8px;
                 font-size: 1.3rem;
                 font-weight: 700;
-                background: rgba(255, 255, 255, 0.1);
+                background: rgb(255 255 255 / 10%);
                 transition: all 0.3s ease;
 
                 &.over {
-                    background: rgba(249, 115, 22, 0.2);
-                    border: 2px solid rgb(249, 115, 22);
-                    color: rgb(249, 115, 22);
-                    box-shadow: 0 0 20px rgba(249, 115, 22, 0.4);
+                    background: rgb(249 115 22 / 20%);
+                    border: 2px solid rgb(249 115 22);
+                    color: rgb(249 115 22);
+                    box-shadow: 0 0 20px rgb(249 115 22 / 40%);
                 }
 
                 &.under {
-                    background: rgba(59, 130, 246, 0.2);
-                    border: 2px solid rgb(59, 130, 246);
-                    color: rgb(59, 130, 246);
-                    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+                    background: rgb(59 130 246 / 20%);
+                    border: 2px solid rgb(59 130 246);
+                    color: rgb(59 130 246);
+                    box-shadow: 0 0 20px rgb(59 130 246 / 40%);
                 }
 
                 &.current {
-                    background: rgba(168, 85, 247, 0.2);
-                    border: 2px solid rgb(168, 85, 247);
-                    color: rgb(168, 85, 247);
-                    box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+                    background: rgb(168 85 247 / 20%);
+                    border: 2px solid rgb(168 85 247);
+                    color: rgb(168 85 247);
+                    box-shadow: 0 0 20px rgb(168 85 247 / 40%);
                 }
             }
         }
@@ -120,8 +120,8 @@
         transition: all 0.3s ease;
 
         &.wait {
-            background: rgba(120, 120, 120, 0.15);
-            border-color: rgba(180, 180, 180, 0.3);
+            background: rgb(120 120 120 / 15%);
+            border-color: rgb(180 180 180 / 30%);
 
             .prediction-text {
                 color: #d4a574;
@@ -129,32 +129,32 @@
         }
 
         &.under {
-            background: rgba(59, 130, 246, 0.1);
-            border-color: rgb(59, 130, 246);
-            box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+            background: rgb(59 130 246 / 10%);
+            border-color: rgb(59 130 246);
+            box-shadow: 0 0 30px rgb(59 130 246 / 30%);
 
             .prediction-text {
-                color: rgb(59, 130, 246);
+                color: rgb(59 130 246);
             }
         }
 
         &.over {
-            background: rgba(249, 115, 22, 0.1);
-            border-color: rgb(249, 115, 22);
-            box-shadow: 0 0 30px rgba(249, 115, 22, 0.3);
+            background: rgb(249 115 22 / 10%);
+            border-color: rgb(249 115 22);
+            box-shadow: 0 0 30px rgb(249 115 22 / 30%);
 
             .prediction-text {
-                color: rgb(249, 115, 22);
+                color: rgb(249 115 22);
             }
         }
 
         &.current {
-            background: rgba(168, 85, 247, 0.1);
-            border-color: rgb(168, 85, 247);
-            box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+            background: rgb(168 85 247 / 10%);
+            border-color: rgb(168 85 247);
+            box-shadow: 0 0 30px rgb(168 85 247 / 30%);
 
             .prediction-text {
-                color: rgb(168, 85, 247);
+                color: rgb(168 85 247);
             }
         }
 
@@ -182,7 +182,7 @@
         gap: 1rem;
         margin-bottom: 1.5rem;
 
-        @media (max-width: 768px) {
+        @media (width <= 768px) {
             grid-template-columns: 1fr;
         }
 
@@ -193,38 +193,38 @@
             transition: all 0.3s ease;
 
             &.under-card {
-                background: rgba(59, 130, 246, 0.08);
-                border-color: rgba(59, 130, 246, 0.3);
+                background: rgb(59 130 246 / 8%);
+                border-color: rgb(59 130 246 / 30%);
 
                 &.dominant {
-                    border-color: rgb(59, 130, 246);
-                    box-shadow: 0 0 25px rgba(59, 130, 246, 0.4);
+                    border-color: rgb(59 130 246);
+                    box-shadow: 0 0 25px rgb(59 130 246 / 40%);
                 }
 
                 .percentage {
-                    color: rgb(59, 130, 246);
+                    color: rgb(59 130 246);
                 }
 
                 .under-fill {
-                    background: linear-gradient(90deg, rgb(59, 130, 246), rgb(37, 99, 235));
+                    background: linear-gradient(90deg, rgb(59 130 246), rgb(37 99 235));
                 }
             }
 
             &.over-card {
-                background: rgba(34, 197, 94, 0.08);
-                border-color: rgba(34, 197, 94, 0.3);
+                background: rgb(34 197 94 / 8%);
+                border-color: rgb(34 197 94 / 30%);
 
                 &.dominant {
-                    border-color: rgb(34, 197, 94);
-                    box-shadow: 0 0 25px rgba(34, 197, 94, 0.4);
+                    border-color: rgb(34 197 94);
+                    box-shadow: 0 0 25px rgb(34 197 94 / 40%);
                 }
 
                 .percentage {
-                    color: rgb(34, 197, 94);
+                    color: rgb(34 197 94);
                 }
 
                 .over-fill {
-                    background: linear-gradient(90deg, rgb(34, 197, 94), rgb(22, 163, 74));
+                    background: linear-gradient(90deg, rgb(34 197 94), rgb(22 163 74));
                 }
             }
 
@@ -248,7 +248,7 @@
 
             .progress-bar {
                 height: 12px;
-                background: rgba(255, 255, 255, 0.05);
+                background: rgb(255 255 255 / 5%);
                 border-radius: 8px;
                 overflow: hidden;
                 margin-bottom: 0.75rem;
@@ -274,7 +274,7 @@
         gap: 1rem;
         margin-bottom: 1.5rem;
 
-        @media (max-width: 768px) {
+        @media (width <= 768px) {
             grid-template-columns: 1fr;
         }
 
@@ -285,29 +285,29 @@
             border: 1px solid;
 
             &.volatility-box {
-                background: rgba(168, 85, 247, 0.08);
-                border-color: rgba(168, 85, 247, 0.3);
+                background: rgb(168 85 247 / 8%);
+                border-color: rgb(168 85 247 / 30%);
 
                 .metric-value {
-                    color: rgb(168, 85, 247);
+                    color: rgb(168 85 247);
                 }
             }
 
             &.change-box {
-                background: rgba(249, 115, 22, 0.08);
-                border-color: rgba(249, 115, 22, 0.3);
+                background: rgb(249 115 22 / 8%);
+                border-color: rgb(249 115 22 / 30%);
 
                 .metric-value {
-                    color: rgb(249, 115, 22);
+                    color: rgb(249 115 22);
                 }
             }
 
             &.power-box {
-                background: rgba(14, 165, 233, 0.08);
-                border-color: rgba(14, 165, 233, 0.3);
+                background: rgb(14 165 233 / 8%);
+                border-color: rgb(14 165 233 / 30%);
 
                 .metric-value {
-                    color: rgb(14, 165, 233);
+                    color: rgb(14 165 233);
                 }
             }
 
@@ -341,40 +341,40 @@
         margin-bottom: 1.5rem;
 
         &.wait {
-            background: rgba(120, 120, 120, 0.3);
+            background: rgb(120 120 120 / 30%);
             color: #999;
         }
 
         &.under {
-            background: rgb(59, 130, 246);
+            background: rgb(59 130 246);
             color: #fff;
 
             &:hover {
-                background: rgb(37, 99, 235);
+                background: rgb(37 99 235);
                 transform: translateY(-2px);
-                box-shadow: 0 4px 20px rgba(59, 130, 246, 0.5);
+                box-shadow: 0 4px 20px rgb(59 130 246 / 50%);
             }
         }
 
         &.over {
-            background: rgb(249, 115, 22);
+            background: rgb(249 115 22);
             color: #fff;
 
             &:hover {
-                background: rgb(234, 88, 12);
+                background: rgb(234 88 12);
                 transform: translateY(-2px);
-                box-shadow: 0 4px 20px rgba(249, 115, 22, 0.5);
+                box-shadow: 0 4px 20px rgb(249 115 22 / 50%);
             }
         }
 
         &.current {
-            background: rgb(168, 85, 247);
+            background: rgb(168 85 247);
             color: #fff;
 
             &:hover {
-                background: rgb(147, 51, 234);
+                background: rgb(147 51 234);
                 transform: translateY(-2px);
-                box-shadow: 0 4px 20px rgba(168, 85, 247, 0.5);
+                box-shadow: 0 4px 20px rgb(168 85 247 / 50%);
             }
         }
 
@@ -383,14 +383,14 @@
             pointer-events: none;
             position: relative;
 
-            &::after {
+            &:after {
                 content: '';
                 position: absolute;
                 width: 20px;
                 height: 20px;
                 top: calc(50% - 10px);
                 right: 20px;
-                border: 2px solid rgba(255, 255, 255, 0.3);
+                border: 2px solid rgb(255 255 255 / 30%);
                 border-top-color: #fff;
                 border-radius: 50%;
                 animation: spin 1s linear infinite;
@@ -412,9 +412,9 @@
     .large-uo-display {
         margin-bottom: 1.5rem;
         padding: 1.5rem;
-        background: rgba(255, 255, 255, 0.03);
+        background: rgb(255 255 255 / 3%);
         border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgb(255 255 255 / 10%);
 
         .large-title {
             text-align: center;
@@ -429,7 +429,7 @@
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
 
-            @media (max-width: 768px) {
+            @media (width <= 768px) {
                 grid-template-columns: 1fr;
             }
 
@@ -439,28 +439,28 @@
                 text-align: center;
 
                 &.under-large {
-                    background: rgba(59, 130, 246, 0.15);
-                    border: 2px solid rgb(59, 130, 246);
+                    background: rgb(59 130 246 / 15%);
+                    border: 2px solid rgb(59 130 246);
 
                     .large-label {
-                        color: rgb(59, 130, 246);
+                        color: rgb(59 130 246);
                     }
 
                     .large-percentage {
-                        color: rgb(59, 130, 246);
+                        color: rgb(59 130 246);
                     }
                 }
 
                 &.over-large {
-                    background: rgba(34, 197, 94, 0.15);
-                    border: 2px solid rgb(34, 197, 94);
+                    background: rgb(34 197 94 / 15%);
+                    border: 2px solid rgb(34 197 94);
 
                     .large-label {
-                        color: rgb(34, 197, 94);
+                        color: rgb(34 197 94);
                     }
 
                     .large-percentage {
-                        color: rgb(34, 197, 94);
+                        color: rgb(34 197 94);
                     }
                 }
 
@@ -501,7 +501,7 @@
             grid-template-columns: repeat(10, 1fr);
             gap: 0.5rem;
 
-            @media (max-width: 768px) {
+            @media (width <= 768px) {
                 grid-template-columns: repeat(5, 1fr);
             }
 
@@ -510,32 +510,32 @@
                 border-radius: 10px;
                 font-size: 1.4rem;
                 font-weight: 700;
-                border: 2px solid rgba(255, 255, 255, 0.2);
-                background: rgba(255, 255, 255, 0.05);
+                border: 2px solid rgb(255 255 255 / 20%);
+                background: rgb(255 255 255 / 5%);
                 color: #fff;
                 cursor: pointer;
                 transition: all 0.3s ease;
 
                 &:hover {
                     transform: scale(1.05);
-                    background: rgba(255, 255, 255, 0.1);
+                    background: rgb(255 255 255 / 10%);
                 }
 
                 &.selected {
-                    background: rgb(249, 115, 22);
-                    border-color: rgb(249, 115, 22);
-                    box-shadow: 0 0 20px rgba(249, 115, 22, 0.6);
+                    background: rgb(249 115 22);
+                    border-color: rgb(249 115 22);
+                    box-shadow: 0 0 20px rgb(249 115 22 / 60%);
                     transform: scale(1.1);
                 }
 
                 &.very-strong:not(.selected) {
-                    border-color: rgb(34, 197, 94);
-                    box-shadow: 0 0 10px rgba(34, 197, 94, 0.4);
+                    border-color: rgb(34 197 94);
+                    box-shadow: 0 0 10px rgb(34 197 94 / 40%);
                 }
 
                 &.strong:not(.selected) {
-                    border-color: rgb(234, 179, 8);
-                    box-shadow: 0 0 10px rgba(234, 179, 8, 0.4);
+                    border-color: rgb(234 179 8);
+                    box-shadow: 0 0 10px rgb(234 179 8 / 40%);
                 }
             }
         }
@@ -545,8 +545,8 @@
     .digit-power-card {
         padding: 1.5rem;
         border-radius: 12px;
-        background: rgba(168, 85, 247, 0.08);
-        border: 2px solid rgba(168, 85, 247, 0.3);
+        background: rgb(168 85 247 / 8%);
+        border: 2px solid rgb(168 85 247 / 30%);
         margin-bottom: 1.5rem;
 
         .power-card-header {
@@ -558,7 +558,7 @@
             .power-title {
                 font-size: 1.1rem;
                 font-weight: 600;
-                color: rgb(168, 85, 247);
+                color: rgb(168 85 247);
             }
 
             .strength-badge {
@@ -570,22 +570,22 @@
                 letter-spacing: 0.5px;
 
                 &.very-strong {
-                    background: rgb(34, 197, 94);
+                    background: rgb(34 197 94);
                     color: #fff;
                 }
 
                 &.strong {
-                    background: rgb(234, 179, 8);
+                    background: rgb(234 179 8);
                     color: #000;
                 }
 
                 &.moderate {
-                    background: rgb(59, 130, 246);
+                    background: rgb(59 130 246);
                     color: #fff;
                 }
 
                 &.weak {
-                    background: rgba(120, 120, 120, 0.5);
+                    background: rgb(120 120 120 / 50%);
                     color: #999;
                 }
             }
@@ -596,7 +596,7 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 1.5rem;
 
-            @media (max-width: 768px) {
+            @media (width <= 768px) {
                 grid-template-columns: 1fr;
             }
 
@@ -612,7 +612,7 @@
                 .power-metric-value {
                     font-size: 1.6rem;
                     font-weight: 700;
-                    color: rgb(14, 165, 233);
+                    color: rgb(14 165 233);
                     margin-bottom: 0.25rem;
 
                     &.confidence-percent {
@@ -631,14 +631,14 @@
 
                     .confidence-bar {
                         height: 10px;
-                        background: rgba(255, 255, 255, 0.1);
+                        background: rgb(255 255 255 / 10%);
                         border-radius: 5px;
                         overflow: hidden;
                         margin-bottom: 0.5rem;
 
                         .confidence-fill {
                             height: 100%;
-                            background: linear-gradient(90deg, rgb(34, 197, 94), rgb(22, 163, 74));
+                            background: linear-gradient(90deg, rgb(34 197 94), rgb(22 163 74));
                             transition: width 0.5s ease;
                             border-radius: 5px;
                         }
@@ -650,8 +650,8 @@
                         border-radius: 4px;
                         font-size: 0.7rem;
                         font-weight: 600;
-                        background: rgba(34, 197, 94, 0.2);
-                        color: rgb(34, 197, 94);
+                        background: rgb(34 197 94 / 20%);
+                        color: rgb(34 197 94);
                         text-transform: uppercase;
                         letter-spacing: 0.5px;
                     }
@@ -671,7 +671,7 @@
             gap: 1rem;
             margin-bottom: 1rem;
 
-            @media (max-width: 768px) {
+            @media (width <= 768px) {
                 grid-template-columns: 80px 1fr 60px;
             }
 
@@ -683,16 +683,16 @@
 
             .side-bar {
                 height: 30px;
-                background: rgba(255, 255, 255, 0.05);
+                background: rgb(255 255 255 / 5%);
                 border-radius: 8px;
                 overflow: hidden;
 
                 &.over-bar {
-                    background: rgba(34, 197, 94, 0.1);
+                    background: rgb(34 197 94 / 10%);
                 }
 
                 &.under-bar {
-                    background: rgba(59, 130, 246, 0.1);
+                    background: rgb(59 130 246 / 10%);
                 }
 
                 .side-bar-fill {
@@ -701,11 +701,11 @@
                     border-radius: 8px;
 
                     &.over-fill {
-                        background: linear-gradient(90deg, rgb(34, 197, 94), rgb(22, 163, 74));
+                        background: linear-gradient(90deg, rgb(34 197 94), rgb(22 163 74));
                     }
 
                     &.under-fill {
-                        background: linear-gradient(90deg, rgb(59, 130, 246), rgb(37, 99, 235));
+                        background: linear-gradient(90deg, rgb(59 130 246), rgb(37 99 235));
                     }
                 }
             }
@@ -725,18 +725,18 @@
         font-weight: 500;
         margin-bottom: 1.5rem;
         padding: 0.75rem;
-        background: rgba(249, 115, 22, 0.1);
+        background: rgb(249 115 22 / 10%);
         border-radius: 8px;
-        border: 1px solid rgba(249, 115, 22, 0.3);
-        color: rgb(249, 115, 22);
+        border: 1px solid rgb(249 115 22 / 30%);
+        color: rgb(249 115 22);
     }
 
     // Visual Timeline
     .visual-timeline {
         padding: 1.5rem;
-        background: rgba(255, 255, 255, 0.03);
+        background: rgb(255 255 255 / 3%);
         border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgb(255 255 255 / 10%);
 
         .timeline-title {
             text-align: center;
@@ -751,7 +751,7 @@
             grid-template-columns: repeat(10, 1fr);
             gap: 0.5rem;
 
-            @media (max-width: 768px) {
+            @media (width <= 768px) {
                 grid-template-columns: repeat(8, 1fr);
             }
 
@@ -767,26 +767,26 @@
                 transition: all 0.3s ease;
 
                 &.u {
-                    background: rgba(59, 130, 246, 0.2);
-                    border-color: rgb(59, 130, 246);
-                    color: rgb(59, 130, 246);
+                    background: rgb(59 130 246 / 20%);
+                    border-color: rgb(59 130 246);
+                    color: rgb(59 130 246);
                 }
 
                 &.o {
-                    background: rgba(34, 197, 94, 0.2);
-                    border-color: rgb(34, 197, 94);
-                    color: rgb(34, 197, 94);
+                    background: rgb(34 197 94 / 20%);
+                    border-color: rgb(34 197 94);
+                    color: rgb(34 197 94);
                 }
 
                 &.c {
-                    background: rgba(249, 115, 22, 0.2);
-                    border-color: rgb(249, 115, 22);
-                    color: rgb(249, 115, 22);
+                    background: rgb(249 115 22 / 20%);
+                    border-color: rgb(249 115 22);
+                    color: rgb(249 115 22);
                 }
 
                 &.latest {
                     animation: pulse 1.5s ease-in-out infinite;
-                    box-shadow: 0 0 15px currentColor;
+                    box-shadow: 0 0 15px currentcolor;
                 }
             }
         }

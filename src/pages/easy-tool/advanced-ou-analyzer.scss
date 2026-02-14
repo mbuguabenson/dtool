@@ -5,14 +5,14 @@
     width: 100%;
 
     .analyzer-power-card {
-        background: rgba(30, 20, 60, 0.4);
-        border: 1px solid rgba(139, 92, 246, 0.2);
+        background: rgb(30 20 60 / 40%);
+        border: 1px solid rgb(139 92 246 / 20%);
         border-radius: 16px;
         padding: 24px;
         position: relative;
         overflow: hidden;
 
-        &::before {
+        &:before {
             content: '';
             position: absolute;
             top: 0;
@@ -30,7 +30,7 @@
             margin-bottom: 24px;
             text-transform: uppercase;
             letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+            text-shadow: 0 0 10px rgb(139 92 246 / 30%);
         }
 
         .power-card__metrics {
@@ -38,7 +38,7 @@
             grid-template-columns: 1fr 1fr;
             gap: 24px;
             margin-bottom: 24px;
-            background: rgba(0, 0, 0, 0.2);
+            background: rgb(0 0 0 / 20%);
             padding: 16px;
             border-radius: 12px;
 
@@ -49,7 +49,7 @@
 
                 .l {
                     font-size: 11px;
-                    color: rgba(255, 255, 255, 0.4);
+                    color: rgb(255 255 255 / 40%);
                     font-weight: 600;
 
                     .sub {
@@ -66,7 +66,7 @@
 
                 .sub-v {
                     font-size: 10px;
-                    color: rgba(255, 255, 255, 0.3);
+                    color: rgb(255 255 255 / 30%);
                     font-weight: 600;
                 }
             }
@@ -93,7 +93,7 @@
                     text-transform: uppercase;
                     background: #f59e0b;
                     color: #000;
-                    box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+                    box-shadow: 0 0 10px rgb(245 158 11 / 40%);
 
                     &.low {
                         background: #ef4444;
@@ -113,23 +113,23 @@
                     &.extreme {
                         background: #8b5cf6;
                         color: #fff;
-                        box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+                        box-shadow: 0 0 15px rgb(139 92 246 / 60%);
                     }
                 }
             }
 
             .confidence-track {
                 height: 8px;
-                background: rgba(0, 0, 0, 0.4);
+                background: rgb(0 0 0 / 40%);
                 border-radius: 4px;
                 overflow: hidden;
                 margin-bottom: 12px;
-                border: 1px solid rgba(255, 255, 255, 0.05);
+                border: 1px solid rgb(255 255 255 / 5%);
 
                 .bar {
                     height: 100%;
                     background: linear-gradient(90deg, #f59e0b, #fbbf24);
-                    box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+                    box-shadow: 0 0 10px rgb(245 158 11 / 50%);
                     transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
                 }
             }
@@ -157,15 +157,15 @@
             .l {
                 font-size: 12px;
                 font-weight: 700;
-                color: rgba(255, 255, 255, 0.6);
+                color: rgb(255 255 255 / 60%);
             }
 
             .track {
                 height: 24px;
-                background: rgba(255, 255, 255, 0.03);
+                background: rgb(255 255 255 / 3%);
                 border-radius: 12px;
                 overflow: hidden;
-                border: 1px solid rgba(255, 255, 255, 0.05);
+                border: 1px solid rgb(255 255 255 / 5%);
 
                 .bar {
                     height: 100%;
@@ -173,12 +173,12 @@
 
                     &.over {
                         background: linear-gradient(90deg, #10b981, #38ef7d);
-                        box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+                        box-shadow: 0 0 15px rgb(16 185 129 / 30%);
                     }
 
                     &.under {
                         background: linear-gradient(90deg, #3b82f6, #00c6ff);
-                        box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+                        box-shadow: 0 0 15px rgb(59 130 246 / 30%);
                     }
                 }
             }
@@ -194,8 +194,8 @@
     }
 
     .analyzer-info-bar {
-        background: rgba(127, 29, 29, 0.2);
-        border: 1px solid rgba(239, 68, 68, 0.1);
+        background: rgb(127 29 29 / 20%);
+        border: 1px solid rgb(239 68 68 / 10%);
         padding: 10px;
         border-radius: 8px;
         text-align: center;
@@ -208,7 +208,7 @@
         .grid-header {
             font-size: 11px;
             font-weight: 700;
-            color: rgba(255, 255, 255, 0.4);
+            color: rgb(255 255 255 / 40%);
             text-align: center;
             margin-bottom: 16px;
         }
@@ -229,7 +229,7 @@
                 font-size: 13px;
                 font-weight: 800;
                 color: #fff;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
 
                 &.over {
                     background: #10b981;
@@ -241,7 +241,7 @@
 
                 &.current {
                     background: #f59e0b;
-                    box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+                    box-shadow: 0 0 10px rgb(245 158 11 / 60%);
                     animation: gridPulse 2s infinite;
                 }
             }

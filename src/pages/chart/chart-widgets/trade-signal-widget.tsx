@@ -17,8 +17,12 @@ const TradeSignalWidget = observer(({ prediction, market, condition }: TTradeSig
     return (
         <div className='trade-signal-widget'>
             <div className='signal-info'>
-                <h4><CirclePlay size={18} /> TRADE SIGNAL: {condition}</h4>
-                <p>Entry: <strong>{prediction}</strong> | Market: {market}</p>
+                <h4>
+                    <CirclePlay size={18} /> TRADE SIGNAL: {condition}
+                </h4>
+                <p>
+                    Entry: <strong>{prediction}</strong> | Market: {market}
+                </p>
             </div>
             <button className='trade-btn' onClick={() => window.alert('Trade Placed!')}>
                 TRADE NOW

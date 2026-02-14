@@ -19,7 +19,7 @@ export const usePortfolio = (subscribe: boolean = true) => {
         setError(null);
 
         const request = { portfolio: 1, subscribe: subscribe ? 1 : 0 };
-        
+
         const unsubscribe = derivApiService.subscribe(request, (data: TDerivResponse) => {
             if (data.error) {
                 setError(data.error.message);

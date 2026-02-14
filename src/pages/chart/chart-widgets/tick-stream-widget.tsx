@@ -26,9 +26,7 @@ const TickStreamWidget = observer(({ ticks }: TTickStreamProps) => {
     if (!ticks || !Array.isArray(ticks)) return null;
 
     const toggleDigit = (digit: number) => {
-        setSelectedDigits(prev =>
-            prev.includes(digit) ? prev.filter(d => d !== digit) : [...prev, digit]
-        );
+        setSelectedDigits(prev => (prev.includes(digit) ? prev.filter(d => d !== digit) : [...prev, digit]));
     };
 
     const filteredTicks = ticks.slice(-200).filter(tick => selectedDigits.includes(tick));
@@ -43,7 +41,11 @@ const TickStreamWidget = observer(({ ticks }: TTickStreamProps) => {
                             key={d}
                             className={classNames('filter-btn', { active: selectedDigits.includes(d) })}
                             onClick={() => toggleDigit(d)}
-                            style={selectedDigits.includes(d) ? { backgroundColor: DIGIT_COLORS[d], borderColor: DIGIT_COLORS[d] } : {}}
+                            style={
+                                selectedDigits.includes(d)
+                                    ? { backgroundColor: DIGIT_COLORS[d], borderColor: DIGIT_COLORS[d] }
+                                    : {}
+                            }
                         >
                             {d}
                         </button>
@@ -51,26 +53,29 @@ const TickStreamWidget = observer(({ ticks }: TTickStreamProps) => {
                 </div>
             </div>
             <div className='tick-stream-list'>
-                {filteredTicks.slice().reverse().map((tick, index) => (
-                    <div 
-                        key={index} 
-                        className={`tick-item tick-${tick} ${index === 0 ? 'latest-tick' : ''}`}
-                        style={{
-                            backgroundColor: DIGIT_COLORS[tick],
-                            color: '#fff',
-                            width: '28px',
-                            height: '28px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            borderRadius: '4px',
-                            fontWeight: 'bold',
-                            fontSize: '12px'
-                        }}
-                    >
-                        {tick}
-                    </div>
-                ))}
+                {filteredTicks
+                    .slice()
+                    .reverse()
+                    .map((tick, index) => (
+                        <div
+                            key={index}
+                            className={`tick-item tick-${tick} ${index === 0 ? 'latest-tick' : ''}`}
+                            style={{
+                                backgroundColor: DIGIT_COLORS[tick],
+                                color: '#fff',
+                                width: '28px',
+                                height: '28px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                borderRadius: '4px',
+                                fontWeight: 'bold',
+                                fontSize: '12px',
+                            }}
+                        >
+                            {tick}
+                        </div>
+                    ))}
             </div>
         </div>
     );

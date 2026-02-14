@@ -9,8 +9,8 @@
     flex-direction: column;
     overflow: hidden;
     backdrop-filter: blur(10px);
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgb(255 255 255 / 10%);
+    border: 1px solid rgb(255 255 255 / 20%);
     animation: fadeIn 0.3s ease-out;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
@@ -20,17 +20,17 @@
         top: 10%;
         left: 10%;
         border-radius: 20px;
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 30px 60px rgb(0 0 0 / 50%);
     }
 
     .profithub-tool-header {
         height: 50px;
-        background: rgba(0, 5, 10, 0.8);
+        background: rgb(0 5 10 / 80%);
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 0 20px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgb(255 255 255 / 10%);
 
         .tool-title {
             font-weight: 600;
@@ -38,8 +38,8 @@
             font-size: 1.1rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            background: linear-gradient(90deg, #ff4444, #ff8888);
-            -webkit-background-clip: text;
+            background: linear-gradient(90deg, #f44, #f88);
+            background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -50,7 +50,7 @@
             align-items: center;
 
             button {
-                background: rgba(255, 255, 255, 0.05);
+                background: rgb(255 255 255 / 5%);
                 border: none;
                 color: #fff;
                 width: 30px;
@@ -64,15 +64,15 @@
                 font-size: 1.2rem;
 
                 &:hover {
-                    background: rgba(255, 255, 255, 0.15);
+                    background: rgb(255 255 255 / 15%);
                     transform: scale(1.1);
                 }
 
                 &.close-btn {
-                    color: #ff4444;
+                    color: #f44;
 
                     &:hover {
-                        background: rgba(255, 68, 68, 0.2);
+                        background: rgb(255 68 68 / 20%);
                     }
                 }
             }
@@ -95,8 +95,8 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #ff4444, #8b0000);
-    box-shadow: 0 10px 25px rgba(255, 68, 68, 0.4);
+    background: linear-gradient(135deg, #f44, #8b0000);
+    box-shadow: 0 10px 25px rgb(255 68 68 / 40%);
     z-index: 2000;
     display: flex;
     align-items: center;
@@ -107,7 +107,7 @@
 
     &:hover {
         transform: scale(1.1) rotate(10deg);
-        box-shadow: 0 15px 35px rgba(255, 68, 68, 0.6);
+        box-shadow: 0 15px 35px rgb(255 68 68 / 60%);
     }
 
     .tool-icon {

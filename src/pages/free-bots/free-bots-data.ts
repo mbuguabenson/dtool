@@ -35,7 +35,8 @@ export const FREE_BOTS_DATA: TFreeBot[] = [
     {
         id: 'unstoppable-switcher',
         name: 'Unstoppable Even/Odd Switcher',
-        description: 'Automatically switches between Even and Odd with massive power analysis and strict pattern entry.',
+        description:
+            'Automatically switches between Even and Odd with massive power analysis and strict pattern entry.',
         category: 'Hybrid',
         xmlPath: 'Official Bots/Even_Odd_Auto_Switcher.xml',
         isPremium: true,

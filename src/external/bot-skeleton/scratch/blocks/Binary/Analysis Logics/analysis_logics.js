@@ -1,7 +1,7 @@
 import { localize } from '@deriv-com/translations';
 
 // Helper to modify context menu (copied from utils)
-const modifyContextMenu = (menu) => {
+const modifyContextMenu = menu => {
     if (menu && menu.length > 0) {
         menu.forEach(item => {
             if (item.text === 'Help') {
@@ -109,8 +109,18 @@ window.Blockly.Blocks.digitFrequencyAnalysis = {
 };
 
 window.Blockly.JavaScript.javascriptGenerator.forBlock.digitFrequencyAnalysis = block => {
-    const digit = window.Blockly.JavaScript.javascriptGenerator.valueToCode(block, 'DIGIT', window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC) || '0';
-    const tickCount = window.Blockly.JavaScript.javascriptGenerator.valueToCode(block, 'TICK_COUNT', window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC) || '50';
+    const digit =
+        window.Blockly.JavaScript.javascriptGenerator.valueToCode(
+            block,
+            'DIGIT',
+            window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC
+        ) || '0';
+    const tickCount =
+        window.Blockly.JavaScript.javascriptGenerator.valueToCode(
+            block,
+            'TICK_COUNT',
+            window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC
+        ) || '50';
     const code = `Bot.digitFrequency(${digit}, ${tickCount})`;
     return [code, window.Blockly.JavaScript.javascriptGenerator.ORDER_FUNCTION_CALL];
 };
@@ -160,7 +170,12 @@ window.Blockly.Blocks.streakDetection = {
 window.Blockly.JavaScript.javascriptGenerator.forBlock.streakDetection = block => {
     const patternType = block.getFieldValue('PATTERN_TYPE');
     const valueType = block.getFieldValue('VALUE_TYPE');
-    const tickCount = window.Blockly.JavaScript.javascriptGenerator.valueToCode(block, 'TICK_COUNT', window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC) || '10';
+    const tickCount =
+        window.Blockly.JavaScript.javascriptGenerator.valueToCode(
+            block,
+            'TICK_COUNT',
+            window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC
+        ) || '10';
     const code = `Bot.detectStreak('${patternType}', '${valueType}', ${tickCount})`;
     return [code, window.Blockly.JavaScript.javascriptGenerator.ORDER_FUNCTION_CALL];
 };
@@ -200,9 +215,24 @@ window.Blockly.Blocks.digitRangeCounter = {
 };
 
 window.Blockly.JavaScript.javascriptGenerator.forBlock.digitRangeCounter = block => {
-    const minDigit = window.Blockly.JavaScript.javascriptGenerator.valueToCode(block, 'MIN_DIGIT', window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC) || '0';
-    const maxDigit = window.Blockly.JavaScript.javascriptGenerator.valueToCode(block, 'MAX_DIGIT', window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC) || '2';
-    const tickCount = window.Blockly.JavaScript.javascriptGenerator.valueToCode(block, 'TICK_COUNT', window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC) || '50';
+    const minDigit =
+        window.Blockly.JavaScript.javascriptGenerator.valueToCode(
+            block,
+            'MIN_DIGIT',
+            window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC
+        ) || '0';
+    const maxDigit =
+        window.Blockly.JavaScript.javascriptGenerator.valueToCode(
+            block,
+            'MAX_DIGIT',
+            window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC
+        ) || '2';
+    const tickCount =
+        window.Blockly.JavaScript.javascriptGenerator.valueToCode(
+            block,
+            'TICK_COUNT',
+            window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC
+        ) || '50';
     const code = `Bot.countDigitsInRange(${minDigit}, ${maxDigit}, ${tickCount})`;
     return [code, window.Blockly.JavaScript.javascriptGenerator.ORDER_FUNCTION_CALL];
 };
@@ -232,7 +262,12 @@ window.Blockly.Blocks.volatilityScore = {
 };
 
 window.Blockly.JavaScript.javascriptGenerator.forBlock.volatilityScore = block => {
-    const tickCount = window.Blockly.JavaScript.javascriptGenerator.valueToCode(block, 'TICK_COUNT', window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC) || '50';
+    const tickCount =
+        window.Blockly.JavaScript.javascriptGenerator.valueToCode(
+            block,
+            'TICK_COUNT',
+            window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC
+        ) || '50';
     const code = `Bot.calculateVolatility(${tickCount})`;
     return [code, window.Blockly.JavaScript.javascriptGenerator.ORDER_FUNCTION_CALL];
 };
@@ -272,7 +307,12 @@ window.Blockly.Blocks.trendDirection = {
 
 window.Blockly.JavaScript.javascriptGenerator.forBlock.trendDirection = block => {
     const trendType = block.getFieldValue('TREND_TYPE');
-    const tickCount = window.Blockly.JavaScript.javascriptGenerator.valueToCode(block, 'TICK_COUNT', window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC) || '20';
+    const tickCount =
+        window.Blockly.JavaScript.javascriptGenerator.valueToCode(
+            block,
+            'TICK_COUNT',
+            window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC
+        ) || '20';
     const code = `Bot.analyzeTrend('${trendType}', ${tickCount})`;
     return [code, window.Blockly.JavaScript.javascriptGenerator.ORDER_FUNCTION_CALL];
 };
@@ -307,8 +347,18 @@ window.Blockly.Blocks.digitByRank = {
 };
 
 window.Blockly.JavaScript.javascriptGenerator.forBlock.digitByRank = block => {
-    const rank = window.Blockly.JavaScript.javascriptGenerator.valueToCode(block, 'RANK', window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC) || '1';
-    const tickCount = window.Blockly.JavaScript.javascriptGenerator.valueToCode(block, 'TICK_COUNT', window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC) || '100';
+    const rank =
+        window.Blockly.JavaScript.javascriptGenerator.valueToCode(
+            block,
+            'RANK',
+            window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC
+        ) || '1';
+    const tickCount =
+        window.Blockly.JavaScript.javascriptGenerator.valueToCode(
+            block,
+            'TICK_COUNT',
+            window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC
+        ) || '100';
     const code = `Bot.getDigitByRank(${rank}, ${tickCount})`;
     return [code, window.Blockly.JavaScript.javascriptGenerator.ORDER_FUNCTION_CALL];
 };
@@ -338,7 +388,12 @@ window.Blockly.Blocks.identifyCandlePattern = {
 };
 
 window.Blockly.JavaScript.javascriptGenerator.forBlock.identifyCandlePattern = block => {
-    const tickCount = window.Blockly.JavaScript.javascriptGenerator.valueToCode(block, 'TICK_COUNT', window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC) || '3';
+    const tickCount =
+        window.Blockly.JavaScript.javascriptGenerator.valueToCode(
+            block,
+            'TICK_COUNT',
+            window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC
+        ) || '3';
     const code = `Bot.identifyCandlePattern(${tickCount})`;
     return [code, window.Blockly.JavaScript.javascriptGenerator.ORDER_FUNCTION_CALL];
 };
@@ -368,7 +423,12 @@ window.Blockly.Blocks.analyzeMomentum = {
 };
 
 window.Blockly.JavaScript.javascriptGenerator.forBlock.analyzeMomentum = block => {
-    const tickCount = window.Blockly.JavaScript.javascriptGenerator.valueToCode(block, 'TICK_COUNT', window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC) || '10';
+    const tickCount =
+        window.Blockly.JavaScript.javascriptGenerator.valueToCode(
+            block,
+            'TICK_COUNT',
+            window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC
+        ) || '10';
     const code = `Bot.analyzeMomentum(${tickCount})`;
     return [code, window.Blockly.JavaScript.javascriptGenerator.ORDER_FUNCTION_CALL];
 };
@@ -398,7 +458,12 @@ window.Blockly.Blocks.checkVolumeHealth = {
 };
 
 window.Blockly.JavaScript.javascriptGenerator.forBlock.checkVolumeHealth = block => {
-    const tickCount = window.Blockly.JavaScript.javascriptGenerator.valueToCode(block, 'TICK_COUNT', window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC) || '20';
+    const tickCount =
+        window.Blockly.JavaScript.javascriptGenerator.valueToCode(
+            block,
+            'TICK_COUNT',
+            window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC
+        ) || '20';
     const code = `Bot.checkVolumeHealth(${tickCount})`;
     return [code, window.Blockly.JavaScript.javascriptGenerator.ORDER_FUNCTION_CALL];
 };

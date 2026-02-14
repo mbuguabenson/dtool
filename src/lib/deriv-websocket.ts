@@ -46,7 +46,7 @@ class DerivWebSocket {
                     }
                 };
 
-                this.ws.onclose = (event) => {
+                this.ws.onclose = event => {
                     console.log('[DerivWebSocket] Disconnected', event.wasClean ? 'Cleanly' : 'Abruptly');
                     if (this.ws) {
                         this.handleReconnect();
@@ -73,7 +73,7 @@ class DerivWebSocket {
             this.ws.onopen = null;
             this.ws.onerror = null;
             this.ws.onmessage = null;
-            
+
             if (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING) {
                 this.ws.close();
             }

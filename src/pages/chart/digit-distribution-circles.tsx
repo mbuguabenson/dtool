@@ -20,8 +20,11 @@ const DigitDistributionCircles = observer(({ onSelect, selected_digit }: Distrib
     const { ticks = [] } = smart_trading;
 
     const digitStats: DigitStats[] = useMemo(() => {
-        if (!ticks || !Array.isArray(ticks)) return Array(10).fill(0).map((_, i) => ({ digit: i, count: 0, percentage: 0 }));
-        
+        if (!ticks || !Array.isArray(ticks))
+            return Array(10)
+                .fill(0)
+                .map((_, i) => ({ digit: i, count: 0, percentage: 0 }));
+
         const counts = Array(10).fill(0);
         ticks.forEach(digit => {
             if (digit >= 0 && digit <= 9) counts[digit]++;

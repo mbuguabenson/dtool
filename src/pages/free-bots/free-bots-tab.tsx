@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { observer } from 'mobx-react-lite';
 import classNames from 'classnames';
+import { observer } from 'mobx-react-lite';
+import { TFreeBot } from './free-bots-data';
+import TechBackground from '@/components/shared_ui/tech-background/tech-background';
 import { useFreeBots } from '@/hooks/use-free-bots';
 import { useStore } from '@/hooks/useStore';
-import TechBackground from '@/components/shared_ui/tech-background/tech-background';
 import './free-bots-tab.scss';
 
 const RequestBotCard = () => {
@@ -24,9 +25,9 @@ const RequestBotCard = () => {
         <div className='request-bot-card'>
             <h3>Request a Custom Bot</h3>
             <textarea
-                placeholder="Describe the bot strategy you need..."
+                placeholder='Describe the bot strategy you need...'
                 value={request}
-                onChange={(e) => setRequest(e.target.value)}
+                onChange={e => setRequest(e.target.value)}
                 disabled={isSent}
             />
             <button onClick={handleSend} disabled={isSent}>
@@ -36,27 +37,29 @@ const RequestBotCard = () => {
     );
 };
 
-const BotCard = ({ bot, onLoad }: { bot: any; onLoad: (bot: any) => void }) => {
+const BotCard = ({ bot, onLoad }: { bot: TFreeBot; onLoad: (bot: TFreeBot) => void }) => {
     // Convert hex to rgb for CSS variable
     const hexToRgb = (hex: string) => {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ? 
-            `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : 
-            '124, 58, 237';
+        return result
+            ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+            : '124, 58, 237';
     };
 
     const rgbColor = hexToRgb(bot.color);
 
     return (
-        <div 
+        <div
             className={classNames('bot-card', {
-                'automatic': bot.category === 'Automatic',
-                'hybrid': bot.category === 'Hybrid'
+                automatic: bot.category === 'Automatic',
+                hybrid: bot.category === 'Hybrid',
             })}
-            style={{ 
-                '--bot-color': bot.color,
-                '--bot-color-rgb': rgbColor
-            } as React.CSSProperties}
+            style={
+                {
+                    '--bot-color': bot.color,
+                    '--bot-color-rgb': rgbColor,
+                } as React.CSSProperties
+            }
         >
             <div className='bot-card__top'>
                 <div className='bot-card__icon'>
@@ -69,7 +72,7 @@ const BotCard = ({ bot, onLoad }: { bot: any; onLoad: (bot: any) => void }) => {
                 <h3 className='bot-card__title'>{bot.name}</h3>
                 <p className='bot-card__tagline'>{bot.category} Algotrade • High Accuracy</p>
                 <p className='bot-card__description'>{bot.description}</p>
-                
+
                 <div className='bot-card__stats'>
                     <div className='stat'>
                         <span className='stat__label'>Win Rate</span>
@@ -124,8 +127,11 @@ const FreeBotsTab = observer(() => {
                 ))}
                 <RequestBotCard />
             </div>
-            
-            <div className='free-bots-tab__coming-soon' style={{ textAlign: 'center', marginTop: '4rem', opacity: 0.5 }}>
+
+            <div
+                className='free-bots-tab__coming-soon'
+                style={{ textAlign: 'center', marginTop: '4rem', opacity: 0.5 }}
+            >
                 <h3>More Strategies Coming Soon...</h3>
             </div>
 

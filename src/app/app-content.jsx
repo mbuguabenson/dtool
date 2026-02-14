@@ -73,7 +73,7 @@ const AppContent = observer(() => {
             setIsApiInitialized(true);
             // Note: setSocketOpened is handled by api-base WebSocket event handlers
             // Calling it here creates a race condition with onsocketopen/onsocketclose
-            
+
             // Clear offline timeout if connection is restored
             if (offline_timeout) {
                 clearTimeout(offline_timeout);

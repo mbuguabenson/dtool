@@ -17,15 +17,15 @@
         & > div {
             flex: 1;
             min-width: 200px;
-            background: rgba(22, 33, 50, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgb(22 33 50 / 70%);
+            border: 1px solid rgb(255 255 255 / 10%);
             border-radius: 1rem;
             padding: 1.25rem 1.5rem;
             backdrop-filter: blur(12px);
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 20px rgb(0 0 0 / 20%);
 
             .lbl {
                 font-size: 0.7rem;
@@ -44,7 +44,7 @@
 
             select {
                 background: transparent;
-                border: 1px solid rgba(255, 255, 255, 0.1);
+                border: 1px solid rgb(255 255 255 / 10%);
                 color: #fff;
                 padding: 0.5rem;
                 border-radius: 0.5rem;
@@ -73,20 +73,20 @@
                 font-size: 1.5rem;
                 font-weight: 902;
                 margin: 0 auto;
-                background: rgba(255, 255, 255, 0.05);
-                border: 2px solid rgba(255, 255, 255, 0.1);
+                background: rgb(255 255 255 / 5%);
+                border: 2px solid rgb(255 255 255 / 10%);
                 transition: all 0.3s ease;
 
                 &.even {
                     color: #3b82f6;
                     border-color: #3b82f6;
-                    text-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+                    text-shadow: 0 0 10px rgb(59 130 246 / 40%);
                 }
 
                 &.odd {
                     color: #f43f5e;
                     border-color: #f43f5e;
-                    text-shadow: 0 0 10px rgba(244, 63, 94, 0.4);
+                    text-shadow: 0 0 10px rgb(244 63 94 / 40%);
                 }
             }
         }
@@ -104,7 +104,7 @@
             font-weight: 802;
             margin: 0;
             background: linear-gradient(90deg, #fff, #8b9bb4);
-            -webkit-background-clip: text;
+            background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -115,7 +115,7 @@
             font-weight: 802;
             font-size: 1rem;
             text-transform: uppercase;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 15px rgb(0 0 0 / 30%);
 
             &.trade-now {
                 background: #10b981;
@@ -129,16 +129,16 @@
             }
 
             &.neutral {
-                background: rgba(255, 255, 255, 0.1);
+                background: rgb(255 255 255 / 10%);
                 color: #8b9bb4;
-                border: 1px solid rgba(255, 255, 255, 0.1);
+                border: 1px solid rgb(255 255 255 / 10%);
             }
         }
     }
 
     .signal-recommendation-card {
-        background: rgba(16, 185, 129, 0.05);
-        border: 1px solid rgba(16, 185, 129, 0.2);
+        background: rgb(16 185 129 / 5%);
+        border: 1px solid rgb(16 185 129 / 20%);
         border-radius: 1rem;
         padding: 1.5rem;
 
@@ -169,29 +169,29 @@
         grid-template-columns: 1fr 1fr;
         gap: 1.5rem;
 
-        @media (max-width: 768px) {
+        @media (width <= 768px) {
             grid-template-columns: 1fr;
         }
 
         .power-card {
-            background: rgba(22, 33, 50, 0.5);
+            background: rgb(22 33 50 / 50%);
             border: 2px solid transparent;
             border-radius: 1.25rem;
             padding: 2rem;
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgb(0 0 0 / 20%);
 
             &.active.even {
-                border-color: rgba(59, 130, 246, 0.3);
-                background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(22, 33, 50, 0.5));
-                box-shadow: 0 15px 40px rgba(59, 130, 246, 0.2);
+                border-color: rgb(59 130 246 / 30%);
+                background: linear-gradient(135deg, rgb(59 130 246 / 10%), rgb(22 33 50 / 50%));
+                box-shadow: 0 15px 40px rgb(59 130 246 / 20%);
             }
 
             &.active.odd {
-                border-color: rgba(244, 63, 94, 0.3);
-                background: linear-gradient(135deg, rgba(244, 63, 94, 0.1), rgba(22, 33, 50, 0.5));
-                box-shadow: 0 15px 40px rgba(244, 63, 94, 0.2);
+                border-color: rgb(244 63 94 / 30%);
+                background: linear-gradient(135deg, rgb(244 63 94 / 10%), rgb(22 33 50 / 50%));
+                box-shadow: 0 15px 40px rgb(244 63 94 / 20%);
             }
 
             .top-row {
@@ -209,7 +209,7 @@
                     width: 40px;
                     height: 40px;
                     border-radius: 10px;
-                    background: rgba(255, 255, 255, 0.05);
+                    background: rgb(255 255 255 / 5%);
                     display: flex;
                     align-items: center;
                     justify-content: center;
@@ -241,7 +241,7 @@
 
                     .bar-wrapper {
                         height: 6px;
-                        background: rgba(255, 255, 255, 0.05);
+                        background: rgb(255 255 255 / 5%);
                         border-radius: 999px;
                         overflow: hidden;
 
@@ -263,12 +263,12 @@
 
             &.even.active .bar-wrapper.shadow {
                 height: 10px;
-                box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+                box-shadow: 0 0 15px rgb(59 130 246 / 40%);
             }
 
             &.odd.active .bar-wrapper.shadow {
                 height: 10px;
-                box-shadow: 0 0 15px rgba(244, 63, 94, 0.4);
+                box-shadow: 0 0 15px rgb(244 63 94 / 40%);
             }
         }
     }
@@ -278,13 +278,13 @@
         grid-template-columns: repeat(4, 1fr);
         gap: 1rem;
 
-        @media (max-width: 900px) {
+        @media (width <= 900px) {
             grid-template-columns: repeat(2, 1fr);
         }
 
         .metric-box {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgb(255 255 255 / 3%);
+            border: 1px solid rgb(255 255 255 / 5%);
             border-radius: 1rem;
             padding: 1.25rem;
             display: flex;
@@ -350,29 +350,29 @@
     .big-action-button {
         padding: 1.5rem;
         border-radius: 1rem;
-        background: rgba(16, 185, 129, 0.9);
+        background: rgb(16 185 129 / 90%);
         color: #fff;
         text-align: center;
         font-size: 1.25rem;
         font-weight: 902;
         cursor: pointer;
         transition: all 0.3s ease;
-        box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        box-shadow: 0 10px 20px rgb(16 185 129 / 30%);
 
         &:hover {
             transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(16, 185, 129, 0.5);
+            box-shadow: 0 15px 30px rgb(16 185 129 / 50%);
             background: #10b981;
         }
 
         &.even {
             background: #3b82f6;
-            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 20px rgb(59 130 246 / 30%);
         }
 
         &.odd {
             background: #f43f5e;
-            box-shadow: 0 10px 20px rgba(244, 63, 94, 0.3);
+            box-shadow: 0 10px 20px rgb(244 63 94 / 30%);
         }
 
         &.executing {
@@ -380,14 +380,14 @@
             pointer-events: none;
             position: relative;
 
-            &::after {
+            &:after {
                 content: '';
                 position: absolute;
                 width: 20px;
                 height: 20px;
                 top: calc(50% - 10px);
                 right: 20px;
-                border: 2px solid rgba(255, 255, 255, 0.3);
+                border: 2px solid rgb(255 255 255 / 30%);
                 border-top-color: #fff;
                 border-radius: 50%;
                 animation: spin 1s linear infinite;
@@ -396,8 +396,8 @@
     }
 
     .last-digits-tape {
-        background: rgba(22, 33, 50, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        background: rgb(22 33 50 / 30%);
+        border: 1px solid rgb(255 255 255 / 5%);
         border-radius: 1.25rem;
         padding: 1.5rem;
 
@@ -425,15 +425,15 @@
                 transition: all 0.2s ease;
 
                 &.even {
-                    background: rgba(59, 130, 246, 0.1);
+                    background: rgb(59 130 246 / 10%);
                     color: #3b82f6;
-                    border: 1px solid rgba(59, 130, 246, 0.3);
+                    border: 1px solid rgb(59 130 246 / 30%);
                 }
 
                 &.odd {
-                    background: rgba(244, 63, 94, 0.1);
+                    background: rgb(244 63 94 / 10%);
                     color: #f43f5e;
-                    border: 1px solid rgba(244, 63, 94, 0.3);
+                    border: 1px solid rgb(244 63 94 / 30%);
                 }
 
                 &:hover {
@@ -456,14 +456,14 @@
 
 @keyframes pulse-glow-green {
     0% {
-        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+        box-shadow: 0 0 0 0 rgb(16 185 129 / 70%);
     }
 
     70% {
-        box-shadow: 0 0 0 15px rgba(16, 185, 129, 0);
+        box-shadow: 0 0 0 15px rgb(16 185 129 / 0%);
     }
 
     100% {
-        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+        box-shadow: 0 0 0 0 rgb(16 185 129 / 0%);
     }
 }

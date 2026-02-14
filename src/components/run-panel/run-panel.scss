@@ -201,7 +201,7 @@
             margin-left: 0.6rem;
             display: inline-block;
             animation: run-speed-pulse 1.5s infinite ease-in-out;
-            filter: drop-shadow(0 0 4px rgba(124, 58, 237, 0.6));
+            filter: drop-shadow(0 0 4px rgb(124 58 237 / 60%));
         }
     }
 }
@@ -209,15 +209,17 @@
 @keyframes run-speed-pulse {
     0% {
         transform: scale(1) rotate(0deg);
-        filter: drop-shadow(0 0 0px rgba(124, 58, 237, 0.6));
+        filter: drop-shadow(0 0 0 rgb(124 58 237 / 60%));
     }
+
     50% {
         transform: scale(1.2) rotate(-5deg);
         filter: drop-shadow(0 0 5px #ffa500);
     }
+
     100% {
         transform: scale(1) rotate(0deg);
-        filter: drop-shadow(0 0 0px #ffa500);
+        filter: drop-shadow(0 0 0 #ffa500);
     }
 }
 
@@ -273,7 +275,7 @@
         width: 40%;
         border-radius: 4px !important;
         background: linear-gradient(90deg, #ffa500 0%, #ff444f 100%) !important;
-        color: #ffffff !important;
+        color: #fff !important;
         border: none !important;
     }
 

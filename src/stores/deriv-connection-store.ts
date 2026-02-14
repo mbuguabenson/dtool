@@ -8,9 +8,9 @@ class DerivConnectionStore {
 
     constructor() {
         makeAutoObservable(this);
-        
+
         // Subscribe to service state changes
-        derivApiService.onStateChange((newState) => {
+        derivApiService.onStateChange(newState => {
             runInAction(() => {
                 this.state = newState;
                 if (newState !== ConnectionState.ERROR) {

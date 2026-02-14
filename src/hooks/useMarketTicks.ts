@@ -36,25 +36,25 @@ export const useMarketTicks = (symbol: string, options: TMarketTicksOptions = {}
             adjust_start_time: 1,
             count: count,
             end: 'latest',
-            style: 'ticks'
+            style: 'ticks',
         });
 
         // 2. Subscribe if requested
         let unsubscribe: (() => void) | null = null;
-        
+
         if (subscribe) {
             unsubscribe = derivApiService.subscribe(
                 {
                     ticks: symbol,
-                    subscribe: 1
+                    subscribe: 1,
                 },
-                (data) => {
+                data => {
                     if (data.msg_type === 'tick' && data.tick) {
                         if (data.tick.symbol === symbolRef.current) {
                             const newTick = {
                                 symbol: data.tick.symbol,
                                 quote: parseFloat(data.tick.quote),
-                                epoch: data.tick.epoch
+                                epoch: data.tick.epoch,
                             };
                             setLastTick(newTick);
                             setTicks(prev => [...prev.slice(-count + 1), newTick]);
@@ -68,7 +68,7 @@ export const useMarketTicks = (symbol: string, options: TMarketTicksOptions = {}
                             setLastTick({
                                 symbol: symbolRef.current,
                                 quote: lastPrice,
-                                epoch: data.history.times[data.history.times.length - 1]
+                                epoch: data.history.times[data.history.times.length - 1],
                             });
                         }
                         setIsLoading(false);
@@ -91,7 +91,7 @@ export const useMarketTicks = (symbol: string, options: TMarketTicksOptions = {}
         history,
         lastTick,
         error,
-        isLoading
+        isLoading,
     };
 };
 

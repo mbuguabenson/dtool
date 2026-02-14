@@ -12,10 +12,12 @@ $CONTRACT_INFO_BOX_PADDING: 1.6em;
     &-button:hover {
         cursor: pointer;
     }
+
     &-icon {
         width: 32px;
         height: 32px;
     }
+
     .info-box {
         position: relative;
         border-radius: $BORDER_RADIUS;
@@ -28,6 +30,7 @@ $CONTRACT_INFO_BOX_PADDING: 1.6em;
 
             &-icon {
                 @extend %inline-icon;
+
                 margin-right: 1.6rem;
                 padding: 0.4rem;
 
@@ -35,6 +38,7 @@ $CONTRACT_INFO_BOX_PADDING: 1.6em;
                     margin-right: 0.8rem;
                 }
             }
+
             &-wrapper {
                 max-width: 35rem;
 
@@ -46,6 +50,7 @@ $CONTRACT_INFO_BOX_PADDING: 1.6em;
                     color: var(--brand-red-coral);
                 }
             }
+
             &-text {
                 &--collapsed {
                     -webkit-box-orient: vertical;
@@ -63,8 +68,9 @@ $CONTRACT_INFO_BOX_PADDING: 1.6em;
                     line-clamp: 2;
                     -webkit-line-clamp: 2;
                 }
+
                 /* iPhone SE screen height fixes due to UI space restrictions */
-                @media only screen and (max-height: 667px) {
+                @media only screen and (height <= 667px) {
                     &--collapsed--fixed-height {
                         display: block;
                         overflow: hidden;
@@ -80,6 +86,7 @@ $CONTRACT_INFO_BOX_PADDING: 1.6em;
                 }
             }
         }
+
         .expired {
             display: flex;
             align-items: center;
@@ -93,6 +100,7 @@ $CONTRACT_INFO_BOX_PADDING: 1.6em;
                     fill: var(--status-success);
                 }
             }
+
             .pl-value {
                 color: var(--text-profit-success);
                 font-weight: bold;
@@ -104,20 +112,24 @@ $CONTRACT_INFO_BOX_PADDING: 1.6em;
                     margin-left: 0.7em;
                 }
             }
+
             &.lost {
                 .pl-value {
                     color: var(--text-loss-danger);
                 }
+
                 svg .color1-fill {
                     fill: var(--status-danger);
                 }
             }
+
             .sell-info {
                 margin-right: 2em;
                 text-align: center;
                 line-height: 1.2em;
             }
         }
+
         .general {
             display: flex;
             align-items: center;
@@ -132,10 +144,12 @@ $CONTRACT_INFO_BOX_PADDING: 1.6em;
                 .profit {
                     color: var(--text-profit-success);
                 }
+
                 .loss {
                     color: var(--text-loss-danger);
                 }
             }
+
             .sell {
                 display: flex;
                 flex-direction: column;
@@ -158,11 +172,13 @@ $CONTRACT_INFO_BOX_PADDING: 1.6em;
                 }
             }
         }
+
         @include mobile {
             padding: 0.8rem;
             margin-left: 0.8rem;
         }
     }
+
     .message {
         margin-top: 0.5em;
         border: 1px solid var(--brand-red-coral);
@@ -175,13 +191,16 @@ $CONTRACT_INFO_BOX_PADDING: 1.6em;
         .message-icon {
             margin-right: 1em;
         }
+
         .message-text {
             flex-grow: 1;
         }
+
         .message-close {
             cursor: pointer;
         }
     }
+
     .chart-close-btn {
         position: absolute;
         cursor: pointer;
@@ -189,6 +208,7 @@ $CONTRACT_INFO_BOX_PADDING: 1.6em;
         right: 0;
         top: 0;
     }
+
     @include mobile {
         left: 0;
     }
@@ -199,6 +219,7 @@ $CONTRACT_INFO_BOX_PADDING: 1.6em;
         &-body {
             padding: 0.8rem 1.6rem;
         }
+
         &-footer {
             .dc-btn {
                 min-width: 5.2rem;

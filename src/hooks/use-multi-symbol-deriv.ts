@@ -14,7 +14,7 @@ export interface MarketData {
 export const useMultiSymbolDeriv = (symbols: string[] = ['R_10', 'R_25', 'R_50', 'R_75', 'R_100'], maxTicks = 50) => {
     const [connectionStatus, setConnectionStatus] = useState<'connected' | 'disconnected'>('disconnected');
     const [marketData, setMarketData] = useState<Record<string, MarketData>>({});
-    
+
     const wsRef = useRef<DerivWebSocket | null>(null);
     const enginesRef = useRef<Record<string, AnalysisEngine>>({});
 
@@ -25,7 +25,7 @@ export const useMultiSymbolDeriv = (symbols: string[] = ['R_10', 'R_25', 'R_50',
                 enginesRef.current[sym] = new AnalysisEngine(maxTicks);
             }
         });
-        
+
         // Initialize state
         setMarketData(prev => {
             const next = { ...prev };
@@ -37,7 +37,7 @@ export const useMultiSymbolDeriv = (symbols: string[] = ['R_10', 'R_25', 'R_50',
                         digit: 0,
                         analysis: null,
                         signals: [],
-                        proSignals: []
+                        proSignals: [],
                     };
                 }
             });
@@ -48,7 +48,7 @@ export const useMultiSymbolDeriv = (symbols: string[] = ['R_10', 'R_25', 'R_50',
     const handleTick = useCallback((data: any) => {
         if (data.msg_type === 'tick') {
             const { symbol, quote } = data.tick;
-            
+
             if (!enginesRef.current[symbol]) return;
 
             const priceStr = String(quote);
@@ -56,7 +56,7 @@ export const useMultiSymbolDeriv = (symbols: string[] = ['R_10', 'R_25', 'R_50',
 
             // Update Engine
             enginesRef.current[symbol].addTick(quote);
-            
+
             // Generate Analysis
             const analysis = enginesRef.current[symbol].getAnalysis();
             const signals = enginesRef.current[symbol].generateSignals();
@@ -70,8 +70,8 @@ export const useMultiSymbolDeriv = (symbols: string[] = ['R_10', 'R_25', 'R_50',
                     digit: lastDigit,
                     analysis,
                     signals,
-                    proSignals
-                }
+                    proSignals,
+                },
             }));
         }
     }, []);
@@ -86,7 +86,7 @@ export const useMultiSymbolDeriv = (symbols: string[] = ['R_10', 'R_25', 'R_50',
             try {
                 await wsRef.current.connect();
                 setConnectionStatus('connected');
-                
+
                 // Subscribe to all symbols
                 // We add a small delay between subscriptions to avoid flooding
                 symbols.forEach((sym, index) => {
@@ -94,9 +94,8 @@ export const useMultiSymbolDeriv = (symbols: string[] = ['R_10', 'R_25', 'R_50',
                         wsRef.current?.subscribeTicks(sym);
                     }, index * 250);
                 });
-
             } catch (error) {
-                console.error("Multi-symbol connection failed", error);
+                console.error('Multi-symbol connection failed', error);
                 setConnectionStatus('disconnected');
             }
         };
@@ -110,6 +109,6 @@ export const useMultiSymbolDeriv = (symbols: string[] = ['R_10', 'R_25', 'R_50',
 
     return {
         connectionStatus,
-        marketData
+        marketData,
     };
 };

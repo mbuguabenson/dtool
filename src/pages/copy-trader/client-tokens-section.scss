@@ -1,6 +1,6 @@
 .client-tokens-section {
-    background: rgba(255, 255, 255, 0.03);
-    border: 2px solid rgba(255, 255, 255, 0.08);
+    background: rgb(255 255 255 / 3%);
+    border: 2px solid rgb(255 255 255 / 8%);
     border-radius: 1.6rem;
     padding: 2.4rem;
 
@@ -11,7 +11,7 @@
             font-size: 2rem;
             font-weight: 700;
             color: var(--text-prominent);
-            margin: 0 0 0.8rem 0;
+            margin: 0 0 0.8rem;
         }
 
         p {
@@ -33,7 +33,7 @@
         gap: 1.2rem;
         margin-bottom: 2.4rem;
 
-        @media (max-width: 768px) {
+        @media (width <= 768px) {
             flex-direction: column;
         }
 
@@ -41,14 +41,14 @@
             flex: 1;
             padding: 1.2rem 1.6rem;
             font-size: 1.4rem;
-            background: rgba(0, 0, 0, 0.3);
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgb(0 0 0 / 30%);
+            border: 2px solid rgb(255 255 255 / 10%);
             border-radius: 0.8rem;
             color: var(--text-prominent);
 
             &:focus {
                 outline: none;
-                border-color: rgba(139, 92, 246, 0.5);
+                border-color: rgb(139 92 246 / 50%);
             }
         }
 
@@ -65,7 +65,7 @@
 
             &:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+                box-shadow: 0 8px 20px rgb(102 126 234 / 30%);
             }
         }
     }
@@ -88,7 +88,7 @@
             font-size: 1.6rem;
             font-weight: 600;
             color: var(--text-less-prominent);
-            margin: 0 0 0.8rem 0;
+            margin: 0 0 0.8rem;
         }
 
         .empty-hint {
@@ -105,19 +105,19 @@
     }
 
     .client-card {
-        background: rgba(255, 255, 255, 0.02);
-        border: 2px solid rgba(255, 255, 255, 0.08);
+        background: rgb(255 255 255 / 2%);
+        border: 2px solid rgb(255 255 255 / 8%);
         border-radius: 1.2rem;
         padding: 1.6rem;
         transition: all 0.3s ease;
 
         &.connected {
-            border-color: rgba(16, 185, 129, 0.3);
-            background: rgba(16, 185, 129, 0.03);
+            border-color: rgb(16 185 129 / 30%);
+            background: rgb(16 185 129 / 3%);
         }
 
         &:hover {
-            border-color: rgba(255, 255, 255, 0.15);
+            border-color: rgb(255 255 255 / 15%);
         }
 
         .card-header {
@@ -154,7 +154,7 @@
 
                     &.connected {
                         background: #10b981;
-                        box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+                        box-shadow: 0 0 8px rgb(16 185 129 / 50%);
                     }
 
                     &.error {
@@ -168,7 +168,7 @@
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    background: rgba(239, 68, 68, 0.1);
+                    background: rgb(239 68 68 / 10%);
                     border: none;
                     border-radius: 50%;
                     color: #ef4444;
@@ -177,7 +177,7 @@
                     font-size: 1.6rem;
 
                     &:hover {
-                        background: rgba(239, 68, 68, 0.2);
+                        background: rgb(239 68 68 / 20%);
                         transform: scale(1.1);
                     }
                 }
@@ -194,7 +194,7 @@
                 align-items: center;
                 gap: 0.8rem;
                 padding: 0.8rem 1.2rem;
-                background: rgba(0, 0, 0, 0.2);
+                background: rgb(0 0 0 / 20%);
                 border-radius: 0.6rem;
 
                 .token-label {
@@ -240,8 +240,8 @@
                 flex-direction: column;
                 gap: 0.8rem;
                 padding: 1.2rem;
-                background: rgba(16, 185, 129, 0.05);
-                border: 1px solid rgba(16, 185, 129, 0.2);
+                background: rgb(16 185 129 / 5%);
+                border: 1px solid rgb(16 185 129 / 20%);
                 border-radius: 0.8rem;
 
                 .stat {
@@ -284,7 +284,7 @@
 
                 &:hover:not(:disabled) {
                     transform: translateY(-2px);
-                    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+                    box-shadow: 0 4px 12px rgb(102 126 234 / 30%);
                 }
 
                 &:disabled {

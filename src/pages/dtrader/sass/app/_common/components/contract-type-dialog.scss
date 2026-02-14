@@ -43,6 +43,7 @@
                 background-color: var(--general-section-1);
                 cursor: pointer;
                 border-radius: $BORDER_RADIUS;
+
                 @include rtl {
                     direction: rtl;
 
@@ -52,6 +53,7 @@
                 }
             }
         }
+
         /* postcss-bem-linter: ignore */
         .dc-vertical-tab__action-bar {
             flex-flow: row;
@@ -68,31 +70,37 @@
                 @include rtl {
                     direction: rtl;
                 }
+
                 margin-bottom: 0;
 
                 /* postcss-bem-linter: ignore */
                 &__field {
                     padding: 0.8rem 1.2rem 0.8rem 3.6rem;
+
                     @include rtl {
                         padding: 0.8rem 3.6rem 0.8rem 1.2rem;
                     }
+
                     height: 3.2rem;
 
                     /* postcss-bem-linter: ignore */
-                    &::-moz-placeholder {
+                    &::placeholder {
                         line-height: 16px;
                     }
                 }
+
                 /* postcss-bem-linter: ignore */
                 &__leading-icon {
                     top: 1.2rem;
                 }
+
                 /* postcss-bem-linter: ignore */
                 &__trailing-icon {
                     cursor: pointer;
                 }
             }
         }
+
         /* postcss-bem-linter: ignore */
         .dc-vertical-tab__content {
             padding: 0 !important;
@@ -103,6 +111,7 @@
                 height: calc(100% - 56px);
             }
         }
+
         /* postcss-bem-linter: ignore */
         .dc-vertical-tab__tab {
             min-width: 240px;
@@ -112,22 +121,27 @@
                 @include rtl {
                     direction: rtl;
                 }
+
                 height: 56px;
             }
+
             .dc-vertical-tab__header {
                 @include rtl {
                     direction: rtl;
                 }
             }
         }
+
         /* postcss-bem-linter: ignore */
         .contract-type-info__wrapper {
             height: calc(100% - 2.4rem - 18px);
         }
+
         .inline-message__information {
             margin: 1.6rem 0.8rem -0.8rem;
         }
     }
+
     &--enter,
     &--exit {
         transform: translate3d(20%, 0, 0);
@@ -135,6 +149,7 @@
         opacity: 0;
         height: 0;
     }
+
     &--enterDone {
         transform: translate3d(0, 0, 0);
         max-height: 100%;

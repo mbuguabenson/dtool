@@ -52,6 +52,7 @@
                     height: 4rem;
                     padding: 1rem 1.6rem;
                 }
+
                 &--selected .dc-list__item-text {
                     border-radius: 0;
                 }
@@ -76,28 +77,34 @@
         &-bold {
             font-weight: var(--core-fontWeight-bold);
         }
+
         /* postcss-bem-linter: ignore */
         &-glossary {
             &--heading {
                 margin: 0 !important;
             }
         }
+
         &-definition {
             color: var(--brand-red-coral);
         }
 
         h2 {
             @include typeface(--paragraph-left-bold-black, none);
+
             margin-bottom: 0.8rem;
             color: var(--text-prominent);
         }
+
         /* postcss-bem-linter: ignore */
         p,
         ul li {
             @include typeface(--paragraph-left-normal-black, none);
+
             margin-bottom: 1.6rem;
             color: var(--component-textIcon-normal-default) !important;
         }
+
         /* postcss-bem-linter: ignore */
         ul {
             margin-left: 1.6rem;
@@ -108,28 +115,35 @@
                 margin-bottom: 0.8rem;
             }
         }
+
         svg {
             margin-bottom: 1.6rem;
         }
+
         .dc-text {
             @include rtl {
                 direction: rtl;
             }
         }
+
         @include mobile {
             /* postcss-bem-linter: ignore */
             h2 {
                 @include typeface(--small-left-bold-black, none);
+
                 margin-bottom: 1.6rem;
             }
+
             /* postcss-bem-linter: ignore */
             h6 {
                 @include typeface(--small-left-bold-black, none);
             }
+
             p,
             ul li {
                 @include typeface(--small-left-normal-black, none);
             }
+
             h2,
             h6,
             p,
@@ -138,6 +152,7 @@
             }
         }
     }
+
     &__gif {
         height: 16.4rem;
         border-radius: 4px;
@@ -147,6 +162,7 @@
         @include mobile {
             height: 16.4rem;
             background-color: var(--general-section-1);
+
             svg {
                 height: 100%;
             }
@@ -164,15 +180,18 @@
             margin-top: 0;
         }
     }
+
     &__action-bar {
         display: flex;
         align-items: center;
         width: 100%;
         position: relative;
     }
+
     &__title {
         cursor: default;
     }
+
     &__icon {
         cursor: pointer;
         padding-left: 2.4rem;
@@ -184,21 +203,26 @@
             cursor: pointer;
         }
     }
+
     &__scrollbars {
         position: relative;
         height: 100%;
         padding-right: 1rem;
+
         &-description--active {
             transition: transform 0.3s linear;
         }
+
         &-glossary {
             margin-top: 0;
+
             &--active {
                 position: relative;
                 transition: transform 0.3s linear;
             }
         }
     }
+
     &__trade-type-btn-wrapper {
         display: flex;
         justify-content: center;
@@ -211,6 +235,7 @@
             padding: 1.6rem;
         }
     }
+
     &__button {
         flex-shrink: 0;
         width: 51.2rem;
@@ -223,6 +248,7 @@
             width: 32.8rem;
         }
     }
+
     &__button-wrapper {
         background: var(--general-section-1);
         padding: 0.4rem;
@@ -241,6 +267,7 @@
             .dc-btn__text {
                 color: var(--text-less-prominent) !important;
             }
+
             &--active {
                 background-color: var(--button-toggle-alternate) !important;
 
@@ -250,10 +277,12 @@
             }
         }
     }
+
     &__video-wrapper-border {
         padding-top: 1.5rem;
         border-top: 1px solid var(--general-section-1);
     }
+
     &__video {
         width: 100%;
         height: 27rem;
@@ -280,15 +309,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
-
             margin-block-end: var(--component-actionSheet-spacing-padding-md) !important;
-
             position: relative;
             margin-inline: auto;
 
             &--accumulator {
                 margin-block-end: var(--component-actionSheet-spacing-padding-sm);
             }
+
             &--lottie {
                 width: 26.1rem;
                 height: 16.1rem;
@@ -314,10 +342,12 @@
                 all: unset;
                 color: var(--core-color-solid-coral-700);
             }
+
             &--bold {
                 font-weight: var(--core-fontWeight-bold);
             }
         }
+
         &__badge {
             background-color: var(--semantic-color-monochrome-surface-normal-lowest);
             border-radius: var(--core-borderRadius-800);

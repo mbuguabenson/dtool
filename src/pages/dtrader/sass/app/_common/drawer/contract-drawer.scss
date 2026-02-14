@@ -2,6 +2,7 @@ $header-height: 4em;
 
 .contract-drawer {
     width: $POSITIONS_DRAWER_WIDTH;
+
     // removing 2px below for borders
     height: calc(100vh - #{$HEADER_HEIGHT} - #{$FOOTER_HEIGHT} - 2px - (#{$POSITIONS_DRAWER_MARGIN} * 4));
     z-index: 2;
@@ -19,14 +20,17 @@ $header-height: 4em;
     svg {
         @extend %inline-icon;
     }
+
     h2 {
         margin-left: 8px;
         text-transform: none;
         color: var(--text-prominent);
     }
+
     .currency-badge {
         margin-bottom: 5px;
     }
+
     &--contract-mode {
         &:before {
             background: var(--general-section-1);
@@ -39,13 +43,16 @@ $header-height: 4em;
             filter: blur(3px);
         }
     }
+
     &__heading {
         display: flex;
         justify-content: flex-start;
         align-items: center;
         padding: 0.5em;
         margin-left: -8px;
+
         @include typeface(--title-left-bold-black);
+
         color: var(--text-general);
 
         &-btn {
@@ -60,9 +67,11 @@ $header-height: 4em;
             }
         }
     }
+
     &__icon {
         margin-right: 16px;
     }
+
     &__body {
         display: flex;
         flex-direction: column;
@@ -92,28 +101,34 @@ $header-height: 4em;
         &__title {
             margin-bottom: 1rem;
         }
+
         &--loading {
             display: none;
         }
+
         &--disabled {
             cursor: not-allowed;
         }
+
         &--hidden {
             opacity: 0;
         }
     }
+
     &__footer {
         margin-bottom: 0.5rem;
         padding: 0 0.4rem;
 
         &-wrapper {
             @include typeface(--small-center-normal-black);
+
             color: var(--text-prominent);
             padding: 0.8rem 0.8rem 0;
             display: grid;
             grid-template-columns: 1fr 1fr;
         }
     }
+
     &__sell-button {
         display: flex;
         align-items: center;

@@ -8,10 +8,10 @@ import {
     LabelPairedPuzzlePieceTwoCaptionBoldIcon,
     LabelPairedLightbulbCaptionRegularIcon,
     LabelPairedCopyCaptionRegularIcon,
-
     LabelPairedFolderOpenCaptionRegularIcon,
     LabelPairedChartLineCaptionRegularIcon,
     LabelPairedCircleDotCaptionRegularIcon,
+    LabelPairedSlidersCaptionRegularIcon,
 } from '@deriv/quill-icons/LabelPaired';
 import { DBOT_TABS } from '@/constants/bot-contents';
 
@@ -63,6 +63,15 @@ const Cards = observer(({ search_query, handleTabChange }: TCardProps) => {
             tabIndex: DBOT_TABS.COPY_TRADER,
             tag: localize('Popular'),
             tagType: 'popular',
+        },
+        {
+            id: 'digit-cracker',
+            title: localize('Digit Cracker'),
+            icon: LabelPairedSlidersCaptionRegularIcon,
+            description: localize('The most powerful digit prediction and automated trading tool'),
+            tabIndex: DBOT_TABS.DIGIT_CRACKER,
+            tag: localize('Premium'),
+            tagType: 'pro',
         },
         {
             id: 'smart-auto',

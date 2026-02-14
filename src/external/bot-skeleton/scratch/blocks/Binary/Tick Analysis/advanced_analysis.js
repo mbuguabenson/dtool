@@ -56,10 +56,25 @@ window.Blockly.Blocks.martingaleWithCompounding = {
 
 window.Blockly.JavaScript.javascriptGenerator.forBlock.martingaleWithCompounding = block => {
     const strategy = block.getFieldValue('STRATEGY');
-    const baseStake = window.Blockly.JavaScript.javascriptGenerator.valueToCode(block, 'BASE_STAKE', window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC) || '0.35';
-    const multiplier = window.Blockly.JavaScript.javascriptGenerator.valueToCode(block, 'MULTIPLIER', window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC) || '2.1';
-    const profit = window.Blockly.JavaScript.javascriptGenerator.valueToCode(block, 'PROFIT', window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC) || '0';
-    
+    const baseStake =
+        window.Blockly.JavaScript.javascriptGenerator.valueToCode(
+            block,
+            'BASE_STAKE',
+            window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC
+        ) || '0.35';
+    const multiplier =
+        window.Blockly.JavaScript.javascriptGenerator.valueToCode(
+            block,
+            'MULTIPLIER',
+            window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC
+        ) || '2.1';
+    const profit =
+        window.Blockly.JavaScript.javascriptGenerator.valueToCode(
+            block,
+            'PROFIT',
+            window.Blockly.JavaScript.javascriptGenerator.ORDER_ATOMIC
+        ) || '0';
+
     // Logic: If profit is negative (loss), use martingale. If profit is positive, use compounding.
     // Enhanced: Aggressive strategy doubles the base on compounding.
     const code = `(() => {

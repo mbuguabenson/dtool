@@ -62,11 +62,11 @@
                 font-weight: 700;
                 cursor: pointer;
                 transition: all 0.3s ease;
-                box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2);
+                box-shadow: 0 4px 15px rgb(37 211 102 / 20%);
 
                 &:hover {
                     transform: translateY(-2px);
-                    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.3);
+                    box-shadow: 0 8px 25px rgb(37 211 102 / 30%);
                 }
 
                 @include mobile-or-tablet-screen {
@@ -99,20 +99,20 @@
         display: flex;
         flex-direction: column;
         height: 100%; // Fill grid cell
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 12px rgb(0 0 0 / 5%);
 
         &:hover {
             transform: translateY(-8px);
             border-color: var(--text-prominent);
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 16px 40px rgb(0 0 0 / 12%);
 
             .card-icon {
                 transform: scale(1.1) rotate(-5deg);
-                background: linear-gradient(135deg, rgba(0, 198, 255, 0.2), rgba(0, 114, 255, 0.2));
+                background: linear-gradient(135deg, rgb(0 198 255 / 20%), rgb(0 114 255 / 20%));
             }
         }
 
-        &::before {
+        &:before {
             content: '';
             position: absolute;
             top: 0;
@@ -122,15 +122,15 @@
             background: linear-gradient(90deg, #00c6ff, #0072ff);
         }
 
-        &.card-even-odd::before {
+        &.card-even-odd:before {
             background: linear-gradient(90deg, #ff9a9e, #fecfef);
         }
 
-        &.card-over-under::before {
+        &.card-over-under:before {
             background: linear-gradient(90deg, #a18cd1, #fbc2eb);
         }
 
-        &.card-differs::before {
+        &.card-differs:before {
             background: linear-gradient(90deg, #84fab0, #8fd3f4);
         }
 
@@ -154,7 +154,7 @@
 
             .card-badge {
                 padding: 0.6rem 1.2rem;
-                background: rgba(0, 198, 255, 0.1);
+                background: rgb(0 198 255 / 10%);
                 color: #00c6ff;
                 border-radius: 2rem;
                 font-size: 1.2rem;
@@ -205,7 +205,7 @@
                         line-height: 1.5;
                         opacity: 0.9;
 
-                        &::before {
+                        &:before {
                             content: '';
                             position: absolute;
                             left: 0;
@@ -223,14 +223,14 @@
                         }
 
                         &.highlight {
-                            background: rgba(0, 198, 255, 0.08);
+                            background: rgb(0 198 255 / 8%);
                             padding: 1.6rem;
                             border-radius: 1.2rem;
                             border-left: 4px solid #00c6ff;
                             margin-top: 1.6rem;
                             font-size: 1.5rem;
 
-                            &::before {
+                            &:before {
                                 display: none;
                             }
 

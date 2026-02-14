@@ -1,11 +1,11 @@
 .risk-disclaimer-modal {
     .dc-modal-header {
         background: transparent !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgb(255 255 255 / 5%);
         padding: 2.4rem;
 
         &__title {
-            color: #ffffff;
+            color: #fff;
             font-family: 'Outfit', sans-serif;
             font-weight: 800;
             text-transform: uppercase;
@@ -15,34 +15,34 @@
             gap: 1.2rem;
             font-size: 1.8rem;
 
-            &::before {
+            &:before {
                 content: 'Shield'; // Using text/icon placeholder or could be an svg
                 content: '🛡️';
                 font-size: 2rem;
-                filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.5));
+                filter: drop-shadow(0 0 15px rgb(59 130 246 / 50%));
             }
         }
 
         &__close {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgb(255 255 255 / 10%);
             border-radius: 50%;
             padding: 0.5rem;
             transition: all 0.2s ease;
 
             &:hover {
-                background: rgba(255, 255, 255, 0.2);
+                background: rgb(255 255 255 / 20%);
                 transform: rotate(90deg);
             }
         }
     }
 
     .dc-modal-content {
-        background: rgba(2, 6, 23, 0.85) !important; // Match dashboard-hero bg with transparency
+        background: rgb(2 6 23 / 85%) !important; // Match dashboard-hero bg with transparency
         backdrop-filter: blur(40px) saturate(180%) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        border: 1px solid rgb(255 255 255 / 8%);
         box-shadow:
-            0 40px 80px rgba(0, 0, 0, 0.6),
-            inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+            0 40px 80px rgb(0 0 0 / 60%),
+            inset 0 0 0 1px rgb(255 255 255 / 5%);
         border-radius: 2.4rem;
         overflow: hidden;
     }
@@ -59,10 +59,10 @@
             color: #e2e8f0;
             font-weight: 500;
             padding: 2rem 2.4rem;
-            background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%);
+            background: linear-gradient(90deg, rgb(59 130 246 / 10%) 0%, rgb(124 58 237 / 5%) 100%);
             border-left: 4px solid #3b82f6;
             border-radius: 0 1.2rem 1.2rem 0;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgb(0 0 0 / 10%);
         }
 
         .risk-points {
@@ -88,7 +88,7 @@
                 .point-text {
                     font-size: 1.4rem;
                     line-height: 1.6;
-                    color: rgba(255, 255, 255, 0.8);
+                    color: rgb(255 255 255 / 80%);
                 }
             }
         }
@@ -96,18 +96,18 @@
         .risk-footer-note {
             font-size: 1.3rem;
             font-weight: 700;
-            color: rgba(255, 68, 79, 0.9);
+            color: rgb(255 68 79 / 90%);
             text-align: center;
             padding-top: 1.6rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgb(255 255 255 / 5%);
             letter-spacing: 0.05rem;
             text-transform: uppercase;
         }
     }
 
     .dc-modal-footer {
-        background: rgba(0, 0, 0, 0.2) !important;
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        background: rgb(0 0 0 / 20%) !important;
+        border-top: 1px solid rgb(255 255 255 / 5%);
         padding: 2rem 3.2rem;
 
         button {
@@ -121,13 +121,13 @@
 
             &.dc-btn--secondary {
                 background: transparent;
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                color: rgba(255, 255, 255, 0.6);
+                border: 1px solid rgb(255 255 255 / 10%);
+                color: rgb(255 255 255 / 60%);
 
                 &:hover {
-                    background: rgba(255, 255, 255, 0.05);
-                    color: #ffffff;
-                    border-color: rgba(255, 255, 255, 0.3);
+                    background: rgb(255 255 255 / 5%);
+                    color: #fff;
+                    border-color: rgb(255 255 255 / 30%);
                     transform: translateY(-2px);
                 }
             }
@@ -135,11 +135,11 @@
             &.dc-btn--primary {
                 background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
                 border: none;
-                box-shadow: 0 8px 20px rgba(0, 198, 255, 0.3);
+                box-shadow: 0 8px 20px rgb(0 198 255 / 30%);
 
                 &:hover {
                     transform: translateY(-2px);
-                    box-shadow: 0 12px 30px rgba(0, 198, 255, 0.5);
+                    box-shadow: 0 12px 30px rgb(0 198 255 / 50%);
                 }
             }
         }

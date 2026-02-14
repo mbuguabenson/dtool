@@ -35,25 +35,32 @@
             justify-content: space-around;
             align-items: center;
         }
+
         &__top {
             width: 50%;
         }
+
         &__bottom {
             width: 40vw; // TODO remove this when find a solution for fill-width inside flex.
         }
+
         &--vanilla {
             width: auto;
         }
+
         &:hover {
             transform: none !important;
         }
+
         &--disabled,
         &[disabled] {
             opacity: 0.32;
         }
+
         &--swoosh {
             transform: none !important;
         }
+
         &__error {
             position: absolute;
             padding: 0.8rem;
@@ -74,18 +81,22 @@
 
     &__icon_wrapper {
         @extend %inline-icon-white;
+
         /* postcss-bem-linter: ignore */
         .color1-fill {
             fill: var(--text-colored-background);
         }
+
         /* postcss-bem-linter: ignore */
         .color2-fill {
             fill: var(--text-colored-background);
         }
+
         @include mobile-screen {
             margin-right: 0.5rem;
         }
     }
+
     &__info {
         color: var(--text-colored-background);
         text-align: left;
@@ -96,6 +107,7 @@
         padding-inline-start: 10px;
         height: 56px;
     }
+
     &__info--left {
         background-color: var(--purchase-main-1);
         width: 40%;
@@ -107,6 +119,7 @@
             position: absolute;
         }
     }
+
     &__info--right {
         width: 45%;
         padding-inline-end: 1rem;
@@ -119,6 +132,7 @@
             transition: 0.3s;
         }
     }
+
     &__effect-detail {
         position: absolute;
         background-color: var(--purchase-main-1);
@@ -127,6 +141,7 @@
         height: 100%;
         z-index: 1;
     }
+
     &__effect-detail--arrow {
         content: '';
         width: 55px;
@@ -140,23 +155,28 @@
         bottom: 0;
         display: inline-block;
     }
+
     &[disabled]:hover {
         cursor: initial;
         transform: none;
     }
-    &:hover:not(&--disabled):not([disabled]) {
+
+    &:hover:not(&--disabled, [disabled]) {
         transform: translate3d(0, -4px, 0);
     }
+
     &__type-wrapper {
         display: flex;
         align-items: center;
         transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
         transform: none;
     }
+
     &__shadow-wrapper {
         @include rtl {
             direction: rtl;
         }
+
         position: relative;
 
         .btn-purchase__box-shadow {
@@ -170,6 +190,7 @@
             transition: opacity 0.25s linear;
             pointer-events: none;
         }
+
         &--disabled {
             pointer-events: none;
 
@@ -178,16 +199,19 @@
             }
         }
     }
-    &:active:not(&--disabled):not([disabled]),
-    &:focus:not(&--disabled):not([disabled]) {
+
+    &:active:not(&--disabled, [disabled]),
+    &:focus:not(&--disabled, [disabled]) {
         transform: translate3d(0, -4px, 0);
     }
+
     &--swoosh {
         transform: translate3d(0, -4px, 0);
 
         .btn-purchase__type-wrapper {
             transform: translate3d(55px, 0, 0);
         }
+
         .btn-purchase__effect-detail {
             transform: scale3d(3, 1, 1);
 
@@ -196,12 +220,14 @@
             }
         }
     }
+
     &--1 {
         background-color: var(--purchase-section-1);
 
         .btn-purchase__info--left {
             background-color: var(--purchase-main-1);
         }
+
         .btn-purchase__effect-detail {
             background: var(--purchase-main-1);
 
@@ -221,12 +247,14 @@
             );
         }
     }
+
     &--2 {
         background-color: var(--purchase-section-2);
 
         .btn-purchase__info--left {
             background-color: var(--purchase-main-2);
         }
+
         .btn-purchase__effect-detail {
             background: var(--purchase-main-2);
 
@@ -234,6 +262,7 @@
                 background: var(--purchase-main-2);
             }
         }
+
         @include mobile {
             background: var(--purchase-section-2);
             background: linear-gradient(
@@ -258,6 +287,7 @@
                     var(--purchase-main-1) 100%
                 );
             }
+
             &-2 {
                 background: var(--purchase-section-2);
                 background: linear-gradient(
@@ -282,24 +312,28 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 255, 255, 0.32);
+            background-color: rgb(255 255 255 / 32%);
             z-index: 4;
             pointer-events: none;
         }
     }
+
     &--animated--slide {
         .btn-purchase__icon_wrapper,
         .btn-purchase__text_wrapper {
             @extend .loader;
         }
+
         .btn-purchase__icon,
         .btn-purchase__text {
             @extend .loader--loading;
         }
+
         .btn-purchase__icon_wrapper {
             width: 16px;
             height: 16px;
         }
+
         .btn-purchase__text_wrapper {
             width: 56px;
             height: 8px;
@@ -309,21 +343,26 @@
             }
         }
     }
+
     &--animated--fade &__info--right &__text {
         opacity: 0;
     }
+
     &__shadow-wrapper:hover:after {
         opacity: 0;
     }
+
     &--multiplier,
     &--accumulator {
         .btn-purchase__info--left {
             width: 35%;
             flex: none;
         }
+
         .btn-purchase__effect-detail--arrow {
             inset-inline-start: 40px;
         }
+
         &.btn-purchase--swoosh {
             .btn-purchase {
                 &__effect-detail {
@@ -333,30 +372,36 @@
                         transform: translate3d(160px, 0, 0) rotate(45deg);
                     }
                 }
+
                 &__type-wrapper {
                     transform: translate3d(70px, 0, 0);
                 }
             }
         }
+
         .btn-purchase__effect-detail {
             width: 72px;
         }
+
         .btn-purchase__top {
             @include mobile {
                 justify-content: center;
             }
         }
+
         .trade-container__price-info {
             @include mobile-screen {
                 justify-content: center;
             }
         }
+
         @include mobile-screen {
             &-deal-cancel {
                 height: 64px;
             }
         }
     }
+
     &--accumulator {
         .btn-purchase {
             &__info {
@@ -364,28 +409,34 @@
                     width: 65%;
                     padding-inline-start: 1.6rem;
                 }
+
                 &--right {
                     width: 30%;
                     padding-inline-end: 1.6rem;
                 }
             }
+
             &__effect-detail--arrow {
                 inset-inline-start: 11rem;
             }
         }
+
         &.btn-purchase--swoosh {
             .btn-purchase {
                 &__effect-detail {
                     transform: scale3d(11, 1, 1);
+
                     &--arrow {
                         transform: translate3d(120px, 0, 0) rotate(45deg);
                     }
                 }
+
                 &__type-wrapper {
                     transform: translate3d(72px, 0, 0);
                 }
             }
         }
+
         @include mobile-screen {
             .btn-purchase {
                 &__bottom,
@@ -393,22 +444,26 @@
                     width: unset;
                     gap: 0.3rem;
                 }
+
                 &__icon_wrapper {
                     height: 1.6rem;
                 }
             }
         }
     }
+
     &--turbos {
         .btn-purchase {
             &__info--left {
                 width: 70%;
             }
+
             &__effect-detail {
                 &--arrow {
                     inset-inline-start: 12rem;
                 }
             }
+
             @include mobile-screen {
                 &__top {
                     align-items: center;
@@ -416,10 +471,12 @@
                 }
             }
         }
+
         &.btn-purchase--swoosh {
             .btn-purchase {
                 &__effect-detail {
                     transform: scale3d(15, 1, 1);
+
                     &--arrow {
                         transform: translate3d(12rem, 0, 0) rotate(45deg);
                     }

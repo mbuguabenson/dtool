@@ -36,6 +36,7 @@ $header-height: 3.6em;
         width: 260px;
         height: 100%;
         background: var(--general-main-1);
+
         // box-shadow: 10px 0 5px -2px var(--general-main-1);
         transition: opacity 0.25s linear;
         opacity: 0;
@@ -45,16 +46,19 @@ $header-height: 3.6em;
             opacity: 1;
         }
     }
+
     &--open {
         transform: translateX(#{$POSITIONS_DRAWER_MARGIN});
         opacity: 1;
     }
+
     &__header {
         height: $header-height;
         display: flex;
         flex-direction: row;
         align-items: center;
         padding: 0 1em;
+
         @include rtl {
             direction: rtl;
         }
@@ -70,6 +74,7 @@ $header-height: 3.6em;
             box-shadow: 0 8px 2px -2px var(--general-section-1) inset;
         }
     }
+
     &__body {
         height: calc(100% - #{$header-height * 2.7});
         padding: 0.8em 0 0;
@@ -81,6 +86,7 @@ $header-height: 3.6em;
         & .dc-themed-scrollbars {
             height: 100%;
         }
+
         & .dc-contract-card {
             &__stop-loss {
                 & .dc-contract-card-item {
@@ -91,13 +97,14 @@ $header-height: 3.6em;
             }
         }
     }
+
     &__footer {
         position: relative;
         height: 6em;
         display: flex;
         align-items: center;
-        box-shadow: 0px -1px 4px 0px #0000000a;
-        box-shadow: 0px -1px 4px 0px #00000014;
+        box-shadow: 0 -1px 4px 0 #0000000a;
+        box-shadow: 0 -1px 4px 0 #00000014;
 
         .positions-drawer__summary {
             margin: 0 1.6rem;
@@ -116,6 +123,7 @@ $header-height: 3.6em;
             gap: 0.4rem;
             align-items: center;
             justify-content: space-between;
+
             .dc-text {
                 line-height: 1.4;
             }
@@ -130,21 +138,26 @@ $header-height: 3.6em;
             top: -6px;
             box-shadow: 0 8px 2px -2px var(--general-section-1) inset;
         }
+
         .dc-btn {
             width: 100%;
             margin: 8px;
             height: 40px;
         }
     }
+
     &__icon-main {
         margin-right: 0.8em;
     }
+
     &__icon-close {
         display: inline-block;
         margin-inline-start: auto;
         cursor: pointer;
+
         svg {
             @extend %inline-icon;
+
             height: 1.6em;
             width: 1.6em;
         }

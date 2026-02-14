@@ -25,7 +25,7 @@ export const useDerivConnection = () => {
         error,
         connect,
         disconnect,
-        authorize
+        authorize,
     };
 };
 

@@ -29,7 +29,7 @@ export const useTrading = () => {
                 duration: params.duration,
                 duration_unit: params.duration_unit,
                 symbol: params.symbol,
-                barrier: params.barrier
+                barrier: params.barrier,
             });
 
             if (proposal.error) {
@@ -38,7 +38,7 @@ export const useTrading = () => {
 
             const result = await derivApiService.buy({
                 buy: proposal.proposal.id,
-                price: params.amount
+                price: params.amount,
             });
 
             if (result.error) {

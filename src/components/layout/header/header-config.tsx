@@ -4,6 +4,7 @@ import {
     LegacyCashierIcon as CashierLogo,
     LegacyHomeNewIcon as TradershubLogo,
     LegacyReportsIcon as ReportsLogo,
+    LegacyTradeTypeDigitsIcon as DigitsLogo,
 } from '@deriv/quill-icons/Legacy';
 import {
     DerivProductBrandLightDerivBotLogoWordmarkIcon as DerivBotLogo,
@@ -86,5 +87,11 @@ export const MenuItems: MenuItemsConfig[] = [
         href: standalone_routes.reports,
         icon: <ReportsLogo iconSize='xs' />,
         label: localize('Reports'),
+    },
+    {
+        as: 'a',
+        href: '#digit_cracker',
+        icon: <DigitsLogo iconSize='xs' />,
+        label: localize('Digit Cracker'),
     },
 ];

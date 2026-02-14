@@ -1,9 +1,9 @@
 .advanced-over-under-tab {
     padding: 1.5rem;
-    background: linear-gradient(135deg, rgba(10, 10, 30, 0.95) 0%, rgba(20, 20, 40, 0.98) 100%);
+    background: linear-gradient(135deg, rgb(10 10 30 / 95%) 0%, rgb(20 20 40 / 98%) 100%);
     min-height: 100vh;
     color: #fff;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', "Roboto", sans-serif;
 
     // Premium Market Header
     .premium-market-header {
@@ -12,11 +12,11 @@
         gap: 1rem;
         margin-bottom: 1.5rem;
         padding: 1rem;
-        background: rgba(255, 255, 255, 0.03);
+        background: rgb(255 255 255 / 3%);
         border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgb(255 255 255 / 10%);
 
-        @media (max-width: 768px) {
+        @media (width <= 768px) {
             grid-template-columns: 1fr;
         }
 
@@ -27,7 +27,7 @@
             align-items: center;
             gap: 0.75rem;
             padding: 0.75rem 1rem;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgb(255 255 255 / 5%);
             border-radius: 8px;
             backdrop-filter: blur(10px);
 
@@ -70,9 +70,9 @@
                 border-radius: 8px;
                 font-size: 1.3rem;
                 font-weight: 700;
-                background: rgba(168, 85, 247, 0.2);
-                border: 2px solid rgba(168, 85, 247, 0.5);
-                box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+                background: rgb(168 85 247 / 20%);
+                border: 2px solid rgb(168 85 247 / 50%);
+                box-shadow: 0 0 15px rgb(168 85 247 / 30%);
             }
         }
     }
@@ -106,23 +106,23 @@
             letter-spacing: 1px;
 
             &.neutral {
-                background: rgba(120, 120, 120, 0.3);
+                background: rgb(120 120 120 / 30%);
                 color: #999;
-                border: 2px solid rgba(120, 120, 120, 0.5);
+                border: 2px solid rgb(120 120 120 / 50%);
             }
 
             &.under {
-                background: rgba(59, 130, 246, 0.2);
-                color: rgb(59, 130, 246);
-                border: 2px solid rgb(59, 130, 246);
-                box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+                background: rgb(59 130 246 / 20%);
+                color: rgb(59 130 246);
+                border: 2px solid rgb(59 130 246);
+                box-shadow: 0 0 20px rgb(59 130 246 / 40%);
             }
 
             &.over {
-                background: rgba(34, 197, 94, 0.2);
-                color: rgb(34, 197, 94);
-                border: 2px solid rgb(34, 197, 94);
-                box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+                background: rgb(34 197 94 / 20%);
+                color: rgb(34 197 94);
+                border: 2px solid rgb(34 197 94);
+                box-shadow: 0 0 20px rgb(34 197 94 / 40%);
             }
         }
     }
@@ -131,9 +131,9 @@
     .last-digits-section {
         margin-bottom: 1.5rem;
         padding: 1rem;
-        background: rgba(255, 255, 255, 0.03);
+        background: rgb(255 255 255 / 3%);
         border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgb(255 255 255 / 10%);
 
         .section-label {
             font-size: 0.85rem;
@@ -161,54 +161,63 @@
                 transition: all 0.3s ease;
 
                 &.d-0 {
-                    background: rgba(6, 182, 212, 0.2);
-                    border-color: rgb(6, 182, 212);
-                    color: rgb(6, 182, 212);
+                    background: rgb(6 182 212 / 20%);
+                    border-color: rgb(6 182 212);
+                    color: rgb(6 182 212);
                 }
+
                 &.d-1 {
-                    background: rgba(59, 130, 246, 0.2);
-                    border-color: rgb(59, 130, 246);
-                    color: rgb(59, 130, 246);
+                    background: rgb(59 130 246 / 20%);
+                    border-color: rgb(59 130 246);
+                    color: rgb(59 130 246);
                 }
+
                 &.d-2 {
-                    background: rgba(139, 92, 246, 0.2);
-                    border-color: rgb(139, 92, 246);
-                    color: rgb(139, 92, 246);
+                    background: rgb(139 92 246 / 20%);
+                    border-color: rgb(139 92 246);
+                    color: rgb(139 92 246);
                 }
+
                 &.d-3 {
-                    background: rgba(236, 72, 153, 0.2);
-                    border-color: rgb(236, 72, 153);
-                    color: rgb(236, 72, 153);
+                    background: rgb(236 72 153 / 20%);
+                    border-color: rgb(236 72 153);
+                    color: rgb(236 72 153);
                 }
+
                 &.d-4 {
-                    background: rgba(34, 197, 94, 0.2);
-                    border-color: rgb(34, 197, 94);
-                    color: rgb(34, 197, 94);
+                    background: rgb(34 197 94 / 20%);
+                    border-color: rgb(34 197 94);
+                    color: rgb(34 197 94);
                 }
+
                 &.d-5 {
-                    background: rgba(249, 115, 22, 0.2);
-                    border-color: rgb(249, 115, 22);
-                    color: rgb(249, 115, 22);
+                    background: rgb(249 115 22 / 20%);
+                    border-color: rgb(249 115 22);
+                    color: rgb(249 115 22);
                 }
+
                 &.d-6 {
-                    background: rgba(234, 179, 8, 0.2);
-                    border-color: rgb(234, 179, 8);
-                    color: rgb(234, 179, 8);
+                    background: rgb(234 179 8 / 20%);
+                    border-color: rgb(234 179 8);
+                    color: rgb(234 179 8);
                 }
+
                 &.d-7 {
-                    background: rgba(34, 197, 94, 0.2);
-                    border-color: rgb(34, 197, 94);
-                    color: rgb(34, 197, 94);
+                    background: rgb(34 197 94 / 20%);
+                    border-color: rgb(34 197 94);
+                    color: rgb(34 197 94);
                 }
+
                 &.d-8 {
-                    background: rgba(16, 185, 129, 0.2);
-                    border-color: rgb(16, 185, 129);
-                    color: rgb(16, 185, 129);
+                    background: rgb(16 185 129 / 20%);
+                    border-color: rgb(16 185 129);
+                    color: rgb(16 185 129);
                 }
+
                 &.d-9 {
-                    background: rgba(99, 102, 241, 0.2);
-                    border-color: rgb(99, 102, 241);
-                    color: rgb(99, 102, 241);
+                    background: rgb(99 102 241 / 20%);
+                    border-color: rgb(99 102 241);
+                    color: rgb(99 102 241);
                 }
             }
         }
@@ -221,7 +230,7 @@
         gap: 1.5rem;
         margin-bottom: 1.5rem;
 
-        @media (max-width: 768px) {
+        @media (width <= 768px) {
             grid-template-columns: 1fr;
         }
 
@@ -233,28 +242,28 @@
             transition: all 0.3s ease;
 
             &.under-card {
-                background: rgba(59, 130, 246, 0.1);
-                border-color: rgba(59, 130, 246, 0.5);
+                background: rgb(59 130 246 / 10%);
+                border-color: rgb(59 130 246 / 50%);
 
                 .percentage-display {
-                    color: rgb(59, 130, 246);
+                    color: rgb(59 130 246);
                 }
 
                 .under-fill {
-                    background: linear-gradient(90deg, rgb(59, 130, 246), rgb(37, 99, 235));
+                    background: linear-gradient(90deg, rgb(59 130 246), rgb(37 99 235));
                 }
             }
 
             &.over-card {
-                background: rgba(34, 197, 94, 0.1);
-                border-color: rgba(34, 197, 94, 0.5);
+                background: rgb(34 197 94 / 10%);
+                border-color: rgb(34 197 94 / 50%);
 
                 .percentage-display {
-                    color: rgb(34, 197, 94);
+                    color: rgb(34 197 94);
                 }
 
                 .over-fill {
-                    background: linear-gradient(90deg, rgb(34, 197, 94), rgb(22, 163, 74));
+                    background: linear-gradient(90deg, rgb(34 197 94), rgb(22 163 74));
                 }
             }
 
@@ -281,7 +290,7 @@
 
             .progress-bar {
                 height: 12px;
-                background: rgba(255, 255, 255, 0.1);
+                background: rgb(255 255 255 / 10%);
                 border-radius: 8px;
                 overflow: hidden;
                 margin-bottom: 1rem;
@@ -307,15 +316,15 @@
         gap: 1rem;
         margin-bottom: 1.5rem;
 
-        @media (max-width: 768px) {
+        @media (width <= 768px) {
             grid-template-columns: 1fr;
         }
 
         .metric-box {
             padding: 1.25rem;
             border-radius: 12px;
-            background: rgba(168, 85, 247, 0.1);
-            border: 1px solid rgba(168, 85, 247, 0.3);
+            background: rgb(168 85 247 / 10%);
+            border: 1px solid rgb(168 85 247 / 30%);
             text-align: center;
 
             .metric-label {
@@ -329,7 +338,7 @@
             .metric-value {
                 font-size: 2rem;
                 font-weight: 700;
-                color: rgb(168, 85, 247);
+                color: rgb(168 85 247);
             }
         }
     }
@@ -338,9 +347,9 @@
     .predicted-section {
         margin-bottom: 1.5rem;
         padding: 1rem;
-        background: rgba(255, 255, 255, 0.03);
+        background: rgb(255 255 255 / 3%);
         border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgb(255 255 255 / 10%);
 
         .section-label {
             font-size: 0.85rem;
@@ -361,15 +370,15 @@
                 border: 2px solid;
 
                 &.under {
-                    background: rgba(59, 130, 246, 0.2);
-                    border-color: rgb(59, 130, 246);
-                    color: rgb(59, 130, 246);
+                    background: rgb(59 130 246 / 20%);
+                    border-color: rgb(59 130 246);
+                    color: rgb(59 130 246);
                 }
 
                 &.over {
-                    background: rgba(34, 197, 94, 0.2);
-                    border-color: rgb(34, 197, 94);
-                    color: rgb(34, 197, 94);
+                    background: rgb(34 197 94 / 20%);
+                    border-color: rgb(34 197 94);
+                    color: rgb(34 197 94);
                 }
             }
         }
@@ -379,15 +388,15 @@
     .how-it-works {
         margin-bottom: 1.5rem;
         padding: 1.5rem;
-        background: rgba(249, 115, 22, 0.1);
+        background: rgb(249 115 22 / 10%);
         border-radius: 12px;
-        border: 1px solid rgba(249, 115, 22, 0.3);
+        border: 1px solid rgb(249 115 22 / 30%);
 
         .how-title {
             font-size: 1rem;
             font-weight: 600;
             margin-bottom: 0.75rem;
-            color: rgb(249, 115, 22);
+            color: rgb(249 115 22);
         }
 
         .how-text {
@@ -416,22 +425,22 @@
             .threshold-tab {
                 padding: 1rem 1.5rem;
                 border-radius: 10px;
-                background: rgba(255, 255, 255, 0.05);
-                border: 2px solid rgba(255, 255, 255, 0.1);
+                background: rgb(255 255 255 / 5%);
+                border: 2px solid rgb(255 255 255 / 10%);
                 cursor: pointer;
                 transition: all 0.3s ease;
                 min-width: 140px;
                 text-align: center;
 
                 &:hover {
-                    background: rgba(255, 255, 255, 0.1);
+                    background: rgb(255 255 255 / 10%);
                     transform: translateY(-2px);
                 }
 
                 &.active {
-                    background: rgb(168, 85, 247);
-                    border-color: rgb(168, 85, 247);
-                    box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+                    background: rgb(168 85 247);
+                    border-color: rgb(168 85 247);
+                    box-shadow: 0 0 20px rgb(168 85 247 / 50%);
                 }
 
                 .tab-name {
@@ -455,19 +464,19 @@
         gap: 1rem;
         margin-bottom: 1.5rem;
 
-        @media (max-width: 1024px) {
+        @media (width <= 1024px) {
             grid-template-columns: repeat(2, 1fr);
         }
 
-        @media (max-width: 768px) {
+        @media (width <= 768px) {
             grid-template-columns: 1fr;
         }
 
         .comparison-card {
             padding: 1.5rem;
             border-radius: 12px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgb(255 255 255 / 3%);
+            border: 1px solid rgb(255 255 255 / 10%);
 
             .card-title {
                 font-size: 0.9rem;
@@ -503,7 +512,7 @@
 
                     .bar-track {
                         height: 8px;
-                        background: rgba(255, 255, 255, 0.05);
+                        background: rgb(255 255 255 / 5%);
                         border-radius: 4px;
                         overflow: hidden;
 
@@ -513,11 +522,11 @@
                             border-radius: 4px;
 
                             &.under-fill {
-                                background: linear-gradient(90deg, rgb(59, 130, 246), rgb(37, 99, 235));
+                                background: linear-gradient(90deg, rgb(59 130 246), rgb(37 99 235));
                             }
 
                             &.over-fill {
-                                background: linear-gradient(90deg, rgb(34, 197, 94), rgb(22, 163, 74));
+                                background: linear-gradient(90deg, rgb(34 197 94), rgb(22 163 74));
                             }
                         }
                     }
@@ -529,7 +538,7 @@
                 grid-template-columns: 1fr 1fr;
                 gap: 0.75rem;
                 padding-top: 1rem;
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                border-top: 1px solid rgb(255 255 255 / 10%);
 
                 .metric-item {
                     &.full-width {
@@ -551,11 +560,11 @@
                             font-size: 1.2rem;
 
                             &.positive {
-                                color: rgb(34, 197, 94);
+                                color: rgb(34 197 94);
                             }
 
                             &.negative {
-                                color: rgb(239, 68, 68);
+                                color: rgb(239 68 68);
                             }
                         }
                     }
@@ -568,8 +577,8 @@
     .risk-assessment-card {
         padding: 1.5rem;
         border-radius: 12px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgb(255 255 255 / 3%);
+        border: 1px solid rgb(255 255 255 / 10%);
         margin-bottom: 1.5rem;
 
         .card-title {
@@ -584,7 +593,7 @@
             gap: 1.5rem;
             margin-bottom: 1.5rem;
 
-            @media (max-width: 768px) {
+            @media (width <= 768px) {
                 grid-template-columns: 1fr;
             }
 
@@ -605,7 +614,7 @@
 
                 .risk-bar {
                     height: 8px;
-                    background: rgba(255, 255, 255, 0.05);
+                    background: rgb(255 255 255 / 5%);
                     border-radius: 4px;
                     overflow: hidden;
 
@@ -613,18 +622,18 @@
                         height: 100%;
                         transition: width 0.5s ease;
                         border-radius: 4px;
-                        background: linear-gradient(90deg, rgb(168, 85, 247), rgb(147, 51, 234));
+                        background: linear-gradient(90deg, rgb(168 85 247), rgb(147 51 234));
 
                         &.low {
-                            background: linear-gradient(90deg, rgb(34, 197, 94), rgb(22, 163, 74));
+                            background: linear-gradient(90deg, rgb(34 197 94), rgb(22 163 74));
                         }
 
                         &.medium {
-                            background: linear-gradient(90deg, rgb(234, 179, 8), rgb(202, 138, 4));
+                            background: linear-gradient(90deg, rgb(234 179 8), rgb(202 138 4));
                         }
 
                         &.high {
-                            background: linear-gradient(90deg, rgb(239, 68, 68), rgb(220, 38, 38));
+                            background: linear-gradient(90deg, rgb(239 68 68), rgb(220 38 38));
                         }
                     }
                 }
@@ -638,29 +647,29 @@
             border: 2px solid;
 
             &.low {
-                background: rgba(34, 197, 94, 0.1);
-                border-color: rgb(34, 197, 94);
+                background: rgb(34 197 94 / 10%);
+                border-color: rgb(34 197 94);
 
                 .risk-badge-label {
-                    color: rgb(34, 197, 94);
+                    color: rgb(34 197 94);
                 }
             }
 
             &.medium {
-                background: rgba(234, 179, 8, 0.1);
-                border-color: rgb(234, 179, 8);
+                background: rgb(234 179 8 / 10%);
+                border-color: rgb(234 179 8);
 
                 .risk-badge-label {
-                    color: rgb(234, 179, 8);
+                    color: rgb(234 179 8);
                 }
             }
 
             &.high {
-                background: rgba(239, 68, 68, 0.1);
-                border-color: rgb(239, 68, 68);
+                background: rgb(239 68 68 / 10%);
+                border-color: rgb(239 68 68);
 
                 .risk-badge-label {
-                    color: rgb(239, 68, 68);
+                    color: rgb(239 68 68);
                 }
             }
 
@@ -682,8 +691,8 @@
     .heatmap-card {
         padding: 1.5rem;
         border-radius: 12px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgb(255 255 255 / 3%);
+        border: 1px solid rgb(255 255 255 / 10%);
         margin-bottom: 1.5rem;
 
         .heatmap-header {
@@ -700,15 +709,15 @@
             .hide-btn {
                 padding: 0.5rem 1rem;
                 border-radius: 6px;
-                background: rgba(255, 255, 255, 0.05);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                color: rgb(168, 85, 247);
+                background: rgb(255 255 255 / 5%);
+                border: 1px solid rgb(255 255 255 / 20%);
+                color: rgb(168 85 247);
                 cursor: pointer;
                 font-size: 0.85rem;
                 transition: all 0.3s ease;
 
                 &:hover {
-                    background: rgba(255, 255, 255, 0.1);
+                    background: rgb(255 255 255 / 10%);
                 }
             }
         }
@@ -737,7 +746,7 @@
                 border-radius: 4px;
 
                 &.header-cell {
-                    background: rgba(255, 255, 255, 0.05);
+                    background: rgb(255 255 255 / 5%);
                     font-weight: 600;
                     opacity: 0.7;
                 }
@@ -759,9 +768,9 @@
         width: 100%;
         padding: 1rem;
         border-radius: 10px;
-        background: rgba(168, 85, 247, 0.2);
-        border: 2px solid rgba(168, 85, 247, 0.5);
-        color: rgb(168, 85, 247);
+        background: rgb(168 85 247 / 20%);
+        border: 2px solid rgb(168 85 247 / 50%);
+        color: rgb(168 85 247);
         cursor: pointer;
         font-size: 1rem;
         font-weight: 600;
@@ -769,9 +778,9 @@
         margin-bottom: 1.5rem;
 
         &:hover {
-            background: rgba(168, 85, 247, 0.3);
+            background: rgb(168 85 247 / 30%);
             transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
+            box-shadow: 0 4px 20px rgb(168 85 247 / 40%);
         }
     }
 }

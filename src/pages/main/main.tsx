@@ -526,7 +526,7 @@ const AppWrapper = observer(() => {
                                 id='id-digit-cracker'
                             >
                                 <PageContentWrapper>
-                                    <Suspense fallback={<ChunkLoader message={localize('Loading Digit Cracker...')} />}>
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
                                         <DigitCracker />
                                     </Suspense>
                                 </PageContentWrapper>
