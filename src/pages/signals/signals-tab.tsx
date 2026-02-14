@@ -129,11 +129,11 @@ const SignalsTab = () => {
 
     // Fetch data for all markets when in multi view
     useEffect(() => {
-        if (activeView === 'multi' && availableSymbols.length > 0) {
-            //Initialize multi-market data with available symbols
+        if (activeView === 'multi' && availableSymbols && availableSymbols.length > 0) {
+            // Initialize multi-market data with available symbols
             const initialData = availableSymbols.slice(0, 12).map(sym => ({
-                symbol: sym.symbol,
-                display_name: sym.display_name,
+                symbol: sym.symbol || 'UNKNOWN',
+                display_name: sym.display_name || 'Unknown Market',
                 price: '0.00',
                 digit: 0,
                 signal: 'LOADING',
@@ -337,9 +337,16 @@ const SignalsTab = () => {
                         <span>Monitoring {multiMarketData.length} markets in real-time</span>
                     </div>
                     <div className='multi-signals-grid'>
-                        {multiMarketData.map(market => (
-                            <MultiSignalCard key={market.symbol} marketData={market} />
-                        ))}
+                        {multiMarketData.length > 0 ? (
+                            multiMarketData.map(market => (
+                                <MultiSignalCard key={market.symbol} marketData={market} />
+                            ))
+                        ) : (
+                            <div className='empty-state'>
+                                <Activity size={48} />
+                                <p>Loading markets...</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
