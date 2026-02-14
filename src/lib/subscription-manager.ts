@@ -10,16 +10,17 @@ interface ActiveSubscription {
     id: string | null;
     callbacks: Set<SubscriptionCallback>;
     unsubscribe: (() => void) | null;
+    lastMessage: unknown | null;
 }
 
 class SubscriptionManager {
     private activeSubscriptions: Map<string, ActiveSubscription> = new Map();
-    private api: { 
-        send: (data: unknown) => Promise<unknown>; 
-        onMessage: () => { 
-            subscribe: (callback: (data: unknown) => void) => { 
-                unsubscribe: () => void; 
-            } 
+    private api: {
+        send: (data: unknown) => Promise<unknown>;
+        onMessage: () => {
+            subscribe: (callback: (data: unknown) => void) => {
+                unsubscribe: () => void;
+            };
         };
         connection: { readyState: number };
     } | null = null;
@@ -40,6 +41,11 @@ class SubscriptionManager {
             const sub = this.activeSubscriptions.get(key)!;
             sub.callbacks.add(callback);
 
+            // Replay last message if available to new subscriber
+            if (sub.lastMessage) {
+                callback(sub.lastMessage);
+            }
+
             // Return unsubscribe function for this specific callback
             return () => {
                 sub.callbacks.delete(callback);
@@ -56,6 +62,7 @@ class SubscriptionManager {
             id: null,
             callbacks: new Set([callback]),
             unsubscribe: null,
+            lastMessage: null,
         };
 
         this.activeSubscriptions.set(key, subscription);
@@ -67,7 +74,11 @@ class SubscriptionManager {
             }
 
             if (this.api.connection.readyState !== 1) {
-                console.warn('[SubscriptionManager] WebSocket not in OPEN state (readyState:', this.api.connection.readyState, ')');
+                console.warn(
+                    '[SubscriptionManager] WebSocket not in OPEN state (readyState:',
+                    this.api.connection.readyState,
+                    ')'
+                );
                 this.activeSubscriptions.delete(key);
                 throw new Error('Connection not ready. Please wait or refresh.');
             }
@@ -109,15 +120,26 @@ class SubscriptionManager {
                 subscription.id = (response as any).subscription.id;
             }
 
+            // If we got history or tick in the first response, trigger callbacks and store it
+            if (response && ((response as any).msg_type === 'history' || (response as any).msg_type === 'tick')) {
+                subscription.lastMessage = response;
+                subscription.callbacks.forEach(cb => cb(response));
+            }
+
             // Set up message listener
             const messageHandler = (data: any) => {
+                // DEBUG: log incoming message
+                // console.log(`[SubscriptionManager] Incoming ${data.msg_type} for ${symbol}`);
+
                 // Basic filtering to ensure we only process messages for this symbol
-                const msgSymbol = data.tick?.symbol || data.echo_req?.ticks_history;
+                const msgSymbol = data.tick?.symbol || data.echo_req?.ticks_history || data.echo_req?.ticks;
                 if (msgSymbol && msgSymbol !== symbol) return;
 
                 if (data.msg_type === 'tick' || data.msg_type === 'history') {
                     const sub = this.activeSubscriptions.get(key);
                     if (sub) {
+                        sub.lastMessage = data;
+                        // console.log(`[SubscriptionManager] Dispatching ${data.msg_type} to ${sub.callbacks.size} callbacks for ${symbol}`);
                         sub.callbacks.forEach(cb => cb(data));
                     }
                 }

@@ -46,14 +46,28 @@ export default class AnalysisStore {
     @observable accessor current_price: string | number = '0.00';
     @observable accessor last_digit: number | null = null;
     @observable accessor total_ticks = 1000;
-    
+
     @observable accessor is_connected = false;
     @observable accessor is_loading = false;
     @observable accessor error_message: string | null = null;
     @observable accessor is_subscribing = false;
-    
-    @observable accessor percentages = { even: 50, odd: 50, over: 50, under: 50, match: 10, differ: 90, rise: 50, fall: 50 };
-    @observable accessor current_streaks = { even_odd: 0, over_under: 0, match_diff: 0, rise_fall: 0 };
+
+    @observable accessor percentages = {
+        even: 50,
+        odd: 50,
+        over: 50,
+        under: 50,
+        match: 10,
+        differ: 90,
+        rise: 50,
+        fall: 50,
+    };
+    @observable accessor current_streaks = {
+        even_odd: { count: 0, type: '' },
+        over_under: { count: 0, type: '' },
+        match_diff: { count: 0, type: '' },
+        rise_fall: { count: 0, type: '' },
+    };
 
     // History (Delegated to engine but observable here for UI)
     @observable accessor even_odd_history: TAnalysisHistory[] = [];
@@ -65,9 +79,9 @@ export default class AnalysisStore {
     @observable accessor over_under_threshold = 5;
     @observable accessor match_diff_digit = 6;
     @observable accessor markets: { group: string; items: { value: string; label: string }[] }[] = [];
-    
+
     @observable accessor subscription_id: string | null = null;
-    
+
     private unsubscribe_ticks: (() => Promise<void> | void) | null = null;
 
     constructor(root_store: RootStore) {
@@ -75,7 +89,7 @@ export default class AnalysisStore {
         this.root_store = root_store;
         this.stats_engine = new DigitStatsEngine();
         this.trade_engine = new DigitTradeEngine();
-        
+
         // Sync engine configs
         this.updateEngineConfig();
 
@@ -106,7 +120,7 @@ export default class AnalysisStore {
         this.stats_engine.setConfig({
             over_under_threshold: this.over_under_threshold,
             match_diff_digit: this.match_diff_digit,
-            total_samples: this.total_ticks
+            total_samples: this.total_ticks,
         });
         this.refreshStats(); // Update observables from engine
     };
@@ -121,7 +135,7 @@ export default class AnalysisStore {
     @action
     handleTick = (tick: TTick) => {
         if (tick.symbol !== this.symbol) return;
-        
+
         const price = Number(tick.quote);
         const price_str = String(tick.quote);
         const last_char = price_str[price_str.length - 1];
@@ -130,7 +144,7 @@ export default class AnalysisStore {
         if (!isNaN(new_digit)) {
             const current_ticks = [...this.ticks, new_digit];
             if (current_ticks.length > this.total_ticks) current_ticks.shift();
-            
+
             this.ticks = current_ticks;
             this.last_digit = new_digit;
             this.current_price = price;
@@ -141,7 +155,7 @@ export default class AnalysisStore {
 
             // Push to trade engine
             this.trade_engine.processTick(
-                new_digit, 
+                new_digit,
                 { percentages: this.stats_engine.getPercentages(), digit_stats: this.stats_engine.digit_stats },
                 this.symbol,
                 this.root_store.client.currency || 'USD'
@@ -155,7 +169,7 @@ export default class AnalysisStore {
         this.current_price = Number(quote);
         const last = digits[digits.length - 1];
         if (last !== undefined) this.last_digit = last;
-        
+
         this.stats_engine.update(digits, Number(quote));
         this.refreshStats();
     };
@@ -182,49 +196,54 @@ export default class AnalysisStore {
                 (unsubscribe as () => void)();
                 this.unsubscribe_ticks = null;
             }
+            if (api_base.api) {
+                subscriptionManager.setApi(api_base.api);
+            }
 
             console.log(`[AnalysisStore] Subscribing to ${this.symbol} (attempt ${retry_count + 1})`);
 
-            this.unsubscribe_ticks = await subscriptionManager.subscribeToTicks(this.symbol, action((data: unknown) => {
-                const response = data as TDerivResponse;
-                if (response.msg_type === 'tick' && response.tick) {
-                    if (response.tick.symbol === this.symbol) {
-                        this.handleTick(response.tick);
-                        runInAction(() => {
-                            this.is_loading = false;
-                            this.error_message = null;
-                        });
-                    }
-                } else if (response.msg_type === 'history' && response.history) {
-                    const prices = response.history.prices;
-                    if (prices && prices.length > 0) {
-                        runInAction(() => {
-                            const last_digits = prices.map((p: number | string) => {
-                                const s = String(p);
-                                const digit = parseInt(s[s.length - 1]);
-                                return isNaN(digit) ? 0 : digit;
+            this.unsubscribe_ticks = await subscriptionManager.subscribeToTicks(
+                this.symbol,
+                action((data: unknown) => {
+                    const response = data as TDerivResponse;
+                    if (response.msg_type === 'tick' && response.tick) {
+                        if (response.tick.symbol === this.symbol) {
+                            this.handleTick(response.tick);
+                            runInAction(() => {
+                                this.is_loading = false;
+                                this.error_message = null;
                             });
-                            
-                            const last_price = Number(prices[prices.length - 1]);
-                            this.current_price = last_price;
-                            this.ticks = last_digits;
-                            
-                            // Hydrate engine
-                            this.stats_engine.update(last_digits, last_price);
-                            this.refreshStats();
-                            this.is_loading = false;
-                            this.error_message = null;
-                        });
-                    }
-                }
-            }));
-            
-            console.log('[AnalysisStore] Subscription successful');
+                        }
+                    } else if (response.msg_type === 'history' && response.history) {
+                        const prices = response.history.prices;
+                        if (prices && prices.length > 0) {
+                            runInAction(() => {
+                                const last_digits = prices.map((p: number | string) => {
+                                    const s = String(p);
+                                    const digit = parseInt(s[s.length - 1]);
+                                    return isNaN(digit) ? 0 : digit;
+                                });
 
+                                const last_price = Number(prices[prices.length - 1]);
+                                this.current_price = last_price;
+                                this.ticks = last_digits;
+
+                                // Hydrate engine
+                                this.stats_engine.update(last_digits, last_price);
+                                this.refreshStats();
+                                this.is_loading = false;
+                                this.error_message = null;
+                            });
+                        }
+                    }
+                })
+            );
+
+            console.log('[AnalysisStore] Subscription successful');
         } catch (e: unknown) {
             console.error('[AnalysisStore] Subscribe error:', e);
             const message = (e as Error)?.message || 'Failed to subscribe';
-            
+
             runInAction(() => {
                 this.error_message = message;
                 this.is_loading = false;
@@ -254,7 +273,7 @@ export default class AnalysisStore {
             this.unsubscribe_ticks();
             this.unsubscribe_ticks = null;
         }
-        
+
         runInAction(() => {
             this.subscription_id = null;
             this.is_loading = false;
@@ -277,14 +296,14 @@ export default class AnalysisStore {
         this.percentages = this.stats_engine.getPercentages();
 
         const getStreak = (history: TAnalysisHistory[]) => {
-            if (history.length === 0) return 0;
+            if (history.length === 0) return { count: 0, type: '' };
             const type = history[0].type;
             let count = 0;
             for (const h of history) {
                 if (h.type === type) count++;
                 else break;
             }
-            return count;
+            return { count, type };
         };
 
         this.current_streaks = {
@@ -368,6 +387,4 @@ export default class AnalysisStore {
         this.over_under_threshold = threshold;
         this.updateEngineConfig();
     };
-
-
 }

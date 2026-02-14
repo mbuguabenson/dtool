@@ -1,4 +1,3 @@
-
 import { api_base } from '@/external/bot-skeleton/services/api/api-base';
 import AnalysisStore from './analysis-store';
 import AppStore from './app-store';
@@ -31,6 +30,7 @@ import SmartAutoStore from './smart-auto-store';
 export default class RootStore {
     public dbot;
     public analysis: AnalysisStore;
+    public digit_cracker: AnalysisStore;
     public app: AppStore;
     public summary_card: SummaryCardStore;
     public auto_trader: AutoTraderStore;
@@ -73,6 +73,7 @@ export default class RootStore {
         this.common = new CommonStore();
 
         this.analysis = new AnalysisStore(this);
+        this.digit_cracker = new AnalysisStore(this);
 
         this.core = {
             ui: this.ui,

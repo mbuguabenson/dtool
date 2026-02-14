@@ -3,7 +3,7 @@
     flex-direction: column;
     gap: 1rem;
     padding: 1rem;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgb(255 255 255 / 5%);
     border-radius: 8px;
     margin-bottom: 1rem;
 
@@ -11,7 +11,7 @@
         display: flex;
         justify-content: space-between;
         padding-bottom: 0.5rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgb(255 255 255 / 10%);
 
         .stat-highlight {
             display: flex;
@@ -19,12 +19,27 @@
             gap: 0.5rem;
             font-family: 'Outfit', sans-serif;
 
-            &.highest { color: var(--status-success); }
-            &.lowest { color: var(--status-danger); }
+            &.highest {
+                color: var(--status-success);
+            }
 
-            .label { font-weight: 600; }
-            .value { font-size: 1.2rem; font-weight: 800; }
-            .percentage { font-size: 0.9rem; opacity: 0.8; }
+            &.lowest {
+                color: var(--status-danger);
+            }
+
+            .label {
+                font-weight: 600;
+            }
+
+            .value {
+                font-size: 1.2rem;
+                font-weight: 800;
+            }
+
+            .percentage {
+                font-size: 0.9rem;
+                opacity: 0.8;
+            }
         }
     }
 
@@ -32,9 +47,9 @@
         display: grid;
         grid-template-columns: repeat(5, 1fr); // 2 rows of 5
         gap: 0.8rem;
-        
-        @media (max-width: 600px) {
-             grid-template-columns: repeat(2, 1fr); // 5 rows of 2 on mobile
+
+        @media (width <= 600px) {
+            grid-template-columns: repeat(2, 1fr); // 5 rows of 2 on mobile
         }
 
         .digit-bar-item {
@@ -47,13 +62,15 @@
                 justify-content: space-between;
                 font-size: 0.85rem;
                 color: var(--text-general);
-                
-                .digit-label { font-weight: 700; }
+
+                .digit-label {
+                    font-weight: 700;
+                }
             }
 
             .progress-bg {
                 height: 6px;
-                background: rgba(255, 255, 255, 0.1);
+                background: rgb(255 255 255 / 10%);
                 border-radius: 3px;
                 overflow: hidden;
 
@@ -64,16 +81,23 @@
                 }
             }
 
-            &.is-highest .digit-info { color: var(--status-success); }
-            &.is-lowest .digit-info { color: var(--status-danger); }
+            &.is-highest .digit-info {
+                color: var(--status-success);
+            }
+
+            &.is-lowest .digit-info {
+                color: var(--status-danger);
+            }
         }
     }
 
     &.summary-mode {
-        background: rgba(13, 17, 43, 0.7); // Deeper blue/black
+        background: rgb(13 17 43 / 70%); // Deeper blue/black
         backdrop-filter: blur(12px);
-        border: 1px solid rgba(60, 100, 255, 0.2); // Subtle blue border
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(60, 100, 255, 0.05);
+        border: 1px solid rgb(60 100 255 / 20%); // Subtle blue border
+        box-shadow:
+            0 0 20px rgb(0 0 0 / 40%),
+            inset 0 0 20px rgb(60 100 255 / 5%);
         padding: 1.2rem;
 
         .stat-row {
@@ -81,8 +105,10 @@
             align-items: center;
             justify-content: space-between;
             margin-bottom: 16px; // More spacing
-            
-            &:last-child { margin-bottom: 0; }
+
+            &:last-child {
+                margin-bottom: 0;
+            }
 
             .stat-labels-container {
                 display: flex;
@@ -100,26 +126,26 @@
                 display: flex;
                 width: 100%;
                 height: 14px; // Thicker bars
-                background: rgba(0, 0, 0, 0.3); // Darker track
+                background: rgb(0 0 0 / 30%); // Darker track
                 border-radius: 7px;
                 overflow: hidden;
                 position: relative;
-                box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+                box-shadow: inset 0 1px 3px rgb(0 0 0 / 50%);
 
                 .progress-bar {
                     height: 100%;
                     transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
                     position: relative;
-                    
+
                     // Add stronger shine/glow effect
-                    &::after {
+                    &:after {
                         content: '';
                         position: absolute;
                         top: 0;
                         left: 0;
                         right: 0;
                         bottom: 0;
-                        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+                        background: linear-gradient(90deg, transparent, rgb(255 255 255 / 60%), transparent);
                         transform: skewX(-20deg) translateX(-150%);
                         animation: shine 2s infinite;
                     }
@@ -130,9 +156,17 @@
 }
 
 @keyframes shine {
-    0% { transform: skewX(-20deg) translateX(-150%); }
-    50% { transform: skewX(-20deg) translateX(150%); }
-    100% { transform: skewX(-20deg) translateX(150%); }
+    0% {
+        transform: skewX(-20deg) translateX(-150%);
+    }
+
+    50% {
+        transform: skewX(-20deg) translateX(150%);
+    }
+
+    100% {
+        transform: skewX(-20deg) translateX(150%);
+    }
 }
 
 .tick-stream-widget {
@@ -172,7 +206,7 @@
 
                 &.active {
                     background: var(--brand-secondary);
-                    color: white;
+                    color: #fff;
                     border-color: var(--brand-secondary);
                 }
             }
@@ -185,28 +219,36 @@
         gap: 4px;
         max-height: 100px;
         overflow-y: auto;
-        
+
         .tick-item {
             width: 24px;
             height: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgb(255 255 255 / 5%);
             border-radius: 4px;
             font-size: 0.9rem;
             color: var(--text-prominent);
-            
-            &.tick-0, &.tick-2, &.tick-4, &.tick-6, &.tick-8 {
+
+            &.tick-0,
+            &.tick-2,
+            &.tick-4,
+            &.tick-6,
+            &.tick-8 {
                 color: #3b82f6; // Blue for Even
             }
 
-            &.tick-1, &.tick-3, &.tick-5, &.tick-7, &.tick-9 {
+            &.tick-1,
+            &.tick-3,
+            &.tick-5,
+            &.tick-7,
+            &.tick-9 {
                 color: #ef4444; // Red for Odd
             }
 
             &.latest-tick {
-                box-shadow: 0 0 10px 2px currentColor; // Glow matching the text color (which is set by modifier)
+                box-shadow: 0 0 10px 2px currentcolor; // Glow matching the text color (which is set by modifier)
                 border: 2px solid #fff;
                 transform: scale(1.1);
                 z-index: 10;
@@ -217,8 +259,13 @@
 }
 
 @keyframes pulse-tick {
-    from { box-shadow: 0 0 5px 1px currentColor; }
-    to { box-shadow: 0 0 15px 4px currentColor; }
+    from {
+        box-shadow: 0 0 5px 1px currentcolor;
+    }
+
+    to {
+        box-shadow: 0 0 15px 4px currentcolor;
+    }
 }
 
 .last-digits-chart {
@@ -233,8 +280,8 @@
 }
 
 .trade-signal-widget {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    background: linear-gradient(135deg, rgb(16 185 129 / 10%), rgb(59 130 246 / 10%));
+    border: 1px solid rgb(16 185 129 / 20%);
     padding: 1rem;
     border-radius: 8px;
     margin-bottom: 1rem;
@@ -261,7 +308,7 @@
 
     .trade-btn {
         background: var(--status-success);
-        color: white;
+        color: #fff;
         border: none;
         padding: 0.6rem 1.2rem;
         border-radius: 6px;
@@ -276,7 +323,15 @@
 }
 
 @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-    70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    0% {
+        box-shadow: 0 0 0 0 rgb(16 185 129 / 40%);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgb(16 185 129 / 0%);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgb(16 185 129 / 0%);
+    }
 }

@@ -1,11 +1,10 @@
-import { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useStore } from '@/hooks/useStore';
 import { AnalysisSection, DigitCircles, TradingEngine } from './components';
 import './circles-analysis.scss';
 
 const CirclesAnalysis = observer(() => {
-    const { analysis, app } = useStore();
+    const { analysis } = useStore();
     const {
         current_price,
         symbol,
@@ -15,50 +14,30 @@ const CirclesAnalysis = observer(() => {
         matches_differs_history,
         rise_fall_history,
         percentages = { even: 50, odd: 50, over: 50, under: 50, match: 0, differ: 0, rise: 0, fall: 0 },
-        current_streaks = { even_odd: 0, over_under: 0, match_diff: 0, rise_fall: 0 },
+        current_streaks = {
+            even_odd: { count: 0, type: '' },
+            over_under: { count: 0, type: '' },
+            match_diff: { count: 0, type: '' },
+            rise_fall: { count: 0, type: '' },
+        },
         setSymbol,
         setTotalTicks,
         last_digit,
         markets,
         over_under_threshold,
         match_diff_digit,
-        updateDigitStats,
     } = analysis;
 
-    const ticks_service = app.api_helpers_store?.ticks_service;
-
-    useEffect(() => {
-        if (!ticks_service || !symbol) return;
-
-        let is_mounted = true;
-        let listenerKey: string | null = null;
-
-        const monitorTicks = async () => {
-            const callback = (ticks: { quote: string | number }[]) => {
-                if (is_mounted && ticks && ticks.length > 0) {
-                    const latest = ticks[ticks.length - 1];
-                    const last_digits = ticks.slice(-total_ticks).map(t => {
-                        const quote_str = String(t.quote || '0');
-                        const digit = parseInt(quote_str[quote_str.length - 1]);
-                        return isNaN(digit) ? 0 : digit;
-                    });
-                    updateDigitStats(last_digits, latest.quote);
-                }
-            };
-
-            listenerKey = await ticks_service.monitor({ symbol, callback });
-        };
-
-        monitorTicks();
-
-        return () => {
-            is_mounted = false;
-            if (listenerKey) ticks_service.stopMonitor({ symbol, key: listenerKey });
-        };
-    }, [symbol, ticks_service, updateDigitStats, total_ticks]);
+    // Unified market data is now managed by AnalysisStore's internal subscription
+    // Components just reactively observe 'analysis' or 'digit_cracker' state.
 
     return (
         <div className='circles-analysis-container'>
+            <div className='hero-bg-blobs'>
+                <div className='blob blob-1' />
+                <div className='blob blob-2' />
+                <div className='blob blob-3' />
+            </div>
             <header className='analysis-header'>
                 <div className='header-left'>
                     <div className='market-selector-wrapper'>
@@ -91,7 +70,9 @@ const CirclesAnalysis = observer(() => {
                         <span className='label'>LIVE PRICE</span>
                         <span className='price-value'>{current_price}</span>
                     </div>
-                    <div className={`digit-display-card ${last_digit !== null ? (last_digit % 2 === 0 ? 'digit--even' : 'digit--odd') : ''}`}>
+                    <div
+                        className={`digit-display-card ${last_digit !== null ? (last_digit % 2 === 0 ? 'digit--even' : 'digit--odd') : ''}`}
+                    >
                         <span className='label'>LAST DIGIT</span>
                         <span className='digit-value'>{last_digit ?? '-'}</span>
                     </div>
@@ -102,7 +83,7 @@ const CirclesAnalysis = observer(() => {
 
             <div className='circles-analysis__content'>
                 <TradingEngine />
-                
+
                 <div className='analysis-sections-grid'>
                     <AnalysisSection
                         title='Matches/Differs'

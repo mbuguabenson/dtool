@@ -516,6 +516,7 @@ export default class SmartTradingStore {
 
     @action
     updateDigitStats = (last_digits: number[], price?: string | number) => {
+        console.log(`[SmartTradingStore] updateDigitStats for ${this.symbol}: price=${price}`);
         if (!last_digits || last_digits.length === 0) return;
 
         const stats = Array.from({ length: 10 }, (_, i) => ({
@@ -573,7 +574,6 @@ export default class SmartTradingStore {
         runInAction(() => {
             if (price !== undefined) {
                 this.analysis_engine.addTick(Number(price));
-                this.root_store.analysis.updateDigitStats(last_digits, price);
                 this.root_store.auto_trader.updateDigitStats(last_digits, price);
             }
 
@@ -764,16 +764,14 @@ export default class SmartTradingStore {
 
         if (!this.symbol || !this.is_connected) return;
 
+        if (api_base.api) {
+            subscriptionManager.setApi(api_base.api);
+        }
+
         try {
-            this.unsubscribeTicks = await subscriptionManager.subscribeToTicks(this.symbol, data => {
+            this.unsubscribeTicks = await subscriptionManager.subscribeToTicks(this.symbol, (data: any) => {
                 if (data.msg_type === 'tick') {
                     const quote = data.tick.quote;
-                    // Construct single-item array or just pass quote if updateDigitStats handles parsing
-                    // updateDigitStats expects last_digits array.
-                    // We need to maintain a local history if we are the primary source,
-                    // or just pass what we have.
-                    // Ideally, we should fetch history first, but for now let's push the new tick.
-
                     // Extract digit
                     const price_str = String(quote);
                     const last_char = price_str[price_str.length - 1];
@@ -782,7 +780,7 @@ export default class SmartTradingStore {
                     // Append to current ticks if valid
                     if (!isNaN(digit)) {
                         // We need to pass the *full* updated array to updateDigitStats because it replaces `this.ticks`
-                        const new_ticks = [...this.ticks, digit].slice(-1000); // Keep last 1000
+                        const new_ticks = [...(this.ticks as any[]), digit].slice(-1000); // Keep last 1000
                         this.updateDigitStats(new_ticks, quote);
                     }
                 } else if (data.msg_type === 'history') {
