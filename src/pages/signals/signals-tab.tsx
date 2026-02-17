@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Activity, Brain, Download, RefreshCw, ShieldAlert, Timer, Zap } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useDeriv } from '@/hooks/use-deriv';
@@ -145,7 +145,8 @@ const SignalsTab = () => {
     const [activeView, setActiveView] = useState<'signals' | 'multi'>('signals');
 
     // Multi-symbol hook integration
-    const multiSymbols = ['R_100', 'R_10', 'R_25', 'R_50', 'R_75', '1HZ100V', '1HZ10V', 'R_100', 'R_10', 'R_25', 'R_50', 'R_75'];
+    // Memoized symbols list to prevent infinite re-renders
+    const multiSymbols = useMemo(() => ['R_100', 'R_10', 'R_25', 'R_50', 'R_75', '1HZ100V', '1HZ10V'], []);
     const { marketData: multiData, connectionStatus: multiConnectionStatus } = useMultiSymbolDeriv(multiSymbols);
 
     // Debug: Log view changes

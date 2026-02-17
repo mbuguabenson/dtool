@@ -10,11 +10,7 @@ import { ChartTitle, SmartChart } from '@deriv/deriv-charts';
 import { useDevice } from '@deriv-com/ui';
 import ToolbarWidgets from './toolbar-widgets';
 import '@deriv/deriv-charts/dist/smartcharts.css';
-import TickStreamWidget from './chart-widgets/tick-stream-widget';
-import DigitStatsWidget from './chart-widgets/digit-stats-widget';
-import RiseFallStatsWidget from './chart-widgets/rise-fall-stats-widget';
-import TradeSignalWidget from './chart-widgets/trade-signal-widget';
-import LastDigitsChart from './chart-widgets/last-digits-chart';
+import '@deriv/deriv-charts/dist/smartcharts.css';
 
 const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) => {
     const barriers: [] = [];
@@ -24,10 +20,10 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
     const [tickHistory, setTickHistory] = useState<number[]>([]);
 
     // Derived stats
-    const lastDigits = tickHistory.map(t => {
-        const quote = t.toString();
-        return parseInt(quote.slice(-1));
-    });
+    // const lastDigits = tickHistory.map(t => {
+    //     const quote = t.toString();
+    //     return parseInt(quote.slice(-1));
+    // });
 
     const {
         chart_type,
@@ -133,8 +129,7 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
                 id='dbot'
                 barriers={barriers}
                 showLastDigitStats={show_digits_stats}
-                chartControlsWidgets={null}
-                enabledChartFooter={false}
+                enabledChartFooter={true}
                 chartStatusListener={(v: boolean) => setChartStatus(!v)}
                 toolbarWidget={() => (
                     <ToolbarWidgets
@@ -160,8 +155,8 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
                 isLive
                 leftMargin={80}
             >
-                {/* Restored Chart Widgets */}
-                <div className='chart-widgets-container'>
+                {/* Restored Chart Widgets - REMOVED to restore original Deriv look */}
+                {/* <div className='chart-widgets-container'>
                     <TickStreamWidget ticks={tickHistory} />
                     <DigitStatsWidget ticks={tickHistory} selected_digit={null} />
                     <RiseFallStatsWidget ticks={tickHistory} />
@@ -171,7 +166,7 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
                         condition='Rise/Fall'
                     />
                     {show_digits_stats && <LastDigitsChart digits={lastDigits} />}
-                </div>
+                </div> */}
             </SmartChart>
         </div>
     );

@@ -29,8 +29,28 @@ const CopyTrading = observer(() => {
             {/* NEW: Demo to Real Account Section */}
             <DemoToRealSection />
 
-            {/* NEW: Client API Tokens Section */}
+            {/* Client API Tokens Section */}
             <ClientTokensSection />
+            
+             {/* NEW: Account Balance Display */}
+            <div className='account-balance-display' style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                padding: '1rem',
+                borderRadius: '8px',
+                marginBottom: '1rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                border: '1px solid rgba(255, 255, 255, 0.1)'
+            }}>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                    <span style={{ fontSize: '1.2rem' }}>💰</span>
+                    <span style={{ color: 'var(--text-general)' }}>Account Balance:</span>
+                </div>
+                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--text-prominent)' }}>
+                    {client.balance} {client.currency}
+                </div>
+            </div>
 
             <div className='copy-trader__internal-toggle'>
                 <div className={`internal-mirror-card ${is_mirroring_internal ? 'active' : ''}`}>
@@ -210,15 +230,29 @@ const CopyTrading = observer(() => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td colSpan={5} className='no-data'>
-                                    <div className='empty-state'>
-                                        <div className='empty-icon'>📊</div>
-                                        <p>No active mirror streams detected.</p>
-                                        <span>Start trading or enable internal mirroring to see results.</span>
-                                    </div>
-                                </td>
-                            </tr>
+                            {copy_trader.trade_history.length > 0 ? (
+                                copy_trader.trade_history.slice().reverse().map((trade, idx) => (
+                                    <tr key={idx}>
+                                        <td>{trade.market}</td>
+                                        <td>{trade.reference}</td>
+                                        <td className={`status-${trade.status.toLowerCase()}`}>{trade.status}</td>
+                                        <td>{trade.stake}</td>
+                                        <td className={Number(trade.profit) >= 0 ? 'profit-pos' : 'profit-neg'}>
+                                            {trade.profit}
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={5} className='no-data'>
+                                        <div className='empty-state'>
+                                            <div className='empty-icon'>📊</div>
+                                            <p>No active mirror streams detected.</p>
+                                            <span>Start trading or enable internal mirroring to see results.</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>

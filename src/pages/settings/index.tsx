@@ -3,9 +3,10 @@ import { observer } from 'mobx-react-lite';
 import Contacts from './components/contacts';
 import ErrorHandling from './components/error-handling';
 import SystemLogs from './components/system-logs';
+import SystemStatus from './components/system-status';
 import './settings.scss';
 
-type SettingsTab = 'contacts' | 'system_logs' | 'error_handling';
+type SettingsTab = 'contacts' | 'system_logs' | 'error_handling' | 'system_status';
 
 const Settings = observer(() => {
     const [activeTab, setActiveTab] = useState<SettingsTab>('contacts');
@@ -18,6 +19,8 @@ const Settings = observer(() => {
                 return <SystemLogs />;
             case 'error_handling':
                 return <ErrorHandling />;
+            case 'system_status':
+                return <SystemStatus />;
             default:
                 return <Contacts />;
         }
@@ -49,6 +52,12 @@ const Settings = observer(() => {
                         onClick={() => setActiveTab('error_handling')}
                     >
                         Error Handling
+                    </button>
+                    <button
+                        className={activeTab === 'system_status' ? 'active' : ''}
+                        onClick={() => setActiveTab('system_status')}
+                    >
+                        System Status
                     </button>
                 </div>
 

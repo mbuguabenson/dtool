@@ -1,7 +1,6 @@
 import React from 'react';
-import ChunkLoader from '@/components/loader/chunk-loader';
+import InitialLoader from '@/components/loader/initial-loader';
 import { useOfflineDetection } from '@/hooks/useOfflineDetection';
-import { localize } from '@deriv-com/translations';
 import { URLUtils } from '@deriv-com/utils';
 import App from './App';
 
@@ -40,6 +39,7 @@ const setLocalStorageToken = async (loginInfo: URLUtils.LoginInfo[], paramsToDel
 
 export const AuthWrapper = () => {
     const [isAuthComplete, setIsAuthComplete] = React.useState(false);
+    const [isLoaderComplete, setIsLoaderComplete] = React.useState(false);
     const { loginInfo, paramsToDelete } = URLUtils.getLoginInfoFromURL();
     const { isOnline } = useOfflineDetection();
 
@@ -77,13 +77,8 @@ export const AuthWrapper = () => {
         }
     }, [isOnline, isAuthComplete]);
 
-    const getLoadingMessage = () => {
-        if (!isOnline) return localize('Loading offline mode...');
-        return localize('Initializing...');
-    };
-
-    if (!isAuthComplete) {
-        return <ChunkLoader message={getLoadingMessage()} />;
+    if (!isAuthComplete || !isLoaderComplete) {
+        return <InitialLoader onFinished={() => setIsLoaderComplete(true)} />;
     }
 
     return <App />;

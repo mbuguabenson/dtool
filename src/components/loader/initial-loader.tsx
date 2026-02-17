@@ -1,112 +1,110 @@
-import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import './initial-loader.scss';
 
-const LOADING_MESSAGES = [
-    'Wait Initializing The Engine...',
-    'Connecting to Server...',
-    'Fetching Market Data...',
-    'Calibrating Algorithms...',
-    'Decrypting Secure Session...',
-    'Synchronizing Portfolio...',
-    'Optimizing Trade Execution...',
-    'Finalizing Setup...'
+const LOG_MESSAGES = [
+    'Initializing Trading Engine...',
+    'Connecting to Deriv WebSocket...',
+    'Authenticated Secure Session...',
+    'Loading Market Algorithms...',
+    'Synchronizing Portfolio Data...',
+    'Optimizing Execution Paths...',
+    'System Ready. Launching...',
 ];
 
-export default function InitialLoader() {
-    const [messageIndex, setMessageIndex] = useState(0);
+export default function InitialLoader({ onFinished }: { onFinished?: () => void }) {
+    const [progress, setProgress] = useState(0);
+    const [logLines, setLogLines] = useState<string[]>([]);
+    const [currentStep, setCurrentStep] = useState(0);
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            setMessageIndex(prev => (prev + 1) % LOADING_MESSAGES.length);
-        }, 1500); // Faster updates
-        return () => clearInterval(interval);
-    }, []);
+        const timer = setInterval(() => {
+            setProgress(prev => {
+                if (prev >= 100) {
+                    clearInterval(timer);
+                    setTimeout(() => onFinished?.(), 500); // Small delay to show 100%
+                    return 100;
+                }
+                const increment = Math.random() * 10 + 5; // Faster but controlled
+                return Math.min(prev + increment, 100);
+            });
+        }, 150); // Faster updates for smoother progress
 
-    const whatsappNumber = '+254796428848';
-    const whatsappLink = `https://wa.me/${whatsappNumber.replace('+', '')}`;
+        const logTimer = setInterval(() => {
+            setLogLines(prev => {
+                const newLine = `[SYSTEM] ${LOG_MESSAGES[Math.floor(Math.random() * LOG_MESSAGES.length)]}`;
+                return [...prev.slice(-15), newLine]; // Keep last 15 lines
+            });
+        }, 300);
+
+        const stepTimer = setInterval(() => {
+            setCurrentStep(prev => (prev + 1) % LOG_MESSAGES.length);
+        }, 1500);
+
+        return () => {
+            clearInterval(timer);
+            clearInterval(logTimer);
+            clearInterval(stepTimer);
+        };
+    }, [onFinished]);
 
     return (
         <div className='initial-loader-overlay'>
-            {/* Trading Background Animation */}
-            <div className='trading-background-animation'>
-                {[...Array(20)].map((_, i) => (
-                    <motion.div
-                        key={i}
-                        className={`candlestick ${Math.random() > 0.5 ? 'candlestick--down' : ''}`}
-                        style={{
-                            left: `${i * 5}%`,
-                            height: `${Math.random() * 40 + 10}%`,
-                            animationDuration: `${Math.random() * 2 + 2}s`,
-                            animationDelay: `${Math.random() * 1}s`
-                        }}
-                    />
+            {/* Glowing Logs Background */}
+            <div className='logs-background'>
+                {logLines.map((line, i) => (
+                    <div key={i} className='log-line'>
+                        <span className='log-prefix'>INF</span> {line}
+                    </div>
                 ))}
+                <div className='log-line'>
+                    <span className='log-prefix'>RUN</span> Loading ProfitHub System...
+                    <span className='flashing-cursor'>_</span>
+                </div>
             </div>
 
-            <motion.div
-                className='loader-content-wrap'
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: 'easeOut' }}
-            >
-                <div className='logo-section'>
-                    <div className='logo-container'>
-                        <img src='/logo-ph.png' alt='Ph' className='main-logo-img' />
-                    </div>
-                    <h1 className='main-brand-title'>PROFITHUB</h1>
+            {/* Center Content */}
+            <div className='loader-center-content'>
+                <div className='logo-container'>
+                    <img src='/logo-ph.png' alt='Ph' className='main-logo-img' />
                 </div>
-
-                <div className='system-status-container'>
-                    <div className='status-header'>
-                        <span className='status-label'>SYSTEM STATUS</span>
-                        <span className='status-value'>OPERATIONAL</span>
-                    </div>
-
-                    <div className='progress-meter'>
-                        <motion.div
-                            className='progress-fill'
-                            initial={{ width: '0%' }}
-                            animate={{ width: '100%' }}
-                            transition={{ duration: 8, ease: 'linear' }}
+                <h1 className='main-brand-title'>PROFITHUB</h1>
+                
+                <div className='progress-display'>
+                    <span className='percentage'>{Math.round(progress)}%</span>
+                    <div className='progress-bar-container'>
+                        <motion.div 
+                            className='progress-bar-fill'
+                            initial={{ width: 0 }}
+                            animate={{ width: `${progress}%` }}
+                            transition={{ ease: "linear" }}
                         />
                     </div>
-
-                    <div className='message-carousel'>
-                        <AnimatePresence>
-                            <motion.p
-                                key={messageIndex}
-                                initial={{ opacity: 0, y: 5 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -5 }}
-                                transition={{ duration: 0.3 }}
-                                className='loading-status-msg'
-                            >
-                                {`> ${LOADING_MESSAGES[messageIndex]}`}
-                            </motion.p>
-                        </AnimatePresence>
-                    </div>
+                    <AnimatePresence mode='wait'>
+                        <motion.span 
+                            key={currentStep}
+                            initial={{ opacity: 0, y: 5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -5 }}
+                            className='status-text'
+                            style={{ color: '#00fa9a', fontSize: '0.8rem', marginTop: '1rem' }}
+                        >
+                            {LOG_MESSAGES[currentStep]}
+                        </motion.span>
+                    </AnimatePresence>
                 </div>
+            </div>
 
-                <motion.div
-                    className='customer-care-cta'
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.5, duration: 0.8 }}
-                >
-                    <a href={whatsappLink} target='_blank' rel='noopener noreferrer' className='whatsapp-support-btn'>
-                        <span className='wa-icon'>💬</span>
-                        <div className='wa-text'>
-                            <span className='wa-label'>VIP SUPPORT</span>
-                            <span className='wa-number'>{whatsappNumber}</span>
-                        </div>
-                    </a>
-                </motion.div>
-            </motion.div>
-
-            <div className='loader-footer-simple'>
-                <span className='powered-tag'>POWERED BY DERIV</span>
-                <span className='version-tag'>v2.4.0-stable</span>
+            {/* Footer */}
+            <div className='loader-footer-deriv'>
+                <span className='powered-by'>POWERED BY DERIV</span>
+                <div className='deriv-branding'>
+                    <span className='deriv-text'>DERIV</span>
+                </div>
+                <div className='secure-badge'>
+                    <div className='secure-dot' />
+                    SECURE CONNECTION ESTABLISHED
+                </div>
             </div>
         </div>
     );

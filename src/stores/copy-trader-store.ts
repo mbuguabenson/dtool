@@ -24,6 +24,8 @@ export type TTradeResult = {
     message: string;
     target_label: string;
     contract_id?: number | string;
+    reference?: string;
+    profit?: string;
 };
 
 export default class CopyTraderStore {

@@ -305,7 +305,7 @@ const AppWrapper = observer(() => {
                             className='main__tabs'
                             onTabItemClick={handleTabChange}
                             top
-                            history={historyShim as React.ComponentProps<typeof Tabs>['history']}
+                            history={historyShim as any}
                             is_scrollable
                         >
                             <div
@@ -419,6 +419,44 @@ const AppWrapper = observer(() => {
                             <div
                                 label={
                                     <div className='main__tabs-label'>
+                                        <LabelPairedLightbulbCaptionRegularIcon
+                                            height='20px'
+                                            width='20px'
+                                            fill='var(--text-general)'
+                                        />
+                                        <Localize i18n_default_text='Smart Auto' />
+                                    </div>
+                                }
+                                id='id-smart-auto'
+                            >
+                                <PageContentWrapper>
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
+                                        <SmartAuto24 />
+                                    </Suspense>
+                                </PageContentWrapper>
+                            </div>
+                            <div
+                                label={
+                                    <div className='main__tabs-label'>
+                                        <LabelPairedSlidersCaptionRegularIcon
+                                            height='20px'
+                                            width='20px'
+                                            fill='var(--text-general)'
+                                        />
+                                        <Localize i18n_default_text='Digit Cracker' />
+                                    </div>
+                                }
+                                id='id-digit-cracker'
+                            >
+                                <PageContentWrapper>
+                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
+                                        <DigitCracker />
+                                    </Suspense>
+                                </PageContentWrapper>
+                            </div>
+                            <div
+                                label={
+                                    <div className='main__tabs-label'>
                                         <LabelPairedSlidersCaptionRegularIcon
                                             height='20px'
                                             width='20px'
@@ -493,44 +531,7 @@ const AppWrapper = observer(() => {
                                     </Suspense>
                                 </PageContentWrapper>
                             </div>
-                            <div
-                                label={
-                                    <div className='main__tabs-label'>
-                                        <LabelPairedLightbulbCaptionRegularIcon
-                                            height='20px'
-                                            width='20px'
-                                            fill='var(--text-general)'
-                                        />
-                                        <Localize i18n_default_text='Smart Auto' />
-                                    </div>
-                                }
-                                id='id-smart-auto'
-                            >
-                                <PageContentWrapper>
-                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                        <SmartAuto24 />
-                                    </Suspense>
-                                </PageContentWrapper>
-                            </div>
-                            <div
-                                label={
-                                    <div className='main__tabs-label'>
-                                        <LabelPairedSlidersCaptionRegularIcon
-                                            height='20px'
-                                            width='20px'
-                                            fill='var(--text-general)'
-                                        />
-                                        <Localize i18n_default_text='Digit Cracker' />
-                                    </div>
-                                }
-                                id='id-digit-cracker'
-                            >
-                                <PageContentWrapper>
-                                    <Suspense fallback={<ChunkLoader message={localize('Loading...')} />}>
-                                        <DigitCracker />
-                                    </Suspense>
-                                </PageContentWrapper>
-                            </div>
+
                             <div
                                 label={
                                     <div className='main__tabs-label'>

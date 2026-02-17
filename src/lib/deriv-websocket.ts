@@ -11,7 +11,7 @@ class DerivWebSocket {
     private endpoint = 'wss://ws.derivws.com/websockets/v3';
 
     constructor(appId?: string) {
-        this.appId = appId || getAppId();
+        this.appId = String(appId || getAppId());
     }
 
     public connect(): Promise<void> {
@@ -27,6 +27,7 @@ class DerivWebSocket {
                 this.ws.onopen = () => {
                     console.log('[DerivWebSocket] Connected');
                     this.reconnectAttempts = 0;
+                    this.startHeartbeat();
                     resolve();
                 };
 
@@ -48,6 +49,7 @@ class DerivWebSocket {
 
                 this.ws.onclose = event => {
                     console.log('[DerivWebSocket] Disconnected', event.wasClean ? 'Cleanly' : 'Abruptly');
+                    this.stopHeartbeat();
                     if (this.ws) {
                         this.handleReconnect();
                     }
@@ -58,26 +60,55 @@ class DerivWebSocket {
         });
     }
 
-    private handleReconnect() {
-        if (this.reconnectAttempts < this.maxReconnectAttempts) {
-            this.reconnectAttempts++;
-            const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
-            console.log(`[DerivWebSocket] Reconnecting in ${delay}ms (Attempt ${this.reconnectAttempts})`);
-            setTimeout(() => this.connect(), delay);
+    private heartbeatInterval: NodeJS.Timeout | null = null;
+
+    private startHeartbeat() {
+        this.stopHeartbeat();
+        this.heartbeatInterval = setInterval(() => {
+            this.send({ ping: 1 });
+        }, 30000); // 30 seconds
+    }
+
+    private stopHeartbeat() {
+        if (this.heartbeatInterval) {
+            clearInterval(this.heartbeatInterval);
+            this.heartbeatInterval = null;
         }
     }
 
-    public disconnect(): void {
-        if (this.ws) {
-            this.ws.onclose = null;
-            this.ws.onopen = null;
-            this.ws.onerror = null;
-            this.ws.onmessage = null;
+    private handleReconnect() {
+        if (this.reconnectAttempts < this.maxReconnectAttempts) {
+            this.reconnectAttempts++;
+            // Exponential backoff with jitter
+            const baseDelay = 1000 * Math.pow(2, this.reconnectAttempts);
+            const jitter = Math.random() * 1000;
+            const delay = Math.min(baseDelay + jitter, 30000);
+            
+            console.log(`[DerivWebSocket] Reconnecting in ${Math.round(delay)}ms (Attempt ${this.reconnectAttempts})`);
+            setTimeout(() => this.connect(), delay);
+        } else {
+             console.error('[DerivWebSocket] Max reconnect attempts reached');
+        }
+    }
 
-            if (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING) {
-                this.ws.close();
+    public async getActiveSymbols(active_symbols = 'brief', product_type = 'basic'): Promise<any> {
+        return this.send({ active_symbols, product_type });
+    }
+
+    public disconnect(): void {
+        this.stopHeartbeat();
+        if (this.ws) {
+            const tempWs = this.ws;
+            this.ws = null; // Prevent reconnect loop
+            
+            tempWs.onclose = null;
+            tempWs.onopen = null;
+            tempWs.onerror = null;
+            tempWs.onmessage = null;
+
+            if (tempWs.readyState === WebSocket.OPEN || tempWs.readyState === WebSocket.CONNECTING) {
+                tempWs.close();
             }
-            this.ws = null;
         }
     }
 
