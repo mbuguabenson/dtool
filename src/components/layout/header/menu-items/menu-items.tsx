@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+
 import { observer } from 'mobx-react-lite';
 import { useFirebaseCountriesConfig } from '@/hooks/firebase/useFirebaseCountriesConfig';
 import { useStore } from '@/hooks/useStore';
@@ -30,7 +31,7 @@ export const MenuItems = observer(() => {
 
     // Use handleTraderHubRedirect for all links
     const getModifiedHref = (originalHref: string) => {
-        const redirect_url = new URL(originalHref);
+        const redirect_url = new URL(originalHref, window.location.href);
 
         if (is_virtual) {
             // For demo accounts, set the account parameter to 'demo'
@@ -44,7 +45,8 @@ export const MenuItems = observer(() => {
     };
 
     // Filter out the Cashier link when the account is a wallet account
-    const filtered_items = items.filter((item, index) => {
+
+    const filtered_items = items.filter((_, index) => {
         // Index 0 is the Cashier link
         if (index === 0 && has_wallet) {
             return false;

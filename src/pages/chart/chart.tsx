@@ -4,30 +4,23 @@ import { observer } from 'mobx-react-lite';
 import chart_api from '@/external/bot-skeleton/services/api/chart-api';
 import { useStore } from '@/hooks/useStore';
 import {
-    ActiveSymbolsRequest,
-    ServerTimeRequest,
-    TicksHistoryResponse,
     TicksStreamRequest,
-    TradingTimesRequest,
 } from '@deriv/api-types';
 import { ChartTitle, SmartChart } from '@deriv/deriv-charts';
 import { useDevice } from '@deriv-com/ui';
 import ToolbarWidgets from './toolbar-widgets';
 import '@deriv/deriv-charts/dist/smartcharts.css';
+import TickStreamWidget from './chart-widgets/tick-stream-widget';
+import DigitStatsWidget from './chart-widgets/digit-stats-widget';
+import RiseFallStatsWidget from './chart-widgets/rise-fall-stats-widget';
+import TradeSignalWidget from './chart-widgets/trade-signal-widget';
+import LastDigitsChart from './chart-widgets/last-digits-chart';
 
 const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) => {
     const barriers: [] = [];
     const { common, ui } = useStore();
     const { chart_store, run_panel, dashboard } = useStore();
     const [isSafari, setIsSafari] = useState(false);
-    const [tickHistory, setTickHistory] = useState<number[]>([]);
-
-    // Derived stats
-    const lastDigits = tickHistory.map(t => parseInt(t.toString().slice(-1)));
-    const digitStats = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(d => ({
-        digit: d,
-        percentage: (lastDigits.filter(x => x === d).length / lastDigits.length) * 100 || 0,
-    }));
 
     const {
         chart_type,
@@ -80,11 +73,8 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
         if (!symbol) updateSymbol();
     }, [symbol, updateSymbol]);
 
-    const requestAPI = (req: ServerTimeRequest | ActiveSymbolsRequest | TradingTimesRequest) => {
+    const requestAPI = (req: any) => {
         return chart_api.api.send(req);
-    };
-    const requestForgetStream = (subscription_id: string) => {
-        subscription_id && chart_api.api.forget(subscription_id);
     };
 
     const requestSubscribe = (req: TicksStreamRequest, callback: (data: any) => void) => {
@@ -158,7 +148,16 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
                 getMarketsOrder={getMarketsOrder}
                 isLive
                 leftMargin={80}
-            />
+            >
+                {/* Restored Chart Widgets */}
+                <div className='chart-widgets-container'>
+                    <TickStreamWidget />
+                    <DigitStatsWidget />
+                    <RiseFallStatsWidget />
+                    <TradeSignalWidget />
+                    {show_digits_stats && <LastDigitsChart />}
+                </div>
+            </SmartChart>
         </div>
     );
 });

@@ -1,10 +1,28 @@
-import { useState, useEffect } from 'react';
-import { Activity, Zap, Timer, Brain, RefreshCw, Download, ShieldAlert } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { useEffect, useState } from 'react';
+import { Activity, Brain, Download, RefreshCw, ShieldAlert, Timer, Zap } from 'lucide-react';
+import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useDeriv } from '@/hooks/use-deriv';
+import { useMultiSymbolDeriv } from '@/hooks/use-multi-symbol-deriv';
 import './signals-tab.scss';
 
-const SignalCard = ({ signal, isPro = false }: { signal: any; isPro?: boolean }) => {
+interface Signal {
+    type: string;
+    status: string;
+    probability: number;
+    recommendation: string;
+    entryCondition: string;
+}
+
+interface MarketData {
+    symbol: string;
+    display_name: string;
+    price: string;
+    digit: number;
+    signal: string;
+    tickCount: number;
+}
+
+const SignalCard = ({ signal, isPro = false }: { signal: Signal; isPro?: boolean }) => {
     const [timeLeft, setTimeLeft] = useState(30);
 
     useEffect(() => {
@@ -76,7 +94,7 @@ const SignalCard = ({ signal, isPro = false }: { signal: any; isPro?: boolean })
     );
 };
 
-const MultiSignalCard = ({ marketData }: { marketData: any }) => {
+const MultiSignalCard = ({ marketData }: { marketData: MarketData }) => {
     const getSignalClass = () => {
         if (marketData.signal === 'TRADE') return 'signal-trade';
         if (marketData.signal === 'WAIT') return 'signal-wait';
@@ -125,29 +143,10 @@ const SignalsTab = () => {
 
     const [showLogs, setShowLogs] = useState(false);
     const [activeView, setActiveView] = useState<'signals' | 'multi'>('signals');
-    const [multiMarketData, setMultiMarketData] = useState<any[]>([]);
 
-    // Fetch data for all markets when in multi view
-    useEffect(() => {
-        if (activeView === 'multi' && availableSymbols && availableSymbols.length > 0) {
-            // Filter for volatility markets only (R_ and HZ symbols)
-            const volatilityMarkets = availableSymbols.filter(sym => {
-                const symbol = sym.symbol || '';
-                return symbol.startsWith('R_') || symbol.includes('HZ');
-            });
-
-            // Initialize multi-market data with volatility symbols only
-            const initialData = volatilityMarkets.slice(0, 12).map(sym => ({
-                symbol: sym.symbol || 'UNKNOWN',
-                display_name: sym.display_name || 'Unknown Market',
-                price: '0.00',
-                digit: 0,
-                signal: 'LOADING',
-                tickCount: 0,
-            }));
-            setMultiMarketData(initialData);
-        }
-    }, [activeView, availableSymbols]);
+    // Multi-symbol hook integration
+    const multiSymbols = ['R_100', 'R_10', 'R_25', 'R_50', 'R_75', '1HZ100V', '1HZ10V', 'R_100', 'R_10', 'R_25', 'R_50', 'R_75'];
+    const { marketData: multiData, connectionStatus: multiConnectionStatus } = useMultiSymbolDeriv(multiSymbols);
 
     // Debug: Log view changes
     useEffect(() => {
@@ -351,12 +350,24 @@ const SignalsTab = () => {
                 <div className='multi-signals-view'>
                     <div className='performance-note'>
                         <Activity size={16} />
-                        <span>Monitoring {multiMarketData.length} markets in real-time</span>
+                        <span>
+                            Monitoring {multiSymbols.length} markets • Status: {multiConnectionStatus.toUpperCase()}
+                        </span>
                     </div>
                     <div className='multi-signals-grid'>
-                        {multiMarketData.length > 0 ? (
-                            multiMarketData.map(market => (
-                                <MultiSignalCard key={market.symbol} marketData={market} />
+                        {multiSymbols.length > 0 ? (
+                            multiSymbols.map((sym, idx) => (
+                                <MultiSignalCard 
+                                    key={`${sym}-${idx}`} 
+                                    marketData={multiData[sym] || {
+                                        symbol: sym,
+                                        display_name: sym,
+                                        price: '0.00',
+                                        digit: 0,
+                                        signal: 'CONNECTING...',
+                                        tickCount: 0
+                                    }} 
+                                />
                             ))
                         ) : (
                             <div className='empty-state'>

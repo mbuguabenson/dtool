@@ -18,13 +18,16 @@ const LocalFooter = observer(() => {
     } = load_modal;
     const { setOpenSettings, setPreviewOnPopup } = dashboard;
     const { isDesktop } = useDevice();
-    const Wrapper = isDesktop ? React.Fragment : Button.Group;
 
     return (
-        <Wrapper>
-            {!isDesktop && (
-                <Button text={localize('Cancel')} onClick={() => setLoadedLocalFile(null)} has_effect secondary large />
-            )}
+        <>
+            <Button
+                text={localize('Cancel')}
+                onClick={() => setLoadedLocalFile(null)}
+                has_effect
+                secondary
+                large
+            />
             <Button
                 text={localize('Open')}
                 onClick={() => {
@@ -41,7 +44,7 @@ const LocalFooter = observer(() => {
                 large
                 disabled={is_open_button_disabled}
             />
-        </Wrapper>
+        </>
     );
 });
 
