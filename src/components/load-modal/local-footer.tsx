@@ -17,7 +17,6 @@ const LocalFooter = observer(() => {
         toggleLoadModal,
     } = load_modal;
     const { setOpenSettings, setPreviewOnPopup } = dashboard;
-    const { isDesktop } = useDevice();
 
     return (
         <>

@@ -73,7 +73,7 @@ export default function InitialLoader() {
                     </div>
 
                     <div className='message-carousel'>
-                        <AnimatePresence mode='wait'>
+                        <AnimatePresence>
                             <motion.p
                                 key={messageIndex}
                                 initial={{ opacity: 0, y: 5 }}

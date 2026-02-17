@@ -21,6 +21,13 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
     const { common, ui } = useStore();
     const { chart_store, run_panel, dashboard } = useStore();
     const [isSafari, setIsSafari] = useState(false);
+    const [tickHistory, setTickHistory] = useState<number[]>([]);
+
+    // Derived stats
+    const lastDigits = tickHistory.map(t => {
+        const quote = t.toString();
+        return parseInt(quote.slice(-1));
+    });
 
     const {
         chart_type,
@@ -89,12 +96,16 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
             .then((history: any) => {
                 setChartSubscriptionId(history?.subscription?.id);
 
-                if (history) {
+                if (history?.history?.prices) {
+                    setTickHistory(history.history.prices);
                     callback(history);
                 }
 
                 if (req.subscribe === 1 && history?.subscription?.id) {
                     const subscription = chart_api.api.onMessage().subscribe(({ data }: any) => {
+                        if (data?.tick?.quote) {
+                            setTickHistory(prev => [...prev.slice(-999), data.tick.quote]);
+                        }
                         callback(data);
                     });
                     subscriptions.current[history.subscription.id] = subscription;
@@ -151,11 +162,15 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
             >
                 {/* Restored Chart Widgets */}
                 <div className='chart-widgets-container'>
-                    <TickStreamWidget />
-                    <DigitStatsWidget />
-                    <RiseFallStatsWidget />
-                    <TradeSignalWidget />
-                    {show_digits_stats && <LastDigitsChart />}
+                    <TickStreamWidget ticks={tickHistory} />
+                    <DigitStatsWidget ticks={tickHistory} selected_digit={null} />
+                    <RiseFallStatsWidget ticks={tickHistory} />
+                    <TradeSignalWidget
+                        prediction={lastDigits[lastDigits.length - 1] || 0}
+                        market={symbol}
+                        condition='Rise/Fall'
+                    />
+                    {show_digits_stats && <LastDigitsChart digits={lastDigits} />}
                 </div>
             </SmartChart>
         </div>
