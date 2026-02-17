@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { NOTIFICATION_TYPE } from '@/components/bot-notification/bot-notification-utils';
 import { useStore } from '@/hooks/useStore';
 import { localize } from '@deriv-com/translations';
-import { useDevice } from '@deriv-com/ui';
+// import { useDevice } from '@deriv-com/ui';
 import Button from '../shared_ui/button';
 
 const LocalFooter = observer(() => {
