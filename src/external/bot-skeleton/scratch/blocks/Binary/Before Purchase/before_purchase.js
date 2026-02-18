@@ -22,8 +22,8 @@ window.Blockly.Blocks.before_purchase = {
                 },
                 {
                     type: 'field_label',
-                    text: localize('2. Purchase conditions'),
-                    class: 'blocklyTextRootBlockHeader',
+                    text: localize('Before purchase'),
+                    'class': 'blocklyTextRootBlockHeader',
                 },
                 {
                     type: 'input_dummy',

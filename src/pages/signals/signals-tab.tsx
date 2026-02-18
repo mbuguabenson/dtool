@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Activity, Brain, Download, RefreshCw, ShieldAlert, Timer, Zap } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { useDeriv } from '@/hooks/use-deriv';
-import { useMultiSymbolDeriv } from '@/hooks/use-multi-symbol-deriv';
+import { useDeriv } from '../../hooks/use-deriv';
+import { useMultiSymbolDeriv } from '../../hooks/use-multi-symbol-deriv';
 import './signals-tab.scss';
 
 interface Signal {
@@ -200,7 +200,7 @@ const SignalsTab = () => {
                     <h2>Signals Pro</h2>
                     <div className='market-selector'>
                         <select value={symbol} onChange={e => changeSymbol(e.target.value)} className='premium-select'>
-                            {availableSymbols.map(s => (
+                            {availableSymbols.map((s: { symbol: string; display_name: string }) => (
                                 <option key={s.symbol} value={s.symbol}>
                                     {s.display_name}
                                 </option>
@@ -250,10 +250,10 @@ const SignalsTab = () => {
                     <h3>Live Trading Signals</h3>
                 </div>
                 <div className='signals-tab__signals-grid'>
-                    {proSignals.map((sig, i) => (
+                    {proSignals.map((sig: Signal, i: number) => (
                         <SignalCard key={`pro-${i}`} signal={sig} isPro />
                     ))}
-                    {signals.map((sig, i) => (
+                    {signals.map((sig: Signal, i: number) => (
                         <SignalCard key={`reg-${i}`} signal={sig} />
                     ))}
                     {signals.length === 0 && proSignals.length === 0 && (
@@ -309,7 +309,7 @@ const SignalsTab = () => {
                                         itemStyle={{ color: '#fff' }}
                                     />
                                     <Bar dataKey='probability' radius={[4, 4, 0, 0]}>
-                                        {aiPrediction.predictions.map((entry, index) => (
+                                        {aiPrediction.predictions.map((entry: { digit: number }, index: number) => (
                                             <Cell
                                                 key={`cell-${index}`}
                                                 fill={
@@ -335,7 +335,7 @@ const SignalsTab = () => {
                         <button onClick={() => setShowLogs(false)}>Close</button>
                     </div>
                     <div className='logs-content'>
-                        {connectionLogs.map((log, i) => (
+                        {connectionLogs.map((log: string, i: number) => (
                             <div key={i} className='log-entry'>
                                 {log}
                             </div>

@@ -22,7 +22,7 @@ window.Blockly.Blocks.during_purchase = {
                 {
                     type: 'field_label',
                     text: localize('3. Sell conditions'),
-                    class: 'blocklyTextRootBlockHeader',
+                    'class': 'blocklyTextRootBlockHeader',
                 },
                 {
                     type: 'input_dummy',

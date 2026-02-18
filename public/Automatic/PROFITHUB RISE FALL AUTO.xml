@@ -522,6 +522,8 @@
             <next>
               <block type="purchase" id="c$$+.HJug4OdYw^%Q*uW">
                 <field name="PURCHASE_LIST">CALL</field>
+                <field name="ALLOW_BULK_PURCHASE">no</field>
+                <field name="NUM_TRADES">1</field>
               </block>
             </next>
           </block>
@@ -564,6 +566,8 @@
                 <next>
                   <block type="purchase" id="G$:*ftIbb?MqLE$Z!SO+">
                     <field name="PURCHASE_LIST">PUT</field>
+                    <field name="ALLOW_BULK_PURCHASE">no</field>
+                    <field name="NUM_TRADES">1</field>
                   </block>
                 </next>
               </block>

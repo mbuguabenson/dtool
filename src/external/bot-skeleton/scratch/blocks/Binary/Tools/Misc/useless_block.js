@@ -9,7 +9,7 @@ window.Blockly.Blocks.useless_block = {
                 {
                     type: 'field_label',
                     text: localize('Conversion Helper Block'),
-                    class: 'blocklyTextRootBlockHeader',
+                    'class': 'blocklyTextRootBlockHeader',
                 },
             ],
             colour: window.Blockly.Colours.RootBlock.colour,

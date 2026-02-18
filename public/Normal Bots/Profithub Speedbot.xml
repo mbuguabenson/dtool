@@ -559,6 +559,8 @@
                         <statement name="DO0">
                           <block type="purchase" id="L1W7RSC||/oDZ}4ImTM:">
                             <field name="PURCHASE_LIST">DIGITOVER</field>
+                            <field name="ALLOW_BULK_PURCHASE">no</field>
+                            <field name="NUM_TRADES">1</field>
                           </block>
                         </statement>
                         <next>
@@ -633,6 +635,8 @@
                                             <statement name="DO0">
                                               <block type="purchase" id="-1=Ua$2,67T6QAP8y5x_">
                                                 <field name="PURCHASE_LIST">DIGITOVER</field>
+                                                <field name="ALLOW_BULK_PURCHASE">no</field>
+                                                <field name="NUM_TRADES">1</field>
                                               </block>
                                             </statement>
                                           </block>

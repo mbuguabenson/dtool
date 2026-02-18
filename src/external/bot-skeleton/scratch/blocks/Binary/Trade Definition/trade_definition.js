@@ -81,7 +81,7 @@ window.Blockly.Blocks.trade_definition = {
                 {
                     type: 'field_label',
                     text: localize('Trade options:'),
-                    class: 'blocklyTextRootBlockHeader',
+                    'class': 'blocklyTextRootBlockHeader',
                 },
                 {
                     type: 'input_dummy',

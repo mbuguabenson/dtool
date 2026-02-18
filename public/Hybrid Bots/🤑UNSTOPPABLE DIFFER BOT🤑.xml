@@ -380,6 +380,8 @@
             <statement name="DO0">
               <block type="purchase" id="}}lKjKyaE+zBH:t98m!j">
                 <field name="PURCHASE_LIST">DIGITDIFF</field>
+                <field name="ALLOW_BULK_PURCHASE">no</field>
+                <field name="NUM_TRADES">1</field>
               </block>
             </statement>
           </block>
@@ -465,6 +467,8 @@
                     <statement name="DO0">
                       <block type="purchase" id="~dq/,25L;6dpE/zrNU`T">
                         <field name="PURCHASE_LIST">DIGITDIFF</field>
+                        <field name="ALLOW_BULK_PURCHASE">no</field>
+                        <field name="NUM_TRADES">1</field>
                       </block>
                     </statement>
                   </block>

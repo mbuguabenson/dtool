@@ -11,8 +11,8 @@ window.Blockly.Blocks.block_holder = {
             args0: [
                 {
                     type: 'field_label',
-                    text: 'Ignore',
-                    class: 'blocklyTextRootBlockHeader',
+                    text: localize('Ignore'),
+                    'class': 'blocklyTextRootBlockHeader',
                 },
                 {
                     type: 'input_dummy',

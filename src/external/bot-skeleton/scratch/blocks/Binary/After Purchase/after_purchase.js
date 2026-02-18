@@ -21,8 +21,8 @@ window.Blockly.Blocks.after_purchase = {
                 },
                 {
                     type: 'field_label',
-                    text: localize('4. Restart trading conditions'),
-                    class: 'blocklyTextRootBlockHeader',
+                    text: localize('After purchase'),
+                    'class': 'blocklyTextRootBlockHeader',
                 },
                 {
                     type: 'input_dummy',
