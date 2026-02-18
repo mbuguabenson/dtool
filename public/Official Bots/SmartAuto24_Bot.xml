@@ -43,7 +43,7 @@
         </value>
       </block>
     </statement>
-    <statement name="SUBMISSION">
+    <statement name="SUBMARKET">
       <block type="trade_definition_tradeoptions" id="options">
         <field name="DURATIONTYPE_LIST">t</field>
         <value name="DURATION">
@@ -72,7 +72,7 @@
             <field name="OP">GTE</field>
             <value name="A">
               <block type="analysis_get_power" id="get-over-power">
-                <field name="TARGET">Over</field>
+                <field name="TARGET">OVER</field>
               </block>
             </value>
             <value name="B">

@@ -1,9 +1,6 @@
-import React from 'react';
-
-import { getProposalRequestObject } from 'AppV2/Utils/trade-params-utils';
-import { useTraderStore } from 'Stores/useTraderStores';
-import { TTradeStore } from 'Types';
-
+import { useTraderStore } from '../../Stores/useTraderStores';
+import { TTradeStore } from '../../Types';
+import { getProposalRequestObject } from '../Utils/trade-params-utils';
 import { useDtraderQuery } from './useDtraderQuery';
 
 type TOnProposalResponse = TTradeStore['onProposalResponse'];

@@ -19,9 +19,9 @@
         "allowJs": true,
         "baseUrl": "./src",
         "paths": {
-            "@/*": ["./*"],
-            "@deriv/shared": ["./components/shared/index.ts"],
-            "@deriv/components": ["./components/shared/index.ts"]
+            "AppV2/*": ["./pages/dtrader/AppV2/*"],
+            "Stores/*": ["./pages/dtrader/Stores/*"],
+            "Types": ["./pages/dtrader/Types"]
         },
         "esModuleInterop": true
     },
